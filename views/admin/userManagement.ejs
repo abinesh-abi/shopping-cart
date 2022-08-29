@@ -1,0 +1,119 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<%- include('../partials/head.ejs') %>
+<body >
+<%- include('../partials/adminNavBar.ejs') %>
+
+<div class="mx-auto" style="width: 90%" >
+<div class="d-flex">
+<%- include('../partials/adminSideBar.ejs') %>
+    <div class="container text-center width">
+     
+              <a
+                href="http://127.0.0.1:3000/admin/create"
+                class="btn btn-success mb-2"
+                >Create</a>
+
+      <!-- <div class="input-group rounded">
+        <input
+          type="search"
+          id="search"
+          onkeyup="check()"
+          onkeydown="check()"
+          class="form-control rounded"
+          placeholder="Search By Email"
+          aria-label="Search"
+          aria-describedby="search-addon"
+        />
+        <span class="input-group-text border-0 bg-primary" id="search-addon">
+          <b class="">Search</b>
+        </span>
+      </div> -->
+      <h1 id="hi"></h1>
+
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th scope="col">Number</th>
+            <th scope="col">Name</th>
+            <th scope="col">Email</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+        </tbody>
+      </table>
+    </div>
+</div>
+
+
+
+
+    <script>
+     let navHilight= document.getElementById("userManagement")
+      navHilight.classList.add('active')
+      navHilight.classList.remove('link-dark')
+
+      // let search = document.getElementById("search")
+      window.addEventListener("load", check)
+      // search.addEventListener("keyup", check)
+
+      function check() {
+        let inp = document.getElementById("search").value;
+        fetch(`http://127.0.0.1:3000/admin/check/${inp}`, {
+          method: "GET",
+        })
+          .then(function (response) {
+            return response.json();
+          })
+          .then((response) => {
+            return response
+          }).then((response) => {
+          var temp = "";
+        if (response.length != 0) {
+            // document.getElementById(tableBody).innerHTML =''
+          response.forEach((element,i) => {
+
+            temp += ` <tr>
+            <th scope="row"> ${i+1}</th>
+            <td> ${element.name}</td>
+            <td> ${element.email} </td>
+            <td class="text-end">
+              
+              <a
+                href="http://127.0.0.1:3000/admin/edit/${element._id}"
+                class="btn btn-success"
+                >Edit</a
+              >
+              <a
+                onclick="deleteUser('${element.email}','${element.name}')"
+                class="btn btn-danger "
+                >Delete</a
+              >
+            </td>
+          </tr>`
+            
+          });
+        }else{temp =''}
+          document.getElementById('tableBody').innerHTML = temp;
+          })
+
+      }
+
+      function deleteUser(email,name) {
+        console.log(email);
+        console.log(name);
+       let confimDelete = confirm(`Are you sure you want to delete ${name}`) 
+       console.log(confimDelete);
+       if (confimDelete) {
+        fetch(`http://127.0.0.1:3000/admin/delete/${email}`, {
+          method: "GET",
+        })
+       }
+       check()
+      }
+          </script>
+
+</div>
+</body>
+</html>

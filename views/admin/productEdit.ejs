@@ -1,0 +1,50 @@
+
+
+<!DOCTYPE html>
+<html>
+  <%- include('../partials/head.ejs') %>
+  <body>
+
+    <div class="container mt-4" style="max-width: 750px">
+        <h1 class="text-center">Edit Product</h1>
+      <form action="/admin/productManagement/editProduct/<%=_id%>" method="post" enctype="multipart/form-data">
+        <div class="mb-3">
+          <label for="exampleInputEmail1" class="form-label">Name</label>
+          <input type="text" name="name" class="form-control" value="<%= name %>" />
+        </div>
+        <div class="mb-3">
+          <label for="exampleInputEmail1" class="form-label">Price</label>
+          <input type="number" name="price" class="form-control" value="<%= price %>" />
+        </div>
+        <div class="mb-3">
+          <label for="exampleInputEmail1" class="form-label">category</label>
+          <input type="text" name="category" class="form-control" value="<%= category %>"/>
+        </div>
+
+        <img id="showImage" src="/images/<%=_id%>.jpg" class="img-fluid" alt="images" >
+
+        <div class="mb-3 mt-3">
+          <!-- <label for="exampleInputEmail1" class="form-label">image</label> -->
+          <input id="image" type="file" name="image" class="form-control"  multiple/>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+    </div>
+    <script>
+
+      //for copy paste image
+      const image = document.getElementById("image");
+      window.addEventListener('paste', e => {
+        image.files = e.clipboardData.files;
+      });
+
+    //   let showImage = document.getElementById("showImage");
+    //   image.addEventListener("change", e => {
+    //     console.log('chand');
+    //     showImage.src=URL.createObjectURL(e.target.files[0])
+    //   })
+
+    </script>
+  </body>
+</html>

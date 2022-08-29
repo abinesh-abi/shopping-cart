@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('../partials/head.ejs') %>
+<head>
+    <style>
+    body{
+        padding: 0
+    }
+    .row > *{
+        height: 500px;
+    }  
+    </style>
+</head>
+<body id=>
+
+
+<!-- <%- include('../partials/navBarAdmin.ejs') %> -->
+<script defer>
+  let loginStatus = document.getElementById("login")
+
+  if ("<%=admin%>") {
+  loginStatus.innerHTML = "<%=admin%>"
+  }
+
+</script>
+<!-- <div class="row">
+    <div class="col-md-3 bg-primary" >
+        <a href="#">home</a>
+        <a href="addProduct">home</a>
+    </div>
+    <div class="col-md-9 bg-secondary"></div>
+</div> -->
+
+
+<div  >
+<nav class="navbar navbar-expand-lg bg-light" >
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/">smartCart</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <form class="d-flex" role="search">
+        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" >
+        <button class="btn btn-outline-success" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+      </form>
+      <ul class="navbar-nav  mb-2 mb-lg-0 ms-auto">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Options
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="/admin/userManagement">User management</a></li>
+            <li><a class="dropdown-item" href="/admin/productManagement">Product managemet</a></li>
+            <li><a class="dropdown-item" href="#">Profile</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <%=admin%>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item text-danger" href="/admin/logout">Logout</a></li>
+            <li><a class="dropdown-item" href="#">Profile</a></li>
+          </ul>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active text-danger" href="#"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a>
+        </li>
+      </ul>
+
+    </div>
+  </div>
+</nav>
+
+<div class="d-flex">
+<%- include('../partials/adminSideBar.ejs') %>
+  <div  class="mainBody bg-danger col-md-9"style="height: 500px;">
+
+ </div>
+ </div>
+
+</div>
+</body>
+</html>

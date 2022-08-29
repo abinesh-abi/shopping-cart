@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include('../partials/head.ejs') %>
+  <body>
+    <style>
+      td {
+        vertical-align: middle;
+      }
+    </style>
+
+    <%- include('../partials/adminNavBar.ejs') %>
+    <div class="mx-auto" style="width: 90%">
+      <div class="d-flex">
+        <%- include('../partials/adminSideBar.ejs') %>
+
+        <div class="container text-center width">
+          <a
+            href="http://127.0.0.1:3000/admin/productManagement/addProduct"
+            class="btn btn-success mb-2"
+            >Add product</a
+          >
+
+          <h1 id="hi"></h1>
+
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th scope="col">Number</th>
+                <th scope="col">Name</th>
+                <th scope="col">Prce</th>
+                <th scope="col">Catogory</th>
+                <th scope="col">Images</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <script>
+
+     let navHilight= document.getElementById("productManagement")
+      navHilight.classList.add('active')
+      navHilight.classList.remove('link-dark')
+
+
+      window.addEventListener("load", check);
+      function check() {
+        let inp = document.getElementById("search").value;
+        fetch(`http://127.0.0.1:3000/admin/productManagement/check/${inp}`, {
+          method: "GET",
+        })
+          .then(function (response) {
+            return response.json();
+          })
+          .then((response) => {
+            return response;
+          })
+          .then((response) => {
+            var temp = "";
+            if (response.length != 0) {
+              // document.getElementById(tableBody).innerHTML =''
+              response.forEach((element, i) => {
+                temp += ` <tr>
+            <td > ${i + 1}</td>
+            <td> ${element.name}</td>
+            <td> ${element.price}</td>
+            <td> ${element.category} </td>
+            <td><img src="/images/${element._id}.jpg" alt="${
+                  element.name
+                }"  style="width:100px; height:100px;" /></td>
+          
+            <td class="text-end">
+              
+              <a
+                href="http://127.0.0.1:3000/admin/productManagement/editProduct/${element._id}"
+                class="btn btn-success "
+                >Edit</a
+              >
+              <a
+                onclick="deleteUser('${element.name}')"
+                class="btn btn-danger "
+                >Delete</a
+              >
+            </td>
+          </tr>`;
+              });
+            } else {
+              temp = "";
+            }
+            document.getElementById("tableBody").innerHTML = temp;
+          });
+      }
+
+      function deleteUser(name) {
+        console.log(name);
+        let confimDelete = confirm(`Are you sure you want to delete ${name}`);
+        if (confimDelete) {
+          fetch(
+            `http://127.0.0.1:3000/admin/productManagement/delete/${name}`,
+            {
+              method: "GET",
+            }
+          );
+        }
+        check();
+      }
+    </script>
+  </body>
+</html>
