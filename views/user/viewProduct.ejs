@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <%- include('../partials/head.ejs') %>
+  <body>
+    <!-- nav bar -->
+    <%- include('../partials/userNavBar.ejs') %>
+
+    <!-- maind div -->
+    <div class="container">
+        <div class="d-flex">
+            <div class="bg-primary" style="height: 100px;width: 50vw;">
+                <img src="/images/<%=product._id%>.jpg" alt="image" class="img-thumbnail" >
+            </div>
+            <div class="bg-secondary" style="height: 100px; width: 50vw;">
+               <h3><%=product.name%></h3> 
+            </div>
+
+        </div>
+    </div>
+
+  </body>
+</html>
