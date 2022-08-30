@@ -2,6 +2,7 @@ var express = require("express");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
+const viewRouter = require("./userProduct")
 const Products = require("../model/product")
 const User = require("../model/users");
 const { request } = require("express");
@@ -28,7 +29,7 @@ function varifyToken(req,res, next) {
   }
 }
 
-
+router.use('/product',viewRouter)
 /* GET users listing. */
 router.get("/", async function (req, res, next) {
   let products = await Products.find()
