@@ -10,26 +10,12 @@
 <%- include('../partials/adminSideBar.ejs') %>
     <div class="container text-center width">
      
-              <a
+              <!-- <a
                 href="http://127.0.0.1:3000/admin/create"
                 class="btn btn-success mb-2"
-                >Create</a>
+                >Create</a> -->
 
-      <!-- <div class="input-group rounded">
-        <input
-          type="search"
-          id="search"
-          onkeyup="check()"
-          onkeydown="check()"
-          class="form-control rounded"
-          placeholder="Search By Email"
-          aria-label="Search"
-          aria-describedby="search-addon"
-        />
-        <span class="input-group-text border-0 bg-primary" id="search-addon">
-          <b class="">Search</b>
-        </span>
-      </div> -->
+
       <h1 id="hi"></h1>
 
       <table class="table table-striped">
@@ -77,16 +63,19 @@
             temp += ` <tr>
             <th scope="row"> ${i+1}</th>
             <td> ${element.name}</td>
-            <td> ${element.email} </td>
+            <td> ${element.number} </td>
             <td class="text-end">
               
+              <!--
               <a
                 href="http://127.0.0.1:3000/admin/edit/${element._id}"
                 class="btn btn-success"
                 >Edit</a
               >
+                -->
+
               <a
-                onclick="deleteUser('${element.email}','${element.name}')"
+                onclick="deleteUser('${element._id}','${element.name}')"
                 class="btn btn-danger "
                 >Delete</a
               >
@@ -100,13 +89,13 @@
 
       }
 
-      function deleteUser(email,name) {
-        console.log(email);
+      function deleteUser(id,name) {
+        console.log(id);
         console.log(name);
        let confimDelete = confirm(`Are you sure you want to delete ${name}`) 
        console.log(confimDelete);
        if (confimDelete) {
-        fetch(`http://127.0.0.1:3000/admin/delete/${email}`, {
+        fetch(`http://127.0.0.1:3000/admin/delete/${id}`, {
           method: "GET",
         })
        }

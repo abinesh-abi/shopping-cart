@@ -94,8 +94,8 @@ router.get("/check",varifyAdmin, async (req, res) => {
 });
 
 router.get("/check/:id",varifyAdmin, async (req, res) => {
-  let email = req.params.id;
-  let data = await User.find({ email: { $regex: `^${email}` } });
+  let name = req.params.id;
+  let data = await User.find({ name: { $regex: `^${name}` } });
 
   if (data.length === 0) {
     res.json([]);
@@ -137,7 +137,7 @@ router.post("/create",varifyAdmin, async (req, res) => {
 });
 router.get("/delete/:id",varifyAdmin, async (req, res) => {
   let mail = req.params.id;
-  let userDelete = await User.findOneAndDelete({ email: req.params.id });
+  let userDelete = await User.findOneAndDelete({ _id: req.params.id });
   res.redirect("/admin/userManagement");
 });
 

@@ -5,16 +5,12 @@ const userSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  email: {
-    type: String,
+  number: {
+    type: Number,
     required: true,
     unique: true,
   },
-  password: {
-    type: String,
-    required: true,
-  },
 });
 
-let User = mongoose.model("users", userSchema);
+let User = mongoose.model("otpUsers", userSchema);
 module.exports = User;

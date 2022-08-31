@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 function varifyAdmin(req, res, next) {
   const token = req.cookies.adminToken;
   if (!token) {
-    res.redirect("login");
+    res.redirect("/admin/login");
   }
   try {
     const data = jwt.verify(token, process.env.JWT_USER_SECRET);

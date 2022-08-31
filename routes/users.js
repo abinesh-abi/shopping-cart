@@ -1,6 +1,7 @@
 var express = require("express");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const client = require('twilio')(process.env.accountSid, process.env.authToken)
 
 const viewRouter = require("./userProduct")
 const Products = require("../model/product")
@@ -48,24 +49,62 @@ router.get("/signup", (req, res) => {
   res.setHeader("cache-control", "private,no-cache,no-store,must-revalidate");
   res.render("user/signup", {
     name: "",
-    emailErr: "",
-    email: "",
+    numErr: "",
+    otpErr: "",
+    number:'',
+    hidden:false
   });
 });
 router.post("/signup", async (req, res) => {
   res.setHeader("cache-control", "private,no-cache,no-store,must-revalidate");
   let { body } = req;
-  let user = await User.findOne({ email: body.email });
-  console.log(user);
+  let user = await User.findOne({ number: body.number });
   if (user) {
     res.render("user/signup", {
       name: body.name,
-      emailErr: "you already have account",
-      email: user.email,
+      numErr: "you already have account",
+      otpErr: "",
+      number:body.number,
+      hidden:false
     });
   } else {
-    body.password = bcrypt.hashSync(body.password, 10);
-    let { name, email } = body;
+    // body.password = bcrypt.hashSync(body.password, 10);
+    let { name, number } = body;
+
+    client.verify.services(process.env.serviceId)
+      .verifications
+      .create({
+        to:`+91${number}`,
+        channel:"sms"
+      })
+      .then(data=>{
+        console.log(data);
+      res.render("user/signup", {
+      name: body.name,
+      numErr: "",
+      otpErr: "",
+      number:body.number,
+      hidden:false
+    });
+      }).catch(error=>{
+        res.send('error')
+      })
+    
+  }
+});
+
+
+router.post("/otp", async (req, res) => {
+ let {body} =req
+
+ console.log(body);
+     client.verify
+    .services(process.env.serviceId)
+    .verificationChecks
+    .create({
+        to:`+91${body.number}`,
+        code:body.otp
+    }).then(data=>{
     new User({ ...body }).save().then((user) => {
       console.log(user);
       const token = jwt.sign(
@@ -81,27 +120,79 @@ router.post("/signup", async (req, res) => {
       );
       res.cookie("token", token).redirect("/");
     });
-  }
-});
+        
+    }).catch((error) => {console.log("Error")})
+})
 
 //login user
 router.get("/login", (req, res) => {
   res.setHeader("cache-control", "private,no-cache,no-store,must-revalidate");
-  res.render("user/login", { emaillErr: "", passwordErr: "", email: "" });
+  res.render("user/login", { numErr: "", otpErr: "", email: "",hidden:false,number:'' });
 });
 
 router.post("/login", async (req, res) => {
   res.setHeader("cache-control", "private,no-cache,no-store,must-revalidate");
   let { body } = req;
-  let dbUser = await User.findOne({ email: body.email });
+  console.log(body);
+  let dbUser = await User.findOne({ number: body.number });
   if (dbUser) {
-    let passwordMatch = bcrypt.compareSync(body.password, dbUser.password);
-    console.log(passwordMatch);
-    if (body.email === dbUser.email && passwordMatch) {
+
+    client.verify.services(process.env.serviceId)
+      .verifications
+      .create({
+        to:`+91${body.number}`,
+        channel:"sms"
+      })
+      .then(data=>{
+        console.log(data);
+      res.render("user/login", {
+      name: body.name,
+      numErr: "",
+      otpErr: "",
+      number:body.number,
+      hidden:false
+    });
+      }).catch(error=>{
+        
+      res.render("user/login", {
+      name: body.name,
+      numErr: "",
+      otpErr: "Invalied OTP",
+      number:body.number,
+      hidden:false
+    });
+
+      })
+
+
+
+  } else {
+    res.render("user/login", {
+      numErr: "you don't have account",
+      otpErr: "",
+      number:''
+    });
+  }
+});
+
+router.post("/login/otp", async (req, res) => {
+ let {body} =req
+
+ console.log(body);
+
+     client.verify
+    .services(process.env.serviceId)
+    .verificationChecks
+    .create({
+        to:`+91${body.number}`,
+        code:body.otp
+    }).then(data=>{
+    User.findOne({number: body.number}).then(user =>{
+      console.log(user);
       const token = jwt.sign(
         {
-          id: dbUser.id,
-          name:dbUser.name
+          id: user._id,
+          name:user.name
         },
         process.env.JWT_USER_SECRET,
         { expiresIn: "3d" },
@@ -110,21 +201,15 @@ router.post("/login", async (req, res) => {
         }
       );
       res.cookie("token", token).redirect("/");
-    } else if (body.password != dbUser.password) {
-      res.render("user/login", {
-        emaillErr: "",
-        passwordErr: "invalied password",
-        email: body.email,
-      });
-    }
-  } else {
-    res.render("user/login", {
-      emaillErr: "you don't have account",
-      passwordErr: "",
-      email: body.email,
     });
-  }
-});
+        
+    }).catch((error) => {
+      res.send('error')
+      console.log(err)
+    })
+
+})
+
 
 router.get('/logout', (req, res) => {
   res.clearCookie('token')
