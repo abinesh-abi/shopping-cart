@@ -12,21 +12,6 @@
 </style>
   </head>
   <body>
-    <!-- <div class="wid mx-auto text-center "> -->
-<!-- <h2 class="h1 mb-5">Login Page</h2>
-<form action="http://127.0.0.1:3000/loginNumber" method="post">
-  Email input
-  <div class="form-outline mb-4">
-    <label class="form-label" for="form2Example1">Enter mobile</label>
-    <input type="number" id="form2Example1" class="form-control" name="number" placeholder="" value=""/>
-  </div>
-  <div class="form-outline mb-4">
-    <label class="form-label" for="form2Example1">Enter Password</label>
-    <input type="number" id="form2Examuple1" class="form-control" name="number" placeholder="" value=""/>
-    <p class="text-danger"></p>
-  </div>
-  <button type="submit" class="btn btn-primary btn-block mb-4">Varify Number</button>
-</form> -->
 <section class="vh-100" >
   <div class="container py-5 h-100">
     <div class="row d-flex justify-content-center align-items-center h-100">
@@ -36,27 +21,30 @@
 
             <h3 class="mb-5">Sign in</h3>
 
-            <form action="http://127.0.0.1:3000/loginNumber" method="post">
+            <form action="http://127.0.0.1:3000/loginOtp" method="post">
             <div class="form-outline mb-4">
-              <label class="form-label" for="typeEmailX-2">Email</label>
-              <input type="email" value="<%=email%>" name="email" id="typeEmailX-2" class="form-control form-control-lg" />
-              <p class="text-danger"><%=emailErr%></p>
+              <label class="form-label" for="typeEmailX-2">Mobile Number</label>
+              <input type="number" value="" name="number" id="typeEmailX-2" class="form-control form-control-lg" />
+              <p class="text-danger"><%=numErr%></p>
             </div>
+            <button class="btn btn-primary btn-lg btn-block" type="submit">Generate OTP</button>
+            </form>
 
+            <!-- <form action="http://127.0.0.1:3000/loginNumber" method="post">
             <div class="form-outline mb-4">
-              <label class="form-label" for="typePasswordX-2">Password</label>
+              <label class="form-label" for="typePasswordX-2">Enter OTP</label>
               <input type="password" name="password" id="typePasswordX-2" class="form-control form-control-lg" required/>
-              <p class="text-danger"><%=passwordErr%></p>
-            </div>
+              <p class="text-danger"></p>
+            </div> 
 
 
             <button class="btn btn-primary btn-lg btn-block" type="submit">Login</button>
-            </form>
+            </form> -->
 
             <hr class="my-4">
 
-            <a href="/loginOtp" class="btn btn-lg btn-block btn-primary mb-2" style="background-color: #3b5998;">
-              <i class="fab fa-facebook-f me-2"></i>Sign in with OTP</a>
+            <!-- <a class="btn btn-lg btn-block btn-primary mb-2" style="background-color: #3b5998;">
+              <i class="fab fa-facebook-f me-2"></i>Sign in with OTP</a> -->
             <div class="form-check  mb-4">
               <p>Not a member? <a href="http://127.0.0.1:3000/signup">Signup</a></p>
               <p>Are You Admin? <a href="http://127.0.0.1:3000/admin">Admin Login</a></p>
@@ -69,7 +57,7 @@
   </div>
 </section>
 
-
+    
     
 
     <!-- JavaScript Bundle with Popper -->

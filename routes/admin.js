@@ -164,6 +164,24 @@ router.post("/edit/:id",varifyAdmin, async(req, res) => {
     })
 
 });
+
+router.get("/banOrNot/:id",async(req,res)=>{
+  let id = req.params.id;
+  let user = await User.findOne({ _id: id })
+
+  if (user.blockOrNot) {
+   User.findOneAndUpdate({_id: id},{blockOrNot:false}) .then(data =>{
+    console.log('unbaned')
+   })
+  }else{
+    User.findOneAndUpdate({_id: id},{blockOrNot:true}) .then(data=>{
+      console.log('baned')
+    })
+
+  }
+  
+})
+
 // router.get("/hi", (req, res) => {
 //   let admin = new Admin({name:"abi", email: "abi@gmail.com", password: 1234 })
 //     .save()

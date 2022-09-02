@@ -39,11 +39,10 @@
         image.files = e.clipboardData.files;
       });
 
-    //   let showImage = document.getElementById("showImage");
-    //   image.addEventListener("change", e => {
-    //     console.log('chand');
-    //     showImage.src=URL.createObjectURL(e.target.files[0])
-    //   })
+      let showImage = document.getElementById("showImage");
+      image.addEventListener("change", e => {
+        showImage.src=URL.createObjectURL(e.target.files[0])
+      })
 
     </script>
   </body>

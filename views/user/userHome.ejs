@@ -5,7 +5,7 @@
     <!-- nav bar -->
     <%- include('../partials/userNavBar.ejs') %>
 
-    <div class="container">
+    <div class="container" id="mainDiv">
       <h5>Mobile</h5>
       <div class="mt-2 d-flex" style="overflow-x: auto; scrollbar-width: none">
         <%for(product of products){ %>
@@ -22,6 +22,7 @@
               <h5 class="card-title"><%=product.name%></h5>
               <p class="card-text">Price : <%= product.price%></p>
               <!-- <a href="/product/view/<%=product._id%>" class="btn btn-primary"></a> -->
+
             </div>
           </div>
         </div>
@@ -32,12 +33,17 @@
 
     <script defer>
 
-     function viewProduct(id) {
-      console.log(id);
-        // fetch(`http://127.0.0.1:3000/product/view/${id}`, {
-        //   method: "GET",
-        // })
-     } 
+    //  function viewProduct(id) {
+    //   console.log(id);
+    //     fetch(`http://127.0.0.1:3000/product/view/${id}`, {
+    //       method: "GET",
+    //     }).then(product=>{
+    //       return product.json()
+    //     }).then(product=>{
+    //       console.log(product)
+    //       document.getElementById("mainDiv").innerHTML = product._id
+    //     })
+    //  } 
     </script>
   </body>
 </html>

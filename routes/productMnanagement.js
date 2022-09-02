@@ -3,7 +3,7 @@ const Products = require("../model/product");
 const { varifyAdmin } = require("./varify/varifyAdmin");
 const fileUpload = require("express-fileupload");
 const fs = require('fs');
-const { routes, path } = require("../app");
+// const { routes, path } = require("../app");
 const { log } = require("console");
 
 var router = express.Router();

@@ -23,6 +23,7 @@
           <tr>
             <th scope="col">Number</th>
             <th scope="col">Name</th>
+            <th scope="col">Mobile Number</th>
             <th scope="col">Email</th>
           </tr>
         </thead>
@@ -59,11 +60,26 @@
         if (response.length != 0) {
             // document.getElementById(tableBody).innerHTML =''
           response.forEach((element,i) => {
-
-            temp += ` <tr>
+            let banState=''
+            if (element.blockOrNot) {
+              banState=` <a
+                onclick="blockOrNot('${element._id}','${element.name}')"
+                class="btn btn-primary"
+                >Unblock</a
+              >`  
+            }else{
+              banState=` <a
+                onclick="blockOrNot('${element._id}','${element.name}')"
+                class="btn btn-secondary"
+                >Block</a
+              >`  
+            }
+            temp += `
+             <tr>
             <th scope="row"> ${i+1}</th>
             <td> ${element.name}</td>
             <td> ${element.number} </td>
+            <td> ${element.email} </td>
             <td class="text-end">
               
               <!--
@@ -74,6 +90,7 @@
               >
                 -->
 
+                ${banState}
               <a
                 onclick="deleteUser('${element._id}','${element.name}')"
                 class="btn btn-danger "
@@ -87,6 +104,19 @@
           document.getElementById('tableBody').innerHTML = temp;
           })
 
+      }
+
+      function blockOrNot(id,name) {
+        console.log(id);
+        console.log(name);
+       let confimBan = confirm(`Are you sure you want to ban or unban ${name}`) 
+       if (confimBan) {
+        fetch(`http://127.0.0.1:3000/admin/banOrNot/${id}`, {
+          method: "GET",
+        }).then(data=>{
+        check()
+        })
+       }
       }
 
       function deleteUser(id,name) {

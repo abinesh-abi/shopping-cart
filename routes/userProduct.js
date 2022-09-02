@@ -6,7 +6,9 @@ const router = express.Router()
 router.get('/view/:id', async(req, res) => {
     let product= await Products.findOne({_id:req.params.id})
     res.render("user/viewProduct" ,{name:'',_id:product._id})
-    // console.log(product._id);
+    // res.status(200).json(product)
+    console.log(product._id);
+
  })
 
 
