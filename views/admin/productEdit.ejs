@@ -7,21 +7,28 @@
 
     <div class="container mt-4" style="max-width: 750px">
         <h1 class="text-center">Edit Product</h1>
-      <form action="/admin/productManagement/editProduct/<%=_id%>" method="post" enctype="multipart/form-data">
+      <form action="/admin/productManagement/editProduct/<%=product._id%>" method="post" enctype="multipart/form-data">
         <div class="mb-3">
           <label for="exampleInputEmail1" class="form-label">Name</label>
-          <input type="text" name="name" class="form-control" value="<%= name %>" />
+          <input type="text" name="name" class="form-control" value="<%= product.name %>" />
         </div>
         <div class="mb-3">
-          <label for="exampleInputEmail1" class="form-label">Price</label>
-          <input type="number" name="price" class="form-control" value="<%= price %>" />
+          <label id="hi" for="exampleInputEmail1" class="form-label">Price</label>
+          <input type="number" name="price" class="form-control" value="<%= product.price %>" />
         </div>
         <div class="mb-3">
           <label for="exampleInputEmail1" class="form-label">category</label>
-          <input type="text" name="category" class="form-control" value="<%= category %>"/>
+          <select class="form-select form-select-lg mb-3"  name="category">
+            <%for(val of categories){%>
+             <option value="<%=val%>"><%=val%></option> 
+            <%}%>
+        </div>
+        <div class="md-form mb-4 pink-textarea active-pink-textarea">
+           <label for="form18">Specifications</label>
+           <textarea name="spec" id="form18" class="md-textarea form-control" rows="3"></textarea>
         </div>
 
-        <img id="showImage" src="/images/<%=_id%>.jpg" class="img-fluid" alt="images" >
+        <img id="showImage" src="/images/<%=product._id%>.jpg" class="img-fluid" alt="images" >
 
         <div class="mb-3 mt-3">
           <!-- <label for="exampleInputEmail1" class="form-label">image</label> -->

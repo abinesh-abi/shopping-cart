@@ -5,6 +5,7 @@ const fileUpload = require("express-fileupload");
 const fs = require('fs');
 // const { routes, path } = require("../app");
 const { log } = require("console");
+const Category = require("../model/category");
 
 var router = express.Router();
 
@@ -52,11 +53,14 @@ router.get("/delete/:id",varifyAdmin, async (req, res) => {
   res.redirect("/admin/userManagement");
 });
 
-router.get("/addProduct",varifyAdmin, (req, res) => {
+router.get("/addProduct",varifyAdmin,  async(req, res) => {
+  let val = await Category.aggregate([{$group:{_id:'array','categories':{$push:"$name"}}}])
+  let categories = val[0].categories
   res.render("admin/addProduct", {
     name: "",
     productExists:"",
-    imageErr:''
+    imageErr:'',
+    categories
   });
 });
 
@@ -101,8 +105,10 @@ router.post("/addProduct", varifyAdmin, (req, res) => {
 router.get('/editProduct/:id',varifyAdmin,async(req,res)=>{
   try {
     let product = await Products.findOne({_id:req.params.id})
-     res.render("admin/productEdit",{name:product.name,price:product.price,category:product.category,_id:product._id})
-     res.render("admin/productEdit",product)
+    let val = await Category.aggregate([{$group:{_id:'array','categories':{$push:"$name"}}}])
+    let categories = val[0].categories
+    //  res.render("admin/productEdit",{name:product.name,price:product.price,category:product.category,_id:product._id})
+     res.render("admin/productEdit",{product,categories})
 
   } catch (error) {
     res.send('error').status(500)

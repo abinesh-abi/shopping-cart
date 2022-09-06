@@ -1,68 +1,79 @@
-<!-- <div class="mx-auto" style="max-width: 900px"> -->
-<!-- <div class="mx-auto container" > -->
-  <nav class="container navbar navbar-expand-lg bg-light">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="/">smartCart</a>
-      <button
-        class="navbar-toggler"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#navbarSupportedContent"
-        aria-controls="navbarSupportedContent"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
-      >
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <form class="d-flex" role="search">
-          <input
-            class="form-control me-2"
-            type="search"
-            placeholder="Search"
-            aria-label="Search"
-          />
-          <button class="btn btn-outline-success" type="submit">
-            <i class="fa-solid fa-magnifying-glass"></i>
-          </button>
-        </form>
-        <ul class="navbar-nav mb-2 mb-lg-0 ms-auto">
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="admin/login"
-              >Admin Login</a
-            >
+ <style>
+body {
+  background-color: #fbfbfb;
+}
+ </style>
+	<nav class="navbar navbar-expand-lg bg-white sticky-top navbar-light p-3 shadow-sm">
+	  <div class="container">
+	    <a class="navbar-brand" href="/"><i class="fa-solid fa-shop me-2"></i> <strong>smartCart</strong></a>
+	    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+	      <span class="navbar-toggler-icon"></span>
+	    </button>
+	 
+	    <div class="mx-auto my-3 d-lg-none d-sm-block d-xs-block">
+	      <div class="input-group">
+	        <span class="border-primary input-group-text bg-primary text-white"><i class="fa-solid fa-magnifying-glass"></i></span>
+	        <input type="text" class="form-control border-primary" style="color:#7a7a7a">
+	        <button class="btn btn-primary text-white">Search</button>
+	      </div>
+	    </div>
+	    <div class=" collapse navbar-collapse" id="navbarNavDropdown">
+	      <div class="ms-auto d-none d-lg-block">
+	        <div class="input-group">
+	          <span class="border-primary input-group-text bg-primary text-white"><i class="fa-solid fa-magnifying-glass"></i></span>
+	          <input type="text" class="form-control border-primary" style="color:#7a7a7a">
+	          <button class="btn btn-primary text-white">Search</button>
+	        </div>
+	      </div>
+	      <ul class="navbar-nav ms-auto ">
+	        <!-- <li class="nav-item">
+	          <a class="nav-link mx-2 text-uppercase active" aria-current="page" href="#">Offers</a>
+	        </li> -->
+	        <li class="nav-item">
+	          <a class="nav-link mx-2 text-uppercase" href="#">Products</a>
+	        </li>
+	        <!-- <li class="nav-item">
+	          <a class="nav-link mx-2 text-uppercase" href="#">Catalog</a>
+	        </li>
+	        <li class="nav-item">
+	          <a class="nav-link mx-2 text-uppercase" href="#">Services</a>
+	        </li>
+	        <li class="nav-item">
+	          <a class="nav-link mx-2 text-uppercase" href="#">About</a>
+	        </li> -->
+	      </ul>
+	      <ul class="navbar-nav ms-auto ">
+	        <li class="nav-item">
+	          <a class="nav-link mx-2 text-uppercase" href="/product/cart"><i class="fa-solid fa-cart-shopping me-1"></i> Cart</a>
+	        </li>
           <%if(!name){%>
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="/login"
-              >Login</a
-            >
+	          <a class="nav-link mx-2 text-uppercase" href="/login"><i class="fa-solid fa-circle-user me-1"></i> Login</a>
           </li>
           <%}else{%>
           <li class="nav-item dropdown">
             <a
               class="nav-link dropdown-toggle"
-              href="#"
+              href=""
               role="button"
               data-bs-toggle="dropdown"
               aria-expanded="false"
             >
+			<i class="fa-solid fa-circle-user me-1"></i>
               <%= name %>
             </a>
             <ul class="dropdown-menu">
               <li>
-                <a class="dropdown-item text-danger" href="logout">Logout</a>
+                <a class="dropdown-item text-danger" href="/logout">Logout</a>
               </li>
-              <li><a class="dropdown-item" href="#">Profile</a></li>
+              <li><a class="dropdown-item" href="/profile/view">Profile</a></li>
             </ul>
           </li>
           <%}%>
-          <li class="nav-item">
-            <a class="nav-link active text-danger" href="#"
-              ><i class="fa fa-shopping-cart" aria-hidden="true"></i
-            ></a>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </nav>
-<!-- </div> -->
+	        <!-- <li class="nav-item">
+	          <a class="nav-link mx-2 text-uppercase" href="#"><i class="fa-solid fa-circle-user me-1"></i> Account</a>
+	        </li> -->
+	      </ul>
+	    </div>
+	  </div>
+	</nav>

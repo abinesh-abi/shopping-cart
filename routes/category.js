@@ -20,7 +20,7 @@ router.get('/',varifyAdmin, async(req,res) => {
 
  })
 
- router.get('/edit/:id',(req,res) => {
+ router.get('/edit/:id',async(req,res) => {
    let id = req.params.id
    res.render("admin/editCategory",{id:id,Err:''})
  })
@@ -44,6 +44,11 @@ router.get('/',varifyAdmin, async(req,res) => {
    }
 
  })
+
+router.get('/get',async(req,res)=>{
+  let category = await Category.aggregate([{$group:{_id:'array','categories':{$push:"$name"}}}])
+  console.log(category)
+})
 
 router.get("/delete/:id",async(req,res) => { 
     try {

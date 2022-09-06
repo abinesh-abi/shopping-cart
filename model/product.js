@@ -1,3 +1,4 @@
+const { text } = require("express");
 const mongoose = require("mongoose");
 
 
@@ -18,10 +19,10 @@ const productSchema = mongoose.Schema({
         type:String,
         required:true
     },
-    // spec:{
-    //     type:Object,
-    //     required:true
-    // }
+    spec:{
+        type:String,
+        // required:true
+    }
 },
 {timestamps:true}
 )

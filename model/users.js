@@ -21,6 +21,9 @@ const userSchema = mongoose.Schema({
   blockOrNot:{
     type: Boolean,
     default: false,
+  },
+  address:{
+    type: String,
   }
 });
 

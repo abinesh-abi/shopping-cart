@@ -5,6 +5,7 @@ const client = require('twilio')(process.env.accountSid, process.env.authToken)
 
 // const authRouter = require("./authUser")
 const viewRouter = require("./userProduct")
+const profileRouter = require("./userProfile")
 const Products = require("../model/product")
 const User = require("../model/users");
 const { request } = require("express");
@@ -31,20 +32,24 @@ function varifyToken(req,res, next) {
   }
 }
 
+router.use((req,res,next)=>{
+  res.setHeader("cache-control", "private,no-cache,no-store,must-revalidate");
+  next();
+})
 //routers
 router.use('/product',viewRouter)
+router.use('/profile',profileRouter)
 // router.use('/auth',authRouter)
 
-/* GET users listing. */
+//products list
 router.get("/", async function (req, res, next) {
   let products = await Products.find()
-  // console.log(products);
 
   if (req.cookies.token) {
-  let {name} =  jwt.verify((req.cookies.token||'nothing'), process.env.JWT_USER_SECRET)
-    res.render("user/userHome", { name:name,products});
+  let {name,id} =  jwt.verify(req.cookies.token, process.env.JWT_USER_SECRET)
+    res.render("user/userHome", { name:name,id,products});
   }else{
-  res.render("user/userHome", { name: "",products});
+  res.render("user/userHome", { name: "",id:'',products});
   }
 });
 
@@ -127,7 +132,7 @@ router.post("/signup", async (req, res) => {
     //   otpErr: "",
     // });
 
-    // otp-start
+    // // otp-start
     client.verify.services(process.env.serviceId)
       .verifications
       .create({
@@ -167,11 +172,11 @@ router.post("/signup/otp", async (req, res) => {
       console.log(user);
       const token = jwt.sign(
         {
-          id: user.id,
+          id: user._id,
           name:user.name
         },
         process.env.JWT_USER_SECRET,
-        { expiresIn: "10d" },
+        { expiresIn: "3d" },
         {
           httpOnly: true,
         }
@@ -190,7 +195,7 @@ router.post("/signup/otp", async (req, res) => {
       
       console.log(error)
     })
-    //otp-end
+    // otp-end
 })
 
 //login user
@@ -202,10 +207,9 @@ router.get("/login", (req, res) => {
 
 router.post('/loginNumber', async(req, res) => {
   let { body}=  req
-  console.log(body)
    let dbUser = await User.findOne({ email: body.email });
-    let passwordMatch = bcrypt.compareSync(req.body.password, dbUser.password)
   if (dbUser) {
+    let passwordMatch = bcrypt.compareSync(req.body.password, dbUser.password)
     if (dbUser.blockOrNot) {
       res.render("user/login", {
         passwordErr: "",
@@ -216,7 +220,7 @@ router.post('/loginNumber', async(req, res) => {
     else if (body.email === dbUser.email && passwordMatch) {
       const token = jwt.sign(
         {
-          id: dbUser.id,
+          id: dbUser._id,
           name:dbUser.name
         },
         process.env.JWT_USER_SECRET,
@@ -224,7 +228,7 @@ router.post('/loginNumber', async(req, res) => {
         {
           httpOnly: true,
         }
-      );
+      )
       res.cookie("token", token).redirect("/");
     } else if (body.password != dbUser.password) {
       res.render("user/login", {
