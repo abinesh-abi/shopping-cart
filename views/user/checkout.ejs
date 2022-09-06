@@ -1,5 +1,180 @@
-<pre>
-    <h1>
-        Check out page
-    </h1>
-</pre>
+<!DOCTYPE html>
+<html>
+  <%- include('../partials/head.ejs') %>
+  <body>
+    <!-- nav bar -->
+    <%- include('../partials/userNavBar.ejs') %>
+
+<section class="h-100 gradient-custom">
+  <div class="container py-5">
+    <div class="row d-flex justify-content-center my-4">
+      <div class="col-md-8">
+        <div class="card mb-4">
+          <div class="card-header py-3">
+            <h5 class="mb-0">Cheek Out</h5>
+          </div>
+          <div class="card-body">
+            <div class="">
+                
+                <ul class="list-style9 no-margin">
+                  <li>
+                      <div class="">
+                        <strong
+                          class="margin-10px-left xs-margin-four-left text-sky"
+                          >Name:</strong
+                        >
+                      </div>
+                      <div class=" ms-2 mt-2">
+                        <h6><%=user.name%></h6>
+                      </div>
+                  </li>
+                  <li>
+                      <div class="">
+                        <strong
+                          class="margin-10px-left xs-margin-four-left text-sky"
+                          >Phone Number:</strong
+                        >
+                      </div>
+                      <div class=" ms-2 mt-2">
+                        <h6><%=user.number%></h6>
+                      </div>
+                  </li>
+                  <li>
+                      <div class="">
+                        <strong
+                          class="margin-10px-left xs-margin-four-left text-sky"
+                          >Email</strong
+                        >
+                      </div>
+                      <div class=" ms-2 mt-2">
+                        <h6><%=user.email%></h6>
+                      </div>
+                  </li>
+                  <li>
+                      <div class="">
+                        <strong
+                          class="margin-10px-left xs-margin-four-left text-sky"
+                          >Address</strong
+                        >
+                      </div>
+                      <div class=" ms-2 mt-2">
+                        <h6><pre><%=user.address%></pre></h6>
+                      </div>
+                      <a href="/product/checkout" type="button" class="btn btn-primary " style="display: inline;">
+                        Change Address
+                    </a>
+                  </li>
+                </ul>
+
+            </div>
+            <!-- Single item -->
+
+            <hr class="my-4" />
+
+          </div>
+        </div>
+        <!-- <div class="card mb-4">
+          <div class="card-body">
+            <p><strong>Expected shipping delivery</strong></p>
+            <p class="mb-0">12.10.2020 - 14.10.2020</p>
+          </div>
+        </div> -->
+        <!-- <div class="card mb-4 mb-lg-0">
+          <div class="card-body">
+            <p><strong>We accept</strong></p>
+            <img class="me-2" width="45px"
+              src="https://mdbcdn.b-cdn.net/wp-content/plugins/woocommerce-gateway-stripe/assets/images/visa.svg"
+              alt="Visa" />
+            <img class="me-2" width="45px"
+              src="https://mdbcdn.b-cdn.net/wp-content/plugins/woocommerce-gateway-stripe/assets/images/amex.svg"
+              alt="American Express" />
+            <img class="me-2" width="45px"
+              src="https://mdbcdn.b-cdn.net/wp-content/plugins/woocommerce-gateway-stripe/assets/images/mastercard.svg"
+              alt="Mastercard" />
+            <img class="me-2" width="45px"
+              src="https://mdbcdn.b-cdn.net/wp-content/plugins/woocommerce/includes/gateways/paypal/assets/images/paypal.webp"
+              alt="PayPal acceptance mark" />
+          </div>
+        </div> -->
+      </div>
+      <div class="col-md-4">
+        <div class="card mb-4">
+          <div class="card-header py-3">
+            <h5 class="mb-0">Summary</h5>
+          </div>
+          <div class="card-body">
+            <ul class="list-group list-group-flush">
+              <li
+                class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
+                Price
+                <span>&#8377; <%=totalPrice%></span>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                <!-- Shipping
+                <span>Gratis</span> -->
+              </li>
+              <li
+                class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
+                <div>
+                  <strong>Total amount</strong>
+                  <strong>
+                    <p class="mb-0">(including GST)</p>
+                  </strong>
+                </div>
+                <span><strong>&#8377; <%=totalPrice%></strong></span>
+              </li>
+            </ul>
+
+            <a href="/product/checkout" type="button" class="btn btn-primary btn-lg btn-block">
+                Buy
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  function changeAddress(productId) {
+    console.log(productId);
+    fetch(`/product/cart/increment/${productId}`,{
+      method: 'GET',
+    }).then(data=> console.log(data))
+  }
+    
+</script>
+  <style>
+   .gradient-custom {
+/* fallback for old browsers */
+background: #6a11cb;
+
+/* Chrome 10-25, Safari 5.1-6 */
+background: -webkit-linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 1));
+
+/* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+background: linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 1))
+} 
+      .list-style9 {
+        list-style: none;
+        padding: 0;
+      }
+
+      .list-style9 li {
+        position: relative;
+        padding: 0 0 15px 0;
+        margin: 0 0 15px 0;
+        border-bottom: 1px dashed rgba(0, 0, 0, 0.1);
+      }
+
+      .list-style9 li:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+        margin-bottom: 0;
+      }
+
+      .text-sky {
+        color: #02c2c7;
+      }
+  </style>  
+  </body>

@@ -1,5 +1,6 @@
 const express = require('express'); 
 const { productExistsInCart, addToCart, allCartItems, removeFromCart, incrementProduct, decrementProduct } = require('../helpers/cartHelper');
+const { viewProfile } = require('../helpers/profileHelper');
 const Cart = require('../model/cart');
 const Products = require('../model/product');
 const { userLogged } = require('./varify/userLogged');
@@ -24,10 +25,10 @@ router.get('/view/:id',userLogged, async(req, res) => {
   console.log(name,id)
    let val = await allCartItems(userId)
 
-   if(val.length ===0){
-   res.render("user/cart",{name,id,cart:[],qty:'',totalPrice:''})
-   }
-  else {
+  //  if(val.length ===0){
+  //  res.render("user/cart",{name,id,cart:[],qty:'',totalPrice:''})
+  //  }
+  // else {
    let cart = val[0].cartItems
    let qty = val[0].cart
 
@@ -40,7 +41,7 @@ router.get('/view/:id',userLogged, async(req, res) => {
    }
 
    res.render("user/cart",{name,id,cart,qty,totalPrice})
-  }
+  // }
  })
 
  router.get('/addToCart/:id',varifyUser,async(req,res)=> { 
@@ -75,9 +76,6 @@ router.get('/view/:id',userLogged, async(req, res) => {
     })
   })
 
-  router.get('/checkout',varifyUser,(req,res)=>{
-    res.send("he")
-  })
 
   router.get('/cart/increment/:id',varifyUser,(req,res)=>{
     let userId = req.userId
@@ -95,6 +93,26 @@ router.get('/view/:id',userLogged, async(req, res) => {
       res.redirect("/product/cart")
       console.log(data)
     }) 
+  })
+
+  router.get('/checkout',varifyUser,async(req,res)=>{
+    let name = req.userName
+    let userId = req.userId
+    let user = await viewProfile(userId)
+   let val = await allCartItems(userId)
+
+   let cart = val[0].cartItems
+   let qty = val[0].cart
+
+  // find tota Price 
+   let totalPrice = 0
+   for (const val in cart) {
+    let price = cart[val].price
+    let totalQuantity = qty[val].quantity
+    totalPrice += price * totalQuantity
+   }
+  //  res.json(user)
+    res.render('user/checkout',{name,totalPrice,user})
   })
 
 module.exports = router

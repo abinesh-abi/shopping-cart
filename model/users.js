@@ -23,7 +23,7 @@ const userSchema = mongoose.Schema({
     default: false,
   },
   address:{
-    type: String,
+    type: Array,
   }
 });
 

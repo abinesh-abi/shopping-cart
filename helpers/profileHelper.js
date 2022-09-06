@@ -1,7 +1,7 @@
 const User = require("../model/users")
 
 module.exports ={
-    viewProfile:(userId,productId)=>{
+    viewProfile:(userId)=>{
         return new Promise((resolve,reject)=>{
            User.findOne({_id:userId})
             .then((user)=>resolve(user))
