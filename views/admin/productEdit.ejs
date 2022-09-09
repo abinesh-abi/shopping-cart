@@ -1,69 +1,110 @@
-
-
 <!DOCTYPE html>
 <html>
   <%- include('../partials/head.ejs') %>
   <body>
-
     <section class="vh-100">
       <div class="container py-5 h-100">
         <div class="row d-flex justify-content-center align-items-center h-100">
           <div class="col-12 col-md-8 col-lg-6 col-xl-5">
             <div class="card shadow-2-strong" style="border-radius: 1rem">
               <div class="card-body p-5 text-center">
-    <div class="container mt-4" style="max-width: 750px">
-        <h1 class="text-center">Edit Product</h1>
-      <form action="/admin/productManagement/editProduct/<%=product._id%>" method="post" enctype="multipart/form-data">
-        <div class="mb-3">
-          <label for="exampleInputEmail1" class="form-label">Name</label>
-          <input type="text" name="name" class="form-control" value="<%= product.name %>" />
-        </div>
-        <div class="mb-3">
-          <label id="hi" for="exampleInputEmail1" class="form-label">Price</label>
-          <input type="number" name="price" class="form-control" value="<%= product.price %>" />
-        </div>
-        <div class="mb-3">
-          <label for="exampleInputEmail1" class="form-label">category</label>
-          <select class="form-select form-select-lg mb-3"  name="category">
-            <%for(val of categories){%>
-             <option value="<%=val%>"><%=val%></option> 
-            <%}%>
-        </div>
-        <div class="md-form mb-4 pink-textarea active-pink-textarea">
-           <label for="form18">Specifications</label>
-           <textarea name="spec" id="form18" class="md-textarea form-control" rows="3"></textarea>
-        </div>
+                <div class="container mt-4" style="max-width: 750px">
+                  <h1 class="text-center">Edit Product</h1>
+                  <form
+                    action="/admin/productManagement/editProduct/<%=product._id%>"
+                    method="post"
+                    enctype="multipart/form-data"
+                  >
+                    <div class="mb-3">
+                      <label for="exampleInputEmail1" class="form-label"
+                        >Name</label
+                      >
+                      <input
+                        type="text"
+                        name="name"
+                        class="form-control"
+                        value="<%= product.name %>"
+                      />
+                    </div>
+                    <div class="mb-3">
+                      <label id="hi" for="exampleInputEmail1" class="form-label"
+                        >Price</label
+                      >
+                      <input
+                        type="number"
+                        name="price"
+                        class="form-control"
+                        value="<%= product.price %>"
+                      />
+                    </div>
+                    <div class="mb-3">
+                      <label for="exampleInputEmail1" class="form-label"
+                        >category</label
+                      >
+                      <select
+                        class="form-select form-select-lg mb-3"
+                        name="category"
+                      >
+                        <%for(val of categories){%>
+                        <option value="<%=val%>"><%=val%></option>
+                        <%}%>
+                      </select>
+                    </div>
+                    <div
+                      class="md-form mb-4 pink-textarea active-pink-textarea"
+                    >
+                      <label for="form18">Specifications</label>
+                      <textarea
+                        name="spec"
+                        id="form18"
+                        class="md-textarea form-control"
+                        rows="3"
+                      >
+<%=product.spec%></textarea
+                      >
+                    </div>
 
-        <img id="showImage" src="/images/<%=product._id%>.jpg" class="img-fluid" alt="images" >
+                    <img
+                      id="showImage"
+                      src="/images/<%=product._id%>.jpg"
+                      class="img-fluid"
+                      alt="images"
+                    />
 
-        <div class="mb-3 mt-3">
-          <!-- <label for="exampleInputEmail1" class="form-label">image</label> -->
-          <input id="image" type="file" name="image" class="form-control"  multiple/>
-        </div>
+                    <div class="mb-3 mt-3">
+                      <!-- <label for="exampleInputEmail1" class="form-label">image</label> -->
+                      <input
+                        id="image"
+                        type="file"
+                        name="image"
+                        class="form-control"
+                        multiple
+                      />
+                    </div>
 
-        <button type="submit" class="btn btn-primary">Submit</button>
-      </form>
-    </div>
+                    <button type="submit" class="btn btn-primary">
+                      Submit
+                    </button>
+                  </form>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
     </section>
-    
-    <script>
 
+    <script>
       //for copy paste image
       const image = document.getElementById("image");
-      window.addEventListener('paste', e => {
+      window.addEventListener("paste", (e) => {
         image.files = e.clipboardData.files;
       });
 
       let showImage = document.getElementById("showImage");
-      image.addEventListener("change", e => {
-        showImage.src=URL.createObjectURL(e.target.files[0])
-      })
-
+      image.addEventListener("change", (e) => {
+        showImage.src = URL.createObjectURL(e.target.files[0]);
+      });
     </script>
   </body>
 </html>

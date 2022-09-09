@@ -19,6 +19,13 @@ router.get('/view/:id',userLogged, async(req, res) => {
     console.log(product._id);
 
  })
+ router.get('/categoryView/:category',varifyUser,(req, res) => {
+  let category = req.params.category
+  let name = req.userName
+  Products.find({category}).then(product =>{
+    res.render("user/categoryView",{name,product:product,category})
+  })
+ })
 
  router.get('/cart',varifyUser,async(req,res)=>{
    let name = req.userName

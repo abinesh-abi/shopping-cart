@@ -6,6 +6,20 @@
     <!-- nav bar -->
     <%- include('../partials/userNavBar.ejs') %>
 
+<style>
+/* hide increment decrement buttons input numbes */
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+    </style>
 <section class="h-100 gradient-custom">
   <div class="container py-5">
     <div class="row d-flex justify-content-center my-4">
@@ -66,7 +80,7 @@
                   </button> -->
 
                   <div class="form-outline">
-                    <input id="form1" min="0" name="quantity" value="<%=qty[itm].quantity%>" type="number" class="form-control" />
+                    <input id="form1" min="0" name="quantity" value="<%=qty[itm].quantity%>" type="number" class="form-control mx-auto" style="max-width: 60px;" disabled/>
                     <label class="form-label" for="form1">Quantity</label>
                   </div>
 

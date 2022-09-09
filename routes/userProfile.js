@@ -1,4 +1,5 @@
 var express = require("express");
+const { viewOrdersByUserId, removeOrder } = require("../helpers/orderHelper");
 const { viewProfile, editProfile, viewProfileByIdAndEmail, addAddress, editAddress, deleteAddress } = require("../helpers/profileHelper");
 const { varifyUser } = require("./varify/varifyUser");
 var router = express.Router();
@@ -109,5 +110,23 @@ router.get("/deleteAddress/:num",varifyUser,(req, res)=>{
         res.json(data)
     })
 
+})
+router.get('/viwOrders',varifyUser,(req, res)=>{
+    let name = req.userName
+    let userId = req.userId
+    viewOrdersByUserId(userId)
+    .then(data=>{ 
+        // res.json(data)
+        res.render("user/viewOrders",{name,data})
+    })
+    .catch(error=>{console.log(error)
+    })
+})
+router.get('/cancelOrder',varifyUser,(req, res)=>{
+    console.log(req.query)
+    let {orderId ,productId} = req.query
+    removeOrder(orderId,productId)
+    .then(data=>res.redirect("/profile/viwOrders"))
+    .catch(err=>console.log(err))
 })
 module.exports = router

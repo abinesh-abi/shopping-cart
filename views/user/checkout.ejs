@@ -60,7 +60,7 @@
                       </div>
                       <div class=" ms-2 mt-2">
 
-                      <select class="form-select form-select-lg mb-3"  name="address" style="max-width: 400px;">
+                      <select class="form-select form-select-lg mb-3"  name="address" style="max-width: 400px;" required>
                       <%for(index in user.address){%>
                       <option value="<%=user.address[index]%>"><%=user.address[index]%></option> 
                       <%}%>

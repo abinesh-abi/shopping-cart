@@ -17,6 +17,9 @@ const schema = mongoose.Schema({
   ],
   totalPrice:Number
 
+},
+{
+  timestamps:true
 });
 
 let Orders = mongoose.model("order", schema);

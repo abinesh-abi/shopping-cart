@@ -1,0 +1,65 @@
+
+<!DOCTYPE html>
+<html>
+  <%- include('../partials/head.ejs') %>
+  <body>
+    <!-- nav bar -->
+    <%- include('../partials/userNavBar.ejs') %>
+      
+    <main>
+      <div class="container mt-2">
+        <div
+          class="mt-2 "
+          style="overflow-x: auto; scrollbar-width: none"
+        >
+          <div
+            class="container-fluid bg-trasparent my-4 p-3"
+            style="position: relative"
+          >
+        <h5><%=category%></h5>
+            <div
+              class="row row-cols-1 row-cols-xs-2 row-cols-sm-2 row-cols-lg-4 g-3 mt-4"
+            >
+              <%for(product of product){ %>
+                
+              <div class="co" style="max-height: 500px">
+                <div class="card h-100 shadow-sm">
+                  <img
+                    src="/images/<%=product._id%>.jpg"
+                    class="card-img-top mx-auto"
+                    alt="..."
+                  />
+                  <div class="card-body">
+                    <div class="clearfix mb-3">
+                      <span class="float-start badge rounded-pill bg-primary">
+                        <%=product.category%></span
+                      >
+                      <span class="float-end price-hp"></span>
+                    </div>
+                    <h4 class="card-title"><%=product.name%></h4>
+
+                <h5 class="card-title  ">price : <%= product.price%> &#8377</h5>
+                    <!-- <h5 class="card-title">
+                  Lorem, ipsum dolor sit amet consectetur adipisicing elit.
+                  Veniam quidem eaque ut eveniet aut quis rerum. Asperiores
+                  accusamus harum ducimus velit odit ut. Saepe, iste optio
+                  laudantium sed aliquam sequi.
+                </h5> -->
+                    <div class="text-center my-4">
+                      <a
+                        href="/product/view/<%=product._id%>"
+                        class="btn btn-primary"
+                        >view</a
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <%}%>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

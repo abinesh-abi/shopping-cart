@@ -52,7 +52,6 @@ module.exports = {
         return new Promise((resolve,reject) =>{
             console.log(userId,productId)
             Cart.updateOne({userId,"cart.productId":productId},{$pull:{cart:{productId:productId}}})
-            // Cart.findOne({userId,"cart.productId":productId})
             .then(cart => resolve(cart))
         })
     },
