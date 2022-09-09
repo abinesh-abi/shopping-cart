@@ -1,7 +1,9 @@
 const express = require('express'); 
-const { productExistsInCart, addToCart, allCartItems, removeFromCart, incrementProduct, decrementProduct } = require('../helpers/cartHelper');
-const { viewProfile } = require('../helpers/profileHelper');
+const { productExistsInCart, addToCart, allCartItems, removeFromCart, incrementProduct, decrementProduct, placeOrder, getCart } = require('../helpers/cartHelper');
+const { viewProfile, addAddress } = require('../helpers/profileHelper');
+const { userFindOne } = require('../helpers/userHelper');
 const Cart = require('../model/cart');
+const Orders = require('../model/orders');
 const Products = require('../model/product');
 const { userLogged } = require('./varify/userLogged');
 const { varifyUser } = require("./varify/varifyUser");
@@ -115,4 +117,42 @@ router.get('/view/:id',userLogged, async(req, res) => {
     res.render('user/checkout',{name,totalPrice,user})
   })
 
+  router.post("/checkout",varifyUser,async(req,res) => {
+    let userId = req.userId
+    let { totalPrice , address} = req.body
+    console.log(totalPrice,address)
+
+    // let user = await userFindOne(userId)
+    let cart = await getCart(userId)
+    let product = cart.cart
+    placeOrder(userId,product,totalPrice,address)
+    .then(data =>res.redirect('/'))
+    .catch(err =>console.log(err)) 
+
+  })
+
+router.get('/addAddressCheckout',varifyUser,async(req,res)=>{
+    let userId = req.userId
+    let name = req.userName
+    console.log(req)
+    res.render("user/addAddressCheckout",{name,Err:''})
+})
+
+router.post("/addAddressCheckout",varifyUser,async(req,res)=>{
+    let userId = req.userId
+    let userName = req.userName
+    let address = req.body.address
+
+    //validation
+    let invaliedAddress = (address.trim().length ==0 )
+
+    if (invaliedAddress) {
+        res.render("user/addAddressCheckout",{name:userName,Err:'This feild cannot be empty'})
+    }else{
+            addAddress(userId,address)
+            .then(user=>{
+                res.redirect("/product/checkout")
+            })
+    }
+})
 module.exports = router

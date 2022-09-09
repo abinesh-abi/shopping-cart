@@ -58,47 +58,76 @@ router.get("/addProduct",varifyAdmin,  async(req, res) => {
   let categories = val[0].categories
   res.render("admin/addProduct", {
     name: "",
-    productExists:"",
-    imageErr:'',
-    categories
+    categories,
+    Err:''
   });
 });
 
-router.post("/addProduct", varifyAdmin, (req, res) => {
+router.post("/addProduct", varifyAdmin, async(req, res) => {
   let { body, files } = req;
-  let productExists
-   Products.findOne({name: body.name}).then((product) => {
-    productExists = product
-   })
+
+  let val = await Category.aggregate([{$group:{_id:'array','categories':{$push:"$name"}}}])
+  let categories = val[0].categories
+  let productExists = await Products.findOne({name: body.name})
+
+   //for validation purposes
+  var invaliedName = (body.name.trim().length ==0 || !body.name.match(/^[a-zA-Z\-]/) )
+  var invaliedSpec = (body.name.trim().length ==0 || !body.name.match(/^[a-zA-Z\-]/) )
+  var invaliedPrice = (body.name.trim().length ==0  )
 
   if (!files) {
      res.status(400).render("admin/addProduct", {
     name: body.name,
-    productExists:"",
-    imageErr:'No files were uploaded.'
+    categories,
+    Err:'No files were uploaded.'
   });
   }
   else if (productExists) {
      res.status(400).render("admin/addProduct", {
     name: req.body.name,
-    productExists:"This product already exists",
-    imageErr:''
+    categories,
+    Err:'This product already exists'
   });
-  }else{
+  } else if(invaliedName){
+     res.status(400).render("admin/addProduct", {
+    name: req.body.name,
+    categories,
+    Err:'Enter valied name'
+  });
+  } else if (invaliedSpec){
+     res.status(400).render("admin/addProduct", {
+    name: req.body.name,
+    categories,
+    Err:'Enter Specification'
+  });
+  }else if (invaliedPrice){
+     res.status(400).render("admin/addProduct", {
+    name: req.body.name,
+    categories,
+    Err:'Enter Price'
+  });
+  }
+  else{
 
   const file = files.image;
   const user = new Products({ ...body });
-  user
+   user
     .save()
-    // .then((respose) => console.log(respose))
-    .catch((err) => console.log(err));
-
+    .then((user) =>{
   file.mv(`public/images/${user._id}.jpg`, (err) => {
     if (err) {
       return res.status(500).send(err);
     }
     res.redirect("/admin/productManagement")
   });
+    })
+    .catch((err) =>{
+     res.status(400).render("admin/addProduct", {
+    name: req.body.name,
+    categories,
+    Err:'All feilds are required'
+  });
+    });
 }
 });
 

@@ -6,6 +6,7 @@
     <%- include('../partials/userNavBar.ejs') %>
 
 <section class="h-100 gradient-custom">
+  <form action="/product/checkout" method="post">
   <div class="container py-5">
     <div class="row d-flex justify-content-center my-4">
       <div class="col-md-8">
@@ -58,10 +59,15 @@
                         >
                       </div>
                       <div class=" ms-2 mt-2">
-                        <h6><pre><%=user.address%></pre></h6>
+
+                      <select class="form-select form-select-lg mb-3"  name="address" style="max-width: 400px;">
+                      <%for(index in user.address){%>
+                      <option value="<%=user.address[index]%>"><%=user.address[index]%></option> 
+                      <%}%>
+                      </select>
                       </div>
-                      <a href="/product/checkout" type="button" class="btn btn-primary " style="display: inline;">
-                        Change Address
+                      <a href="/product/addAddressCheckout" type="button" class="btn btn-primary " style="display: inline;">
+                        Add New Address
                     </a>
                   </li>
                 </ul>
@@ -109,6 +115,7 @@
                 Price
                 <span>&#8377; <%=totalPrice%></span>
               </li>
+                <input type="text" name="totalPrice" value="<%=totalPrice%>" hidden>
               <li class="list-group-item d-flex justify-content-between align-items-center px-0">
                 <!-- Shipping
                 <span>Gratis</span> -->
@@ -125,14 +132,18 @@
               </li>
             </ul>
 
-            <a href="/product/checkout" type="button" class="btn btn-primary btn-lg btn-block">
+            <!-- <a href="/product/checkout" type="button" class="btn btn-primary btn-lg btn-block">
                 Buy
-            </a>
+            </a> -->
+            <button  type="submit" class="btn btn-primary btn-lg btn-block">
+                Buy
+            </button>
           </div>
         </div>
       </div>
     </div>
   </div>
+  </form>
 </section>
 
 <script>

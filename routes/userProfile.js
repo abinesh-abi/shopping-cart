@@ -1,5 +1,5 @@
 var express = require("express");
-const { viewProfile, editProfile, viewProfileByIdAndEmail } = require("../helpers/profileHelper");
+const { viewProfile, editProfile, viewProfileByIdAndEmail, addAddress, editAddress, deleteAddress } = require("../helpers/profileHelper");
 const { varifyUser } = require("./varify/varifyUser");
 var router = express.Router();
 
@@ -48,4 +48,66 @@ router.post('/edit',varifyUser,async(req,res)=>{
     }
 })
 
+router.get('/addAddress',varifyUser,async(req,res)=>{
+    let userId = req.userId
+    let name = req.userName
+    console.log(req)
+    res.render("user/addAddress",{name,Err:''})
+})
+
+router.post("/addAddress",varifyUser,async(req,res)=>{
+    let userId = req.userId
+    let userName = req.userName
+    let address = req.body.address
+
+    //validation
+    let invaliedAddress = (address.trim().length ==0 )
+
+    if (invaliedAddress) {
+        res.render("user/addAddress",{name:userName,Err:'This feild cannot be empty'})
+    }else{
+            addAddress(userId,address)
+            .then(user=>{
+                res.redirect("/profile/view")
+            })
+    }
+})
+router.get('/editAddress/:num',varifyUser,async(req,res)=>{
+    let num = req.params.num
+    let userId = req.userId
+    let userName = req.userName
+    let user = await viewProfile(userId)
+    console.log(num)
+        
+    
+    let address = user.address[num]
+    res.render("user/editAddress",{name:userName,num,address,Err:""})
+})
+router.post("/editAddress/:num",varifyUser,async(req,res)=>{
+    let userId = req.userId
+    let num = req.params.num
+
+    // let user = await viewProfile(userId)
+    // let oldAddress = user.address[0][`${addr}`]
+    let newAddress = req.body.address
+
+    try {
+    editAddress(userId,newAddress,num)
+    .then(data=>{
+        res.redirect('/profile/view')
+    }).catch(err=>{
+        console.log(err)
+    })
+    } catch (error) {
+        console.log(error)    
+    }
+})
+router.get("/deleteAddress/:num",varifyUser,(req, res)=>{
+    let userId = req.userId
+    let index = req.params.num
+    deleteAddress(userId, index).then(data=>{
+        res.json(data)
+    })
+
+})
 module.exports = router

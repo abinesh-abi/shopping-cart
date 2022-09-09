@@ -1,6 +1,7 @@
 
 const { default: mongoose } = require("mongoose")
 const Cart = require("../model/cart")
+const Orders = require("../model/orders")
 
 module.exports = {
     allCartItems:(userId,productId)=>{
@@ -25,6 +26,14 @@ module.exports = {
             })  
         })
     },
+    getCart:(userId)=>{
+        return new Promise((resolve, reject) => {
+         Cart.findOne({userId:userId})
+        .then(cart => {resolve(cart)})
+        .catch(err => {reject(err)});    
+         })
+    }
+    ,
     productExistsInCart:(userId,productId)=>{
        return new Promise((resolve,reject) =>{
         let cart = Cart.findOne({userId,'cart.productId':productId})
@@ -58,6 +67,15 @@ module.exports = {
              Cart.updateOne({userId,"cart.productId":productId},{$inc:{"cart.$.quantity":-1}})
              .then(data=>resolve(data))
         });
-    }
+    },
+    placeOrder:(userId,product,totalPrice)=>{
+        return new Promise((resolve,reject) =>{
+            //  Orders
+            //  .updateOne({userId},{$push:{orders:product,totalPrice}},{upsert:true})
+            new Orders({userId,orders:product,totalPrice}).save()
+             .then(cart => resolve(cart))
+             .catch(err => reject(err));
+        })
+    },
     
 }

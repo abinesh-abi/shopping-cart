@@ -22,11 +22,11 @@
         <div class="row g-0">
           <div class="col-md-6 border-end">
             <div class="d-flex flex-column justify-content-center">
-              <div class="main_image">
+              <div class="main_image" style="max-width: 300px;">
                 <img
                   src="/images/<%=product._id%>.jpg"
                   id="main_product_image"
-                  width="350"
+                  width ="200px"
                 />
               </div>
               <!-- <div class="thumbnail_images">
@@ -71,10 +71,10 @@
               </div>
               <h3>&#8377 <%=product.price%></h3>
               <div class="mt-2 pr-3 content">
-                <p>
+                <!-- <p>
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
                   do eiusmod tempor incididunt ut labore et dolore magna aliqua
-                </p>
+                </p> -->
               </div>
               <!-- <div class="ratings d-flex flex-row align-items-center">
                 <div class="d-flex flex-row">
@@ -101,14 +101,14 @@
                 <!-- <a href="/product/addToCart/<%=product.id%>"  class="btn btn-dark">Add to Cart</a> -->
                 <a onclick="addToCart('<%=id%>','<%=product.id%>')"  class="btn btn-dark">Add to Cart</a>
               </div>
-              <div class="mt-2 pr-3 content">
+              <div class="mt-5 pr-3 content">
                 <pre><%=product.spec%></pre>
               </div>
-              <div class="search-option">
-                <!-- <i class="bx bx-search-alt-2 first-search"></i>
+              <!-- <div class="search-option">
+                <i class="bx bx-search-alt-2 first-search"></i>
                 <div class="inputs"><input type="text" name="" /></div>
-                <i class="bx bx-share-alt share"></i> -->
-              </div>
+                <i class="bx bx-share-alt share"></i>
+              </div> -->
             </div>
           </div>
         </div>

@@ -9,6 +9,7 @@ const profileRouter = require("./userProfile")
 const Products = require("../model/product")
 const User = require("../model/users");
 const { request } = require("express");
+const { categoryViceView } = require("../helpers/userHelper");
 var router = express.Router();
 
 
@@ -42,14 +43,16 @@ router.use('/profile',profileRouter)
 // router.use('/auth',authRouter)
 
 //products list
-router.get("/", async function (req, res, next) {
-  let products = await Products.find()
 
+router.get("/", async function (req, res, next) {
+  let categories = await categoryViceView()
+    console.log(categories)
+  let products = await Products.find()
   if (req.cookies.token) {
   let {name,id} =  jwt.verify(req.cookies.token, process.env.JWT_USER_SECRET)
-    res.render("user/userHome", { name:name,id,products});
+    res.render("user/userHome", { name:name,id,categories});
   }else{
-  res.render("user/userHome", { name: "",id:'',products});
+  res.render("user/userHome", { name: "",id:'',categories});
   }
 });
 

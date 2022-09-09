@@ -90,23 +90,35 @@
                   >Edit detail</a
                 >
                   <li class="mt-4">
+                    <%for(val in user.address){%>
                     <div class="row">
                       <div class="col-md-5 col-5">
                         <i class="fas fa-map-marker-alt text-green"></i>
                         <strong class="margin-10px-left text-green"
-                          >Address:</strong
+                          >Address: <%=Number(val)+1%></strong
                         >
+                        <a href="/profile/editAddress/<%=val%>" class="fa-solid fa-pen text-primary"></a>
+                        <a href="/profile/deleteAddress/<%=val%>" class="fa-solid fa-trash text-danger ps-2"></a>
                       </div>
                       <div class="col-md-7 col-7">
                         <p>
                             <pre>
-<%=user.address%>  
+<%=user.address[val]%>  
                             </pre>
                         </p>        
                       </div>
                     </div>
+                    <%}%>
                   </li>
                 </ul>
+
+                <a
+                  href="/profile/addAddress"
+                  class="btn btn-primary mx-auto"
+                  type="button"
+                  style="background-color: rgb(99, 39, 120)"
+                  >Add Address</a
+                >
               </div>
               <div class="mx-auto mt-5">
               </div>

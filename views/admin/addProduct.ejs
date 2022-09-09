@@ -1,49 +1,92 @@
-
 <!DOCTYPE html>
 <html>
   <%- include('../partials/head.ejs') %>
   <body>
+    <section class="vh-100">
+      <div class="container py-5 h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+          <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+            <div class="card shadow-2-strong" style="border-radius: 1rem">
+              <div class="card-body p-5 text-center">
+                <div class="container" style="max-width: 750px">
+                  <h2>Add Product</h2>
+                  <p class="text-danger"><%=Err%></p>
+                  <form
+                    action="/admin/productManagement/addProduct"
+                    method="post"
+                    enctype="multipart/form-data"
+                  >
+                    <div class="mb-3">
+                      <label for="exampleInputEmail1" class="form-label"
+                        >Name</label
+                      >
+                      <input
+                        type="text"
+                        name="name"
+                        class="form-control"
+                        value="<%= name %>"
+                      />
+                    </div>
+                    <div class="mb-3">
+                      <label for="exampleInputEmail1" class="form-label"
+                        >Price</label
+                      >
+                      <input type="number" name="price" class="form-control" />
+                    </div>
+                    <div class="mb-3">
+                      <label for="exampleInputEmail1" class="form-label"
+                        >category</label
+                      >
+                      <select
+                        class="form-select form-select-lg mb-3"
+                        name="category"
+                      >
+                        <%for(val of categories){%>
+                        <option value="<%=val%>"><%=val%></option>
+                        <%}%>
+                      </select>
+                    </div>
+                    <div
+                      class="md-form mb-4 pink-textarea active-pink-textarea"
+                    >
+                      <label for="form18">Specifications</label>
+                      <textarea
+                        name="spec"
+                        id="form18"
+                        class="md-textarea form-control"
+                        rows="3"
+                      ></textarea>
+                    </div>
+                    <div class="mb-3">
+                      <label for="exampleInputEmail1" class="form-label"
+                        >image</label
+                      >
+                      <input
+                        id="image"
+                        type="file"
+                        name="image"
+                        class="form-control"
+                        multiple
+                      />
+                    </div>
 
-    <div class="container" style="max-width: 750px">
-      <h1 class="text-danger"><%=productExists%></h1>
-      <form action="/admin/productManagement/addProduct" method="post" enctype="multipart/form-data">
-        <div class="mb-3">
-          <label for="exampleInputEmail1" class="form-label">Name</label>
-          <input type="text" name="name" class="form-control" value="<%= name %>" />
+                    <button type="submit" class="btn btn-primary">
+                      Submit
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="mb-3">
-          <label for="exampleInputEmail1" class="form-label">Price</label>
-          <input type="number" name="price" class="form-control" />
-        </div>
-        <div class="mb-3">
-          <label for="exampleInputEmail1" class="form-label">category</label>
-          <select class="form-select form-select-lg mb-3"  name="category">
-            <%for(val of categories){%>
-             <option value="<%=val%>"><%=val%></option> 
-            <%}%>
-          </select>
-        </div>
-        <div class="md-form mb-4 pink-textarea active-pink-textarea">
-           <label for="form18">Specifications</label>
-           <textarea name="spec" id="form18" class="md-textarea form-control" rows="3"></textarea>
-        </div>
-        <div class="mb-3">
-          <label for="exampleInputEmail1" class="form-label">image</label>
-          <input id="image" type="file" name="image" class="form-control"  multiple/>
-          <p class="text-danger"><%=imageErr%></p>
-        </div>
-
-        <button type="submit" class="btn btn-primary">Submit</button>
-      </form>
-    </div>
+      </div>
+    </section>
     <script>
-
       //for copy paste image
       const image = document.getElementById("image");
-      window.addEventListener('paste', e => {
+      window.addEventListener("paste", (e) => {
         image.files = e.clipboardData.files;
       });
-
     </script>
   </body>
 </html>

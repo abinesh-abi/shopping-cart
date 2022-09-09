@@ -5,6 +5,12 @@
   <%- include('../partials/head.ejs') %>
   <body>
 
+    <section class="vh-100">
+      <div class="container py-5 h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+          <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+            <div class="card shadow-2-strong" style="border-radius: 1rem">
+              <div class="card-body p-5 text-center">
     <div class="container mt-4" style="max-width: 750px">
         <h1 class="text-center">Edit Product</h1>
       <form action="/admin/productManagement/editProduct/<%=product._id%>" method="post" enctype="multipart/form-data">
@@ -38,6 +44,13 @@
         <button type="submit" class="btn btn-primary">Submit</button>
       </form>
     </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    
     <script>
 
       //for copy paste image

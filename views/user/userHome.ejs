@@ -8,7 +8,7 @@
     <!-- <div class="container mt-2">
       <h5>Mobile</h5>
       <div class="mt-2 d-flex" style="overflow-x: auto; scrollbar-width: none">
-        <%for(product of products){ %>
+        <%for(product of categories){ %>
           <div style="float: left; display: inline">
             <div class="card" style="width: 18rem">
               <img
@@ -30,18 +30,20 @@
     <main>
       <div class="container mt-2">
         <div
-          class="mt-2 d-flex"
+          class="mt-2 "
           style="overflow-x: auto; scrollbar-width: none"
         >
+              <%for(index in categories){ %>
           <div
             class="container-fluid bg-trasparent my-4 p-3"
             style="position: relative"
           >
-        <h5>Mobile</h5>
+        <h5><%=categories[index].name%></h5>
             <div
               class="row row-cols-1 row-cols-xs-2 row-cols-sm-2 row-cols-lg-4 g-3"
             >
-              <%for(product of products){ %>
+              <%for(product of categories[index].products){ %>
+                
               <div class="co" style="max-height: 500px">
                 <div class="card h-100 shadow-sm">
                   <img
@@ -78,6 +80,7 @@
               <%}%>
             </div>
           </div>
+              <%}%>
         </div>
       </div>
     </main>

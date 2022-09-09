@@ -8,6 +8,7 @@ const Admin = require("../model/admin");
 const User = require("../model/users");
 const productRouter = require("./productMnanagement")
 const categoryRouter = require("./category")
+const orderRouter = require("./orderManagement")
 const {varifyAdmin} =require("./varify/varifyAdmin")
 
 var router = express.Router();
@@ -16,6 +17,7 @@ var router = express.Router();
 
 router.use('/productManagement',productRouter)
 router.use('/category',categoryRouter)
+router.use('/orders',orderRouter)
 
 //admin
 router.get("/", varifyAdmin, (req, res) => {
