@@ -46,7 +46,6 @@ router.use('/profile',profileRouter)
 
 router.get("/", async function (req, res, next) {
   let categories = await categoryViceView()
-    console.log(categories)
   let products = await Products.find()
   if (req.cookies.token) {
   let {name,id} =  jwt.verify(req.cookies.token, process.env.JWT_USER_SECRET)

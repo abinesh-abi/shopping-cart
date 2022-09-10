@@ -5,302 +5,237 @@
     <!-- nav bar -->
     <%- include('../partials/userNavBar.ejs') %>
 
-    <!-- <div class="container mt-2">
-      <h5>Mobile</h5>
-      <div class="mt-2 d-flex" style="overflow-x: auto; scrollbar-width: none">
-        <%for(product of categories){ %>
-          <div style="float: left; display: inline">
-            <div class="card" style="width: 18rem">
-              <img
-                class="card-img-top mx-auto"
-                src="./images/<%=product._id%>.jpg"
-                alt="Card image cap"
-                style="width: 8rem"
-              />
-              <div class="card-body">
-                <h5 class="card-title"><%=product.name%></h5>
-                <p class="card-text">Price : <%= product.price%></p>
-                <a href="/product/view/<%=product._id%>" class="btn btn-primary"></a>
+
+    <div id="all">
+      <div id="content">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-12">
+              <div id="main-slider" class="owl-carousel owl-theme">
+                <div class="item"><img src="img/main-slider1.jpg" alt="" class="img-fluid"></div>
+                <div class="item"><img src="img/main-slider2.jpg" alt="" class="img-fluid"></div>
+                <div class="item"><img src="img/main-slider3.jpg" alt="" class="img-fluid"></div>
+                <div class="item"><img src="img/main-slider4.jpg" alt="" class="img-fluid"></div>
               </div>
+              <!-- /#main-slider-->
             </div>
           </div>
-        <%}%>
-      </div>
-    </div> -->
-    <main>
-      <div class="container mt-2">
-        <div
-          class="mt-2 "
-          style="overflow-x: auto; scrollbar-width: none"
-        >
-              <%for(index in categories){ %>
-          <div
-            class="container-fluid bg-trasparent my-4 p-3"
-            style="position: relative"
-          >
-        <h5><a href="/product/categoryView/<%=categories[index].name%>"><%=categories[index].name%></a></h5>
-            <div
-              class="row row-cols-1 row-cols-xs-2 row-cols-sm-2 row-cols-lg-4 g-3"
-            >
-              <%for(product of categories[index].products){ %>
-                
-              <div class="co" style="max-height: 500px">
-                <div class="card h-100 shadow-sm">
-                  <img
-                    src="./images/<%=product._id%>.jpg"
-                    class="card-img-top mx-auto"
-                    alt="..."
-                  />
-                  <div class="card-body">
-                    <div class="clearfix mb-3">
-                      <span class="float-start badge rounded-pill bg-primary">
-                        <%=product.category%></span
-                      >
-                      <span class="float-end price-hp"></span>
-                    </div>
-                    <h4 class="card-title"><%=product.name%></h4>
-
-                <h5 class="card-title  ">price : <%= product.price%> &#8377</h5>
-                    <!-- <h5 class="card-title">
-                  Lorem, ipsum dolor sit amet consectetur adipisicing elit.
-                  Veniam quidem eaque ut eveniet aut quis rerum. Asperiores
-                  accusamus harum ducimus velit odit ut. Saepe, iste optio
-                  laudantium sed aliquam sequi.
-                </h5> -->
-                    <div class="text-center my-4">
-                      <a
-                        href="/product/view/<%=product._id%>"
-                        class="btn btn-primary"
-                        >view</a
-                      >
-                    </div>
-                  </div>
+        </div>
+        <!--
+        *** ADVANTAGES HOMEPAGE ***
+        _________________________________________________________
+        -->
+        <div id="advantages">
+          <div class="container">
+            <div class="row mb-4">
+              <div class="col-md-4">
+                <div class="box clickable d-flex flex-column justify-content-center mb-0 h-100">
+                  <div class="icon"><i class="fa fa-heart"></i></div>
+                  <h3><a href="#">We love our customers</a></h3>
+                  <p class="mb-0">We are known to provide best possible service ever</p>
                 </div>
               </div>
-              <%}%>
+              <div class="col-md-4">
+                <div class="box clickable d-flex flex-column justify-content-center mb-0 h-100">
+                  <div class="icon"><i class="fa fa-tags"></i></div>
+                  <h3><a href="#">Best prices</a></h3>
+                  <p class="mb-0">You can check that the height of the boxes adjust when longer text like this one is used in one of them.</p>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="box clickable d-flex flex-column justify-content-center mb-0 h-100">
+                  <div class="icon"><i class="fa fa-thumbs-up"></i></div>
+                  <h3><a href="#">100% satisfaction guaranteed</a></h3>
+                  <p class="mb-0">Free returns on everything for 3 months.</p>
+                </div>
+              </div>
             </div>
           </div>
+        </div>
+        <!-- /#advantages-->
+        <!-- *** ADVANTAGES END ***-->
+        <!--
+        *** HOT PRODUCT SLIDESHOW ***
+        _________________________________________________________
+        -->
+        <div id="hot">
+          <%for(index in categories){ %>
+          <div class="box py-4">
+            <div class="container">
+              <div class="row">
+                <div class="col-md-12">
+                  <h2 class="mb-0"><a href="/product/categoryView/<%=categories[index].name%>"><%=categories[index].name%></a></h2>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="container">
+            <div class="product-slider owl-carousel owl-theme">
+              <%for(product of categories[index].products){ %>
+              <div class="item">
+                <div class="product">
+                  <div class="flip-container">
+                    <div class="flipper">
+                      <div class="front"><a href="detail.html"><img src="./images/<%=product._id%>.jpg" alt="" class="img-fluid"></a></div>
+                      <div class="back"><a href="detail.html"><img src="/product/view/<%=product._id%>" alt="" class="img-fluid"></a></div>
+                    </div>
+                  </div><a href="detail.html" class="invisible"><img src="img/product1.jpg" alt="" class="img-fluid"></a>
+                  <div class="text">
+                    <h3><%=product.name%></h3>
+                    <p class="price"> 
+                      <del></del>&#8377 <%= product.price%>
+                    </p>
+                  </div>
+                </div>
+                <!-- /.product-->
+              </div>
+              <%}%>
+            </div>
+            <!-- /.container-->
+          </div>
+          <!-- /#hot-->
+          <!-- *** HOT END ***-->
               <%}%>
         </div>
-      </div>
-    </main>
+        <!--
+        *** GET INSPIRED ***
+        _________________________________________________________
+        -->
+        <!-- <div class="container">
+          <div class="col-md-12">
+            <div class="box slideshow">
+              <h3>Get Inspired</h3>
+              <p class="lead">Get the inspiration from our world class designers</p>
+              <div id="get-inspired" class="owl-carousel owl-theme">
+                <div class="item"><a href="#"><img src="img/getinspired1.jpg" alt="Get inspired" class="img-fluid"></a></div>
+                <div class="item"><a href="#"><img src="img/getinspired2.jpg" alt="Get inspired" class="img-fluid"></a></div>
+                <div class="item"><a href="#"><img src="img/getinspired3.jpg" alt="Get inspired" class="img-fluid"></a></div>
+              </div>
+            </div>
+          </div>
+        </div> -->
+        <!-- *** GET INSPIRED END ***-->
+        <!--
+        *** BLOG HOMEPAGE ***
+        _________________________________________________________
+        -->
+        <!-- <div class="box text-center">
+          <div class="container">
+            <div class="col-md-12">
+              <h3 class="text-uppercase">From our blog</h3>
+              <p class="lead mb-0">What's new in the world of fashion? <a href="blog.html">Check our blog!</a></p>
+            </div>
+          </div>
+        </div> -->
+        
 
-    <script defer>
-      //  function viewProduct(id) {
-      //   console.log(id);
-      //     fetch(`http://127.0.0.1:3000/product/view/${id}`, {
-      //       method: "GET",
-      //     }).then(product=>{
-      //       console.log(product);
-      //       return product.json()
-      //     }).then(product=>{
-      //       console.log(product)
-      //       // document.getElementById("mainDiv").innerHTML = product._id
-      //     })
-      //  }
-    </script>
-  </body>
-  <style>
-    @import url("https://fonts.googleapis.com/css2?family=Fira+Sans+Extra+Condensed:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
-    @import url("https://fonts.googleapis.com/css2?family=Heebo:wght@100;200;300;400;500;600;700;800;900&display=swap");
-    @import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
-    :root {
-      --font1: "Heebo", sans-serif;
-      --font2: "Fira Sans Extra Condensed", sans-serif;
-      --font3: "Roboto", sans-serif;
-    }
-    body {
-      font-family: var(--font3);
-      background-image: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
-    }
-    h2 {
-      font-weight: 900;
-    }
-    .container-fluid {
-      max-width: 1200px;
-    }
-    .card {
-      background: #fff;
-      box-shadow: 0 6px 10px rgba(0, 0, 0, 0.08), 0 0 6px rgba(0, 0, 0, 0.05);
-      transition: 0.3s transform cubic-bezier(0.155, 1.105, 0.295, 1.12),
-        0.3s box-shadow,
-        0.3s -webkit-transform cubic-bezier(0.155, 1.105, 0.295, 1.12);
-      border: 0;
-      border-radius: 1rem;
-    }
-    .card-img,
-    .card-img-top {
-      border-top-left-radius: calc(1rem - 1px);
-      border-top-right-radius: calc(1rem - 1px);
-    }
-    .card h5 {
-      overflow: hidden;
-      height: 56px;
-      font-weight: 900;
-      font-size: 1rem;
-    }
-    .card-img-top {
-      width: 100%;
-      max-height: 180px;
-      object-fit: contain;
-      padding: 30px;
-    }
-    .card h2 {
-      font-size: 1rem;
-    }
-    .card:hover {
-      transform: scale(1.05);
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.06);
-    }
-    .label-top {
-      position: absolute;
-      background-color: #8bc34a;
-      color: #fff;
-      top: 8px;
-      right: 8px;
-      padding: 5px 10px 5px 10px;
-      font-size: 0.7rem;
-      font-weight: 600;
-      border-radius: 3px;
-      text-transform: uppercase;
-    }
-    .top-right {
-      position: absolute;
-      top: 24px;
-      left: 24px;
-      width: 90px;
-      height: 90px;
-      border-radius: 50%;
-      font-size: 1rem;
-      font-weight: 900;
-      background: #ff5722;
-      line-height: 90px;
-      text-align: center;
-      color: white;
-    }
-    .top-right span {
-      display: inline-block;
-      vertical-align: middle;
-    }
-    @media (max-width: 768px) {
-      .card-img-top {
-        max-height: 250px;
-      }
-    }
-    .over-bg {
-      background: rgba(53, 53, 53, 0.85);
-      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-      backdrop-filter: blur(0px);
-      -webkit-backdrop-filter: blur(0px);
-      border-radius: 10px;
-    }
-    .btn {
-      font-size: 1rem;
-      font-weight: 500;
-      text-transform: uppercase;
-      padding: 5px 50px 5px 50px;
-    }
-    .box .btn {
-      font-size: 1.5rem;
-    }
-    @media (max-width: 1025px) {
-      .btn {
-        padding: 5px 40px 5px 40px;
-      }
-    }
-    @media (max-width: 250px) {
-      .btn {
-        padding: 5px 30px 5px 30px;
-      }
-    }
-    .btn-warning {
-      background: none #f7810a;
-      color: #ffffff;
-      fill: #ffffff;
-      border: none;
-      text-decoration: none;
-      outline: 0;
-      box-shadow: -1px 6px 19px rgba(247, 129, 10, 0.25);
-      border-radius: 100px;
-    }
-    .btn-warning:hover {
-      background: none #ff962b;
-      color: #ffffff;
-      box-shadow: -1px 6px 13px rgba(255, 150, 43, 0.35);
-    }
-    .bg-success {
-      font-size: 1rem;
-      background-color: #f7810a !important;
-    }
-    .bg-danger {
-      font-size: 1rem;
-    }
-    .price-hp {
-      font-size: 1rem;
-      font-weight: 600;
-      color: darkgray;
-    }
-    .amz-hp {
-      font-size: 0.7rem;
-      font-weight: 600;
-      color: darkgray;
-    }
-    .fa-question-circle:before {
-      color: darkgray;
-    }
-    .fa-plus:before {
-      color: darkgray;
-    }
-    .box {
-      border-radius: 1rem;
-      background: #fff;
-      box-shadow: 0 6px 10px rgb(0 0 0 / 8%), 0 0 6px rgb(0 0 0 / 5%);
-      transition: 0.3s transform cubic-bezier(0.155, 1.105, 0.295, 1.12),
-        0.3s box-shadow,
-        0.3s -webkit-transform cubic-bezier(0.155, 1.105, 0.295, 1.12);
-    }
-    .box-img {
-      max-width: 300px;
-    }
-    .thumb-sec {
-      max-width: 300px;
-    }
-    @media (max-width: 576px) {
-      .box-img {
-        max-width: 200px;
-      }
-      .thumb-sec {
-        max-width: 200px;
-      }
-    }
-    .inner-gallery {
-      width: 60px;
-      height: 60px;
-      border: 1px solid #ddd;
-      border-radius: 3px;
-      margin: 1px;
-      display: inline-block;
-      overflow: hidden;
-      -o-object-fit: cover;
-      object-fit: cover;
-    }
-    @media (max-width: 370px) {
-      .box .btn {
-        padding: 5px 40px 5px 40px;
-        font-size: 1rem;
-      }
-    }
-    .disclaimer {
-      font-size: 0.9rem;
-      color: darkgray;
-    }
-    .related h3 {
-      font-weight: 900;
-    }
-    footer {
-      background: #212529;
-      height: 80px;
-      color: #fff;
-    }
-  </style>
-</html>
+        <!-- <div class="container">
+          <div class="col-md-12">
+            <div id="blog-homepage" class="row">
+              <div class="col-sm-6">
+                <div class="post">
+                  <h4><a href="post.html">Fashion now</a></h4>
+                  <p class="author-category">By <a href="#">John Slim</a> in <a href="">Fashion and style</a></p>
+                  <hr>
+                  <p class="intro">Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo.</p>
+                  <p class="read-more"><a href="post.html" class="btn btn-primary">Continue reading</a></p>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="post">
+                  <h4><a href="post.html">Who is who - example blog post</a></h4>
+                  <p class="author-category">By <a href="#">John Slim</a> in <a href="">About Minimal</a></p>
+                  <hr>
+                  <p class="intro">Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo.</p>
+                  <p class="read-more"><a href="post.html" class="btn btn-primary">Continue reading</a></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div> -->
+        <!-- /.container-->
+        <!-- *** BLOG HOMEPAGE END ***-->
+      </div>
+    </div>
+    <!--
+    *** FOOTER ***
+    _________________________________________________________
+    -->
+    <!-- <div id="footer">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-3 col-md-6">
+            <h4 class="mb-3">Pages</h4>
+            <ul class="list-unstyled">
+              <li><a href="text.html">About us</a></li>
+              <li><a href="text.html">Terms and conditions</a></li>
+              <li><a href="faq.html">FAQ</a></li>
+              <li><a href="contact.html">Contact us</a></li>
+            </ul>
+            <hr>
+            <h4 class="mb-3">User section</h4>
+            <ul class="list-unstyled">
+              <li><a href="#" data-toggle="modal" data-target="#login-modal">Login</a></li>
+              <li><a href="register.html">Regiter</a></li>
+            </ul>
+          </div>
+          <div class="col-lg-3 col-md-6">
+            <h4 class="mb-3">Top categories</h4>
+            <h5>Men</h5>
+            <ul class="list-unstyled">
+              <li><a href="category.html">T-shirts</a></li>
+              <li><a href="category.html">Shirts</a></li>
+              <li><a href="category.html">Accessories</a></li>
+            </ul>
+            <h5>Ladies</h5>
+            <ul class="list-unstyled">
+              <li><a href="category.html">T-shirts</a></li>
+              <li><a href="category.html">Skirts</a></li>
+              <li><a href="category.html">Pants</a></li>
+              <li><a href="category.html">Accessories</a></li>
+            </ul>
+          </div>
+          <div class="col-lg-3 col-md-6">
+            <h4 class="mb-3">Where to find us</h4>
+            <p><strong>Obaju Ltd.</strong><br>13/25 New Avenue<br>New Heaven<br>45Y 73J<br>England<br><strong>Great Britain</strong></p><a href="contact.html">Go to contact page</a>
+            <hr class="d-block d-md-none">
+          </div>
+          <div class="col-lg-3 col-md-6">
+            <h4 class="mb-3">Get the news</h4>
+            <p class="text-muted">Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.</p>
+            <form>
+              <div class="input-group">
+                <input type="text" class="form-control"><span class="input-group-append">
+                  <button type="button" class="btn btn-outline-secondary">Subscribe!</button></span>
+              </div>
+            </form>
+            <hr>
+            <h4 class="mb-3">Stay in touch</h4>
+            <p class="social"><a href="#" class="facebook external"><i class="fa fa-facebook"></i></a><a href="#" class="twitter external"><i class="fa fa-twitter"></i></a><a href="#" class="instagram external"><i class="fa fa-instagram"></i></a><a href="#" class="gplus external"><i class="fa fa-google-plus"></i></a><a href="#" class="email external"><i class="fa fa-envelope"></i></a></p>
+          </div>
+        </div>
+      </div>
+    </div> -->
+    <!-- /#footer-->
+    <!-- *** FOOTER END ***-->
+    
+    
+    <!--
+    *** COPYRIGHT ***
+    _________________________________________________________
+    -->
+    <div id="copyright">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-6 mb-2 mb-lg-0">
+            <p class="text-center text-lg-left">©2019 Your name goes here.</p>
+          </div>
+          <div class="col-lg-6">
+            <p class="text-center text-lg-right">Template design by <a href="https://bootstrapious.com/">Bootstrapious</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
