@@ -10,6 +10,8 @@ const Products = require("../model/product")
 const User = require("../model/users");
 const { request } = require("express");
 const { categoryViceView } = require("../helpers/userHelper");
+const Category = require("../model/category");
+const { getCart } = require("../helpers/cartHelper");
 var router = express.Router();
 
 
@@ -43,6 +45,25 @@ router.use('/profile',profileRouter)
 // router.use('/auth',authRouter)
 
 //products list
+
+// for nav information
+router.get('/navHeadInfo',async(req,res,next)=>{
+  let userId = null
+  let userName=null
+  let cart = null
+  if (req.cookies.token) {
+  let {name,id} =  jwt.verify(req.cookies.token, process.env.JWT_USER_SECRET)
+    userName = name
+    userId=id
+  }
+  try {
+  cart = (await getCart(userId)).cart.length
+  } catch (error) {
+    cart =null   
+  }
+  let categories = await Category.find()
+  res.json({userName,cart,categories}) 
+})
 
 router.get("/", async function (req, res, next) {
   let categories = await categoryViceView()
@@ -262,11 +283,11 @@ router.post("/loginOtp", async (req, res) => {
   console.log(body);
   let dbUser = await User.findOne({ number: body.number });
 
+    if (dbUser) {
+
       if (dbUser.blockOrNot) {
       res.render("user/otpLogin",{numErr:'You are banned to login'})
     }
-    else if (dbUser) {
-
     client.verify.services(process.env.serviceId)
       .verifications
       .create({

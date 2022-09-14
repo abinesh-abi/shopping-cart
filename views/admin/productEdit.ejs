@@ -76,7 +76,21 @@
                       <input
                         id="image"
                         type="file"
-                        name="image"
+                        name="one"
+                        class="form-control"
+                        multiple
+                      />
+                      <input
+                        id="image"
+                        type="file"
+                        name="two"
+                        class="form-control"
+                        multiple
+                      />
+                      <input
+                        id="image"
+                        type="file"
+                        name="three"
                         class="form-control"
                         multiple
                       />
@@ -95,11 +109,11 @@
     </section>
 
     <script>
-      //for copy paste image
-      const image = document.getElementById("image");
-      window.addEventListener("paste", (e) => {
-        image.files = e.clipboardData.files;
-      });
+      // //for copy paste image
+      // const image = document.getElementById("image");
+      // window.addEventListener("paste", (e) => {
+      //   image.files = e.clipboardData.files;
+      // });
 
       let showImage = document.getElementById("showImage");
       image.addEventListener("change", (e) => {

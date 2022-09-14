@@ -14,33 +14,11 @@ body {
         <!-- <div class="col-lg-6 offer mb-3 mb-lg-0"><a href="#" class="btn btn-success btn-sm">Offer of the day</a><a href="#" class="ml-1">Get flat 35% off on orders over $50!</a></div> -->
         <div class="col-lg-6 offer mb-3 mb-lg-0"></div>
         <div class="col-lg-6 text-center text-lg-right">
-          <ul class="menu list-inline mb-0">
+          <ul id="loginStatus" class="menu list-inline mb-0">
             <li class="list-inline-item"><a href="/admin">Admin</a></li>
-            <%if(!name){%>
-            <li class="list-inline-item">
-              <!-- <a  data-toggle="modal" data-target="#login-modal" -->
-              <a href="/login">Login</a>
-            </li>
-            <li class="list-inline-item">
-              <a href="register.html">Register</a>
-            </li>
-            <%}else{%>
-            <!-- <li class="list-inline-item">
-              <a><%= name %></a>
-            </li> -->
-            <li class="list-inline-item dropdown">
-              <a type="button" class="dropdown-toggle" data-toggle="dropdown">
-                <%= name %>
-              </a>
-              <div class="dropdown-menu">
-                <a class="dropdown-item text-dark" href="logout">Logout</a>
-                <a class="dropdown-item text-dark" href="/profile/view">Profile</a>
-              </div>
-            </li>
-            <%}%>
-            <!-- <li class="list-inline-item"><a href="contact.html">Contact</a></li> -->
-            <!-- <li class="list-inline-item"><a href="#">Recently viewed</a></li> -->
+			<!-- data came from fetch -->
           </ul>
+
         </div>
       </div>
     </div>
@@ -105,7 +83,7 @@ body {
   </div>
   <nav class="navbar navbar-expand-lg">
     <div class="container">
-      <a href="index.html" class="navbar-brand home ">
+      <a href="/" class="navbar-brand home ">
 			SmartCart
 		</a>
       <div class="navbar-buttons">
@@ -126,7 +104,7 @@ body {
         >
           <span class="sr-only">Toggle search</span
           ><i class="fa fa-search"></i></button
-        ><a href="basket.html" class="btn btn-outline-secondary navbar-toggler"
+        ><a href="/product/cart" class="btn btn-outline-secondary navbar-toggler"
           ><i class="fa fa-shopping-cart"></i
         ></a>
       </div>
@@ -135,7 +113,7 @@ body {
           <li class="nav-item"><a href="#" class="nav-link active">Home</a></li>
           <li class="nav-item dropdown menu-large">
             <a
-              href="#"
+              href=""
               data-toggle="dropdown"
               data-hover="dropdown"
               data-delay="200"
@@ -147,15 +125,15 @@ body {
                 <div class="row">
                   <div class="col-md-6 col-lg-3">
                     <h5>Category</h5>
-                    <ul class="list-unstyled mb-3">
+                    <ul class="list-unstyled mb-3" id="categoryList">
           			<%for(index in categories){ %>
                       <li class="nav-item">
-                        <a href="category.html" class="nav-link"><%=categories[index].name %></a>
+						<a class="nav-link" href="/product/categoryView/<%=categories[index].name%>"><%=categories[index].name%></a>
                       </li>
               		<%}%>
                     </ul>
                   </div>
-                  <div class="col-md-6 col-lg-3">
+                  <!-- <div class="col-md-6 col-lg-3">
                         <h5>Shoes</h5>
 
                         <ul class="list-unstyled mb-3">
@@ -164,8 +142,8 @@ body {
                           <li class="nav-item"><a href="category.html" class="nav-link">Hiking shoes</a></li>
                           <li class="nav-item"><a href="category.html" class="nav-link">Casual</a></li>
                         </ul>
-                      </div>
-                      <div class="col-md-6 col-lg-3">
+                      </div> -->
+                      <!-- <div class="col-md-6 col-lg-3">
                         <h5>Accessories</h5>
                         <ul class="list-unstyled mb-3">
                           <li class="nav-item"><a href="category.html" class="nav-link">Trainers</a></li>
@@ -175,8 +153,8 @@ body {
                           <li class="nav-item"><a href="category.html" class="nav-link">Hiking shoes</a></li>
                           <li class="nav-item"><a href="category.html" class="nav-link">Casual</a></li>
                         </ul>
-                      </div>
-                      <div class="col-md-6 col-lg-3">
+                      </div> -->
+                      <!-- <div class="col-md-6 col-lg-3">
                         <h5>Featured</h5>
                         <ul class="list-unstyled mb-3">
                           <li class="nav-item"><a href="category.html" class="nav-link">Trainers</a></li>
@@ -189,7 +167,7 @@ body {
                           <li class="nav-item"><a href="category.html" class="nav-link">Sandals</a></li>
                           <li class="nav-item"><a href="category.html" class="nav-link">Hiking shoes</a></li>
                         </ul>
-                      </div>
+                      </div> -->
                 </div>
               </li>
             </ul>
@@ -306,9 +284,9 @@ body {
             id="basket-overview"
             class="navbar-collapse collapse d-none d-lg-block"
           >
-            <a href="basket.html" class="btn btn-primary navbar-btn"
+            <a href="/product/cart" class="btn btn-primary navbar-btn" id="cartNum"
               ><i class="fa fa-shopping-cart"></i
-              ><span>3 items in cart</span></a
+              >Cart</a
             >
           </div>
         </div>
@@ -329,4 +307,48 @@ body {
       </form>
     </div>
   </div>
+  <script defer>
+	document.addEventListener('load',getValues())
+	function getValues() {
+    fetch(`http://127.0.0.1:3000/navHeadInfo`, {
+        method: "GET",
+     }).then(data=>  data.json())
+	 .then(data=>{
+		if (data.cart) {
+			document.getElementById("cartNum")
+			.innerHTML = `
+			<i class="fa fa-shopping-cart"></i>
+			<span >${data.cart}</span> items in cart`
+		}
+            if(!data.userName){
+				document.getElementById('loginStatus').innerHTML =`
+            <li class="list-inline-item"><a href="/admin">Admin</a></li>
+				<li class="list-inline-item">
+              <!-- <a  data-toggle="modal" data-target="#login-modal" -->
+              <a href="/login">Login</a>
+            </li>
+            <li class="list-inline-item">
+              <a href="register.html">Register</a>
+            </li>`
+            }else{
+				document.getElementById('loginStatus').innerHTML =`
+            <li class="list-inline-item"><a href="/admin">Admin</a></li>
+				<!-- <li class="list-inline-item">
+              <a><%= name %></a>
+            </li> -->
+            <li class="list-inline-item dropdown">
+              <a type="button" class="dropdown-toggle" data-toggle="dropdown">
+                <%= name %>
+              </a>
+              <div class="dropdown-menu">
+                <a class="dropdown-item text-dark" href="/logout">Logout</a>
+                <a class="dropdown-item text-dark" href="/profile/view">Profile</a>
+              </div>
+            </li>`
+            }
+	 })
+	}
+
+
+  </script>
 </header>

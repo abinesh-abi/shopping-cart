@@ -1,15 +1,18 @@
 var express = require("express");
 const { viewOrdersByUserId, removeOrder } = require("../helpers/orderHelper");
 const { viewProfile, editProfile, viewProfileByIdAndEmail, addAddress, editAddress, deleteAddress } = require("../helpers/profileHelper");
+const { categoryViceView } = require("../helpers/userHelper");
+const Category = require("../model/category");
 const { varifyUser } = require("./varify/varifyUser");
 var router = express.Router();
 
 router.get("/view",varifyUser,async(req,res)=>{
+  let categories = await categoryViceView()
     let userId = req.userId
     let name = req.userName
     console.log(userId)
     let user = await viewProfile(userId)
-    res.render('user/profile',{name,id:userId,user})
+    res.render('user/profile',{name,id:userId,user,categories})
 })
 
 router.get("/getValues",varifyUser,async(req,res)=>{
@@ -111,13 +114,14 @@ router.get("/deleteAddress/:num",varifyUser,(req, res)=>{
     })
 
 })
-router.get('/viwOrders',varifyUser,(req, res)=>{
+router.get('/viwOrders',varifyUser,async(req, res)=>{
+  let categories = await Category.find()
     let name = req.userName
     let userId = req.userId
     viewOrdersByUserId(userId)
     .then(data=>{ 
         // res.json(data)
-        res.render("user/viewOrders",{name,data})
+        res.render("user/viewOrders",{name,data,categories})
     })
     .catch(error=>{console.log(error)
     })

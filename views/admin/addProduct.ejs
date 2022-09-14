@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
   <%- include('../partials/head.ejs') %>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" integrity="sha512-0SPWAwpC/17yYyZ/4HSllgaK7/gg9OlVozq8K7rf3J8LvCjYEEIfzzpnA2/SSjpGIunCSD18r3UhvDcu/xncWA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <body>
     <section class="vh-100">
       <div class="container py-5 h-100">
@@ -62,18 +63,65 @@
                         >image</label
                       >
                       <input
-                        id="image"
+                        id="image1"
                         type="file"
-                        name="image"
+                        name="one"
                         class="form-control"
-                        multiple
+                        data-toggle="modal"
+                        data-target="#modal"
+                      />
+                      <input
+                        id="image2"
+                        type="file"
+                        name="two"
+                        class="form-control"
+                        data-toggle="modal"
+                        data-target="#modal"
+                      />
+                      <input
+                        id="image3"
+                        type="file"
+                        name="three"
+                        class="form-control"
+                        data-toggle="modal"
+                        data-target="#modal"
                       />
                     </div>
-
+                    <img src="/images/631d6ab2663e0c5cd83d1765.jpg" alt="" id="hi">
                     <button type="submit" class="btn btn-primary">
                       Submit
                     </button>
                   </form>
+
+        <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+			  	<div class="modal-dialog modal-lg" role="document">
+			    	<div class="modal-content">
+			      		<div class="modal-header">
+			        		<h5 class="modal-title">Crop Image Before Upload</h5>
+			        		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			          			<span aria-hidden="true">×</span>
+			        		</button>
+			      		</div>
+			      		<div class="modal-body">
+			        		<div class="img-container">
+			            		<div class="row">
+			                		<div class="col-md-8">
+			                    		<img id="sample_image" src="/images/631d6ab2663e0c5cd83d1765.jpg" />
+			                    		<!-- <img id="sample_image"  /> -->
+			                		</div>
+			                		<div class="col-md-4">
+			                    		<div class="preview"></div>
+			                		</div>
+			            		</div>
+			        		</div>
+			      		</div>
+			      		<div class="modal-footer">
+			      			<button type="button" id="crop" class="btn btn-primary">Crop</button>
+			        		<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+			      		</div>
+			    	</div>
+			  	</div>
+			</div>			
                 </div>
               </div>
             </div>
@@ -81,12 +129,163 @@
         </div>
       </div>
     </section>
-    <script>
-      //for copy paste image
-      const image = document.getElementById("image");
-      window.addEventListener("paste", (e) => {
-        image.files = e.clipboardData.files;
+    		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js" integrity="sha512-ooSWpxJsiXe6t4+PPjCgYmVfr1NS5QXJACcR/FPpsdm6kqG1FmQ2SVyg2RXeVuCRBLr0lWHnWJP6Zs1Efvxzww==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script defer>
+
+
+
+////////////////////
+          let image1 = document.getElementById('image1')
+          let image2 = document.getElementById('image2')
+          let image3 = document.getElementById('image3')
+          let displayImage =  document.getElementById('sample_image')
+          let hi =  document.getElementById('hi')
+          let cropButton = document.getElementById('crop')
+          let model = document.getElementById('model')
+
+     let cropper  //for store croppde image
+     let element
+      image1.addEventListener("change", (e) => {
+        console.log('firsont')
+        cropper = cropArea(e)
+        element =image1
+       Cropper.noConflict();
+       Cropper.clear()
       });
+
+      image2.addEventListener("change", (e) => {
+        console.log('second')
+        cropper = cropArea(e)
+        element =image2
+       Cropper.noConflict();
+       Cropper.clear()
+      });
+
+      image3.addEventListener("change", (e) => {
+        cropper = cropArea(e)
+        element =image3
+       Cropper.noConflict();
+       Cropper.clear()
+      });
+
+      //cropp button click event
+        cropButton.addEventListener("click", () => {
+          cropImage(element)
+        })
+
+        // function for crop area
+      function cropArea(e) {
+        displayImage.src=null
+        displayImage.src = URL.createObjectURL(e.target.files[0]);
+           return new Cropper(displayImage, {
+            aspectratio:0,
+            viewMode:0,
+        });
+      }
+
+
+      //function for crop Image
+      function cropImage(element) {
+            // This method coverts the selected cropped image on the cropper canvas into a blob object
+            cropper.getCroppedCanvas().toBlob((blob) => {
+                // Gets the original image data
+                // let fileInputElement1 = document.getElementById("image1");
+                // Make a new cropped image file using that blob object, image_data.name will make the new file name same as original image
+                let file1 = new File([blob], 'hello.jpg', {
+                    type: "image/*",
+                    lastModified: new Date().getTime(),
+                });
+                // Create a new container
+                let container1 = new DataTransfer();
+                // Add the cropped image file to the container
+                container1.items.add(file1);
+                console.log(container1.files[0],'containerfile')
+                // lace the original image file with the new cropped image file
+                element.files = container1.files;
+                console.log(element.files[0],'done')
+                // Replace the original image file with the new cropped image file
+
+                hi.src = URL.createObjectURL(
+                    element.files[0]
+                );
+                displayImage.src = null
+                $('#modal').modal('hide');
+            });
+            return 0
+      }
+
+
+/////////============
+        // cropButton.addEventListener("click", () => {
+        //     // This method coverts the selected cropped image on the cropper canvas into a blob object
+        //     cropper.getCroppedCanvas().toBlob((blob) => {
+        //         // Gets the original image data
+        //         let fileInputElement1 = document.getElementById("image1");
+        //         // Make a new cropped image file using that blob object, image_data.name will make the new file name same as original image
+        //         let file1 = new File([blob], 'hello.jpg', {
+        //             type: "image/*",
+        //             lastModified: new Date().getTime(),
+        //         });
+        //         // Create a new container
+        //         let container1 = new DataTransfer();
+        //         // Add the cropped image file to the container
+        //         container1.items.add(file1);
+        //         console.log(container1.files[0],'containerfile')
+        //         // lace the original image file with the new cropped image file
+        //         image.files = container1.files;
+        //         console.log(image.files[0],'done')
+        //         // Replace the original image file with the new cropped image file
+
+        //         hi.src = URL.createObjectURL(
+        //             image.files[0]
+        //         );
+        // $('#modal').modal('hide');
+
+        //     });
+        // });
+
+///========================
+
+
+    //   cropButton.addEventListener('click', () => {
+    //     let croppedImage = cropper.getCroppedCanvas()
+    //     .toDataURL("image/png")
+    // var data = new FormData()
+    // data.append('one',croppedImage)
+    // data.append('name','hello')
+    // data.append('price','123')
+    // data.append('spec','wefq')
+    // data.append('category','wefq')
+
+    // fetch("/admin/productManagement/addProduct",{
+    //  method: "post",
+    //  body: data,
+    // }).then((response) =>{
+    //   return response.json();
+    // }).then((response) =>{
+    //   console.log(response)
+    //   hi.src =response.file
+    // })
+    //     $('#modal').modal('hide');
+
+    // })
+/////////////////// 
+
+ //for copy paste image
+      // const image1 = document.getElementById("image1");
+      // const image2 = document.getElementById("image2");
+      // const image3 = document.getElementById("image3");
+      // window.addEventListener("paste", (e) => {
+      //   image1.files = e.clipboardData.files;
+      // });
+      // window.addEventListener("paste", (e) => {
+      //   image2.files = e.clipboardData.files;
+      // });
+      // window.addEventListener("paste", (e) => {
+      //   image3.files = e.clipboardData.files;
+      // });
     </script>
   </body>
 </html>

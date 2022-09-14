@@ -13,29 +13,9 @@
       <div class="d-flex">
         <%- include('../partials/adminSideBar.ejs') %>
 
-        <div class="container text-center width">
-          <a
-            href="http://127.0.0.1:3000/admin/productManagement/addProduct"
-            class="btn btn-success mb-2"
-            >Add product</a
-          >
+            <div id="allOrders">
 
-          <h1 id="hi"></h1>
-
-          <table class="table table-striped">
-            <thead>
-              <tr>
-                <th scope="col">Number</th>
-                <th scope="col">Name</th>
-                <th scope="col">Product</th>
-                <th scope="col">Catogory</th>
-                <th scope="col">Images</th>
-                <th scope="col">Price</th>
-              </tr>
-            </thead>
-            <tbody id="tableBody"></tbody>
-          </table>
-        </div>
+            </div>
       </div>
     </div>
 
@@ -56,45 +36,61 @@
             return response.json();
           })
           .then((response) => {
-            // console.log(response);
-            return response;
-          })
-          .then((response) => {
-            var temp = "";
             if (response.length != 0) {
-              // document.getElementById(tableBody).innerHTML =''
+              let orders=''
               response.forEach((element, i) => {
-                temp += ` <tr>
-            <td > ${i + 1}</td>
-            <td> ${element.users[0].name}</td>
-            <td> ${element.orderdItems[0].name}</td>
-            <td> ${element.orderdItems[0].category} </td>
-            <td> ${element.orderdItems[0].price} </td>
-            <td><img src="/images/${element.orderdItems[0]._id}.jpg" alt="${
-                  element.name
-                }"  style="width:100px; height:100px;" /></td>
-          
-            <td class="text-end">
-              
-              <!--
-              <a
-                href="http://127.0.0.1:3000/admin/productManagement/editProduct/${element._id}"
-                class="btn btn-success "
-                >Edit</a
-              >
-              -->
-              <a
-                onclick="removeOrder('${element._id}','${element.orderdItems[0]._id}')"
-                class="btn btn-danger "
-                >Cancel Order</a
-              >
-            </td>
-          </tr>`;
+                let temp
+                element.orderdItems.forEach((val,h)=>{
+                temp += `
+                      <tr>
+                        <td>${val.name}</td>
+                        <td>${val.price}</td>
+                        <td>${element.orders[h].quantity}</td>
+                        <td>${val.price *element.orders[h].quantity }</td>
+                        <td>
+                          <img src="/images/${val._id}.jpg" alt="${val.name}"  style="width:50px; height:50px;" /></td>
+                        <td>
+                          <a
+                            onclick="removeOrder('${element._id}','${element.orderdItems[0]._id}')"
+                            class="btn btn-danger "
+                            >Cancel Order</a
+                          >
+                        </td>
+                      </tr>
+                `
+                })
+                if (element.orders.length != 0){
+                orders+=`
+              <div class="col-lg-12 grid-margin stretch-card">
+              <div class="card">
+                <div class="card-body">
+                  <h4 class="card-title">Name : ${element.users[0].name}</h4>
+                  <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th>Product Name</th>
+                        <th>Price</th>
+                        <th>Quantyty</th>
+                        <th>Total Price</th>
+                        <th>Image</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      ${temp}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div> 
+                `
+                }
               });
+            document.getElementById("allOrders").innerHTML =orders;
             } else {
-              temp = "";
+            document.getElementById("allOrders").innerHTML =`
+            <h3>There is no orders</h3>
+            `
             }
-            document.getElementById("tableBody").innerHTML = temp;
           });
       }
 

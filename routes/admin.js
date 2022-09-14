@@ -24,6 +24,9 @@ router.get("/", varifyAdmin, (req, res) => {
   res.render("admin/userManagement", { admin: req.admin });
 });
 
+router.get('/dashboard',(req,res) =>{
+  res.render("admin/dashboard")
+})
 
 //Admin login
 router.get("/login", (req, res) => {

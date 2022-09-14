@@ -60,11 +60,13 @@
                       </div>
                       <div class=" ms-2 mt-2">
 
-                      <select class="form-select form-select-lg mb-3"  name="address" style="max-width: 400px;" required>
+                           
+                      <select class="custom-select" name="address" required>
                       <%for(index in user.address){%>
-                      <option value="<%=user.address[index]%>"><%=user.address[index]%></option> 
+                        <option selected value="<%=user.address[index]%>"><%=user.address[index]%></option>
                       <%}%>
                       </select>
+       
                       </div>
                       <a href="/product/addAddressCheckout" type="button" class="btn btn-primary " style="display: inline;">
                         Add New Address
@@ -129,6 +131,30 @@
                   </strong>
                 </div>
                 <span><strong>&#8377; <%=totalPrice%></strong></span>
+              </li>
+              <li
+                class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
+                <div>
+                  <strong>Select Payment method</strong>
+                  <br>
+                   <label>
+                    <input type="radio" name="payMethod" value="cod" required />
+                    <span class="radio"></span>
+                    <span>Cash On Delivery</span>
+                  </label>
+                  <br>
+                   <label>
+                    <input type="radio" name="payMethod" value="paypal" />
+                    <span class="radio"></span>
+                    <span>PayPal</span>
+                  </label>
+                  <br>
+                   <label>
+                    <input type="radio" name="payMethod"  value="razorpay"/>
+                    <span class="radio"></span>
+                    <span>Razorpay</span>
+                  </label>
+                </div>
               </li>
             </ul>
 

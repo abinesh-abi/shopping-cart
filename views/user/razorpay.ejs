@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+  <%- include('../partials/head.ejs') %>
+  <body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <!-- nav bar -->
+    <%- include('../partials/userNavBar.ejs') %>
+<!-- 
+    <h1 id="orderId"></h1>
+    <h1 id="totalAmount"></h1>
+     <button id="rzp-button1">Pay</button> -->
+     <div id="message" >
+     </div>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script> 
+    <script>
+
+
+var orderId ;
+let amount
+$(document).ready(function(){
+    var settings = {
+  "url": "/product/razorpayCreateOreder",
+  "method": "POST",
+  "timeout": 0,
+  "headers": {
+    "Content-Type": "application/json"
+  },
+  "data": JSON.stringify({
+    "amount": "<%=totalPrice%>"
+  }),
+};
+
+//creates new orderId everytime
+$.ajax(settings).done(function (response) {
+
+  orderId=response.orderId;
+  amount = response.amount;
+  // document.getElementById("orderId").innerHTML= orderId;
+  // document.getElementById("totalAmount").innerHTML= amount
+  console.log(orderId,amount);
+
+  $("button").show();
+
+
+
+// document.getElementById('rzp-button1').onclick = function(e){
+
+var options = {
+    "key": "rzp_test_D3WDKJhHBmHEI8", // Enter the Key ID generated from the Dashboard
+    "amount": `${amount}`, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+    "currency": "INR",
+    "name": "SmartCart",
+    "description": "Test Transaction",
+    "image": "https://example.com/your_logo",
+    "order_id": `${orderId}`, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+    "handler": function (response){
+        // alert(response.razorpay_payment_id);
+        // alert(response.razorpay_order_id);
+        // alert(response.razorpay_signature)
+
+        varifyPayment(response,orderId)
+    },
+        "prefill": {
+        "name": "Gaurav Kumar",
+        "email": "gaurav.kumar@example.com",
+        "contact": "9999999999"
+    },
+    "notes": {
+        "address": "Razorpay Corporate Office"
+    },
+    "theme": {
+        "color": "#3399cc"
+    }
+};
+var rzp1 = new Razorpay(options);
+rzp1.on('payment.failed', function (response){
+        alert(response.error.code);
+        alert(response.error.description);
+        alert(response.error.source);
+        alert(response.error.step);
+        alert(response.error.reason);
+        alert(response.error.metadata.order_id);
+        alert(response.error.metadata.payment_id);
+});
+
+    rzp1.open();
+    e.preventDefault();
+// }
+});
+});      
+  function varifyPayment(payment,orderId) {
+    console.log(payment)
+    console.log(orderId)
+    // fetch('/product/razorpayVarify',{
+    //   method:'post',
+    //   body:{
+    //   ...payment,
+    //   orderId:orderId
+    //   }
+    // })
+    let temp
+   $.ajax({
+    url:'/product/razorpayVarify',
+    data:{
+      ...payment,
+      orderId:orderId
+    },
+    method:'post',
+    success:function(result) {
+      if (result.status == 'success') {
+   document.getElementById('message').innerHTML= `
+   <div class="container">
+   <div class="row">
+      <div class="col-md-6 mx-auto mt-5">
+         <div class="payment">
+            <div class="payment_header">
+               <div class="check"><i class="fa fa-check" aria-hidden="true"></i></div>
+            </div>
+            <div class="content">
+               <h1>Payment ${result.status} !</h1>
+             <!--  <p>Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. </p> -->
+               <a href="#">Go to Home</a>
+            </div>
+            
+         </div>
+      </div>
+   </div>
+</div>
+   `
+      }else{
+   document.getElementById('message').innerHTML= "payment Failed!"
+      }
+    }
+   })
+  // //  .then(response => document.write(response))
+  }
+    </script>
+    <style type="text/css">
+
+    body
+    {
+        background:#f2f2f2;
+    }
+
+    .payment
+	{
+		border:1px solid #f2f2f2;
+		height:280px;
+        border-radius:20px;
+        background:#fff;
+	}
+   .payment_header
+   {
+	   background:rgba(255,102,0,1);
+	   padding:20px;
+       border-radius:20px 20px 0px 0px;
+	   
+   }
+   
+   .check
+   {
+	   margin:0px auto;
+	   width:50px;
+	   height:50px;
+	   border-radius:100%;
+	   background:#fff;
+	   text-align:center;
+   }
+   
+   .check i
+   {
+	   vertical-align:middle;
+	   line-height:50px;
+	   font-size:30px;
+   }
+
+    .content 
+    {
+        text-align:center;
+    }
+
+    .content  h1
+    {
+        font-size:25px;
+        padding-top:25px;
+    }
+
+    .content a
+    {
+        width:200px;
+        height:35px;
+        color:#fff;
+        border-radius:30px;
+        padding:5px 10px;
+        background:rgba(255,102,0,1);
+        transition:all ease-in-out 0.3s;
+    }
+
+    .content a:hover
+    {
+        text-decoration:none;
+        background:#000;
+    }
+   
+</style
+  </body>
+</html>

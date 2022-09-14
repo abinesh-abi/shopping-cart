@@ -20,11 +20,14 @@ input[type=number] {
   -moz-appearance: textfield;
 }
     </style>
-<section class="h-100 gradient-custom">
-  <div class="container py-5">
+
+
+
+<section class="h-100  container">
+  <div class="py-5 row">
     <div class="row d-flex justify-content-center my-4">
-      <div class="col-md-8">
-        <div class="card mb-4">
+      <div class="col-md-8 ">
+        <div class="card mb-4" id="cartItems">
           <div class="card-header py-3">
             <h5 class="mb-0">Cart - <%=cart.length%> items</h5>
           </div>
@@ -36,7 +39,8 @@ input[type=number] {
                 <!-- Image -->
                 <div class="bg-image hover-overlay hover-zoom ripple rounded" data-mdb-ripple-color="light">
                   <img src="/images/<%=cart[itm]._id%>.jpg"
-                    class="w-100" alt="Blue Jeans Jacket" />
+                    class="w-75" alt="Blue Jeans Jacket "
+                     />
                   <a href="#!">
                     <div class="mask" style="background-color: rgba(251, 251, 251, 0.2)"></div>
                   </a>
@@ -51,7 +55,7 @@ input[type=number] {
                 <!-- <p>Size: M</p> -->
                 <a href="/product/cart/delete/<%=cart[itm]._id%>" type="button" class="btn btn-primary btn-sm me-1 mb-2" data-mdb-toggle="tooltip"
                   title="Remove item">
-                  <i class="fas fa-trash"></i>
+                  <i class="fa fa-trash"></i>
                 </a>
                 <!-- <a type="button" class="btn btn-danger btn-sm mb-2" data-mdb-toggle="tooltip"
                   title="Move to the wish list">
@@ -65,11 +69,11 @@ input[type=number] {
                 <div class="d-flex mb-4" style="max-width: 300px">
 
                   <a href="/product/cart/decrement/<%=cart[itm]._id%>"
-                    onclick="return this.parentNode.querySelector('input[type=number]').value >= 1  "
+                    onclick="return this.parentNode.querySelector('input[type=number]').value >= 2  "
                     >
                   <button class="btn btn-primary px-3 ms-2">
                     <!-- onclick="this.parentNode.querySelector('input[type=number]').stepUp()"> -->
-                    <i class="fas fa-minus"></i>
+                    <i class="fa fa-minus"></i>
                   </button>
                 </a>
 
@@ -87,7 +91,7 @@ input[type=number] {
                   <a href="/product/cart/increment/<%=cart[itm]._id%>">
                   <button class="btn btn-primary px-3 ms-2">
                     <!-- onclick="this.parentNode.querySelector('input[type=number]').stepUp()"> -->
-                    <i class="fas fa-plus"></i>
+                    <i class="fa fa-plus"></i>
                   </button>
                 </a>
 
@@ -113,14 +117,22 @@ input[type=number] {
             <hr class="my-4" />
 
                   <%}%>
-          </div>
+          <div class="box-footer d-flex justify-content-between flex-column flex-lg-row">
+                    <div class="left"><a href="/" class="btn btn-outline-secondary"><i class="fa fa-chevron-left"></i> Continue shopping</a></div>
+                    <div class="right">
+                      <!-- <button class="btn btn-outline-secondary"><i class="fa fa-refresh"></i> Update cart</button> -->
+                      <a href="/product/checkout" class="btn btn-primary">Proceed to checkout <i class="fa fa-chevron-right"></i></a>
+                    </div>
+                  </div>
         </div>
-        <div class="card mb-4">
+          </div>
+        <!-- <div class="card mb-4">
           <div class="card-body">
             <p><strong>Expected shipping delivery</strong></p>
             <p class="mb-0">12.10.2020 - 14.10.2020</p>
           </div>
-        </div>
+        </div> -->
+
         <!-- <div class="card mb-4 mb-lg-0">
           <div class="card-body">
             <p><strong>We accept</strong></p>
@@ -140,39 +152,47 @@ input[type=number] {
         </div> -->
       </div>
       <div class="col-md-4">
-        <div class="card mb-4">
-          <div class="card-header py-3">
-            <h5 class="mb-0">Summary</h5>
-          </div>
-          <div class="card-body">
-            <ul class="list-group list-group-flush">
-              <li
-                class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
-                Products
-                <span>&#8377; <%=totalPrice%></span>
-              </li>
-              <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                <!-- Shipping
-                <span>Gratis</span> -->
-              </li>
-              <li
-                class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
-                <div>
-                  <strong>Total amount</strong>
-                  <strong>
-                    <p class="mb-0">(including GST)</p>
-                  </strong>
+              <div id="order-summary" class="box">
+                <div class="box-header">
+                  <h3 class="mb-0">Order summary</h3>
                 </div>
-                <span><strong>&#8377; <%=totalPrice%></strong></span>
-              </li>
-            </ul>
-
-            <a href="/product/checkout" type="button" class="btn btn-primary btn-lg btn-block">
-              Go to checkout
-            </a>
-          </div>
-        </div>
-      </div>
+                <p class="text-muted">Shipping and additional costs are calculated based on the values you have entered.</p>
+                <div class="table-responsive">
+                  <table class="table">
+                    <tbody>
+                      <tr>
+                        <td>Order subtotal</td>
+                        <th>&#8377; <%=totalPrice%></th>
+                      </tr>
+                      <!-- <tr>
+                        <td>Shipping and handling</td>
+                        <th>&#8377; 0.00</th>
+                      </tr>
+                      <tr>
+                        <td>Tax</td>
+                        <th>&#8377; 0.00</th>
+                      </tr> -->
+                      <tr class="total">
+                        <td>Total</td>
+                        <th>&#8377; <%=totalPrice%></th>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <!-- <div class="box">
+                <div class="box-header">
+                  <h4 class="mb-0">Coupon code</h4>
+                </div>
+                <p class="text-muted">If you have a coupon code, please enter it in the box below.</p>
+                <form>
+                  <div class="input-group">
+                    <input type="text" class="form-control"><span class="input-group-append">
+                      <button type="button" class="btn btn-primary"><i class="fa fa-gift"></i></button></span>
+                  </div>
+                </form>
+              </div> -->
+            </div>
     </div>
   </div>
 </section>
@@ -192,6 +212,12 @@ input[type=number] {
      reload() 
       console.log(data)
     })
+  }
+  if ('<%=cart.length%>'==0) {
+   document.getElementById("cartItems")
+   .innerHTML=`
+    <h3 class="p-3 text-center"> Cart is Empty</h3>
+   `
   }
     
 </script>
