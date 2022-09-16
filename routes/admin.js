@@ -6,6 +6,7 @@ const jwt = require("jsonwebtoken");
 const Products = require("../model/product");
 const Admin = require("../model/admin");
 const User = require("../model/users");
+const dashboardRouter = require("./dashboardManagement")
 const productRouter = require("./productMnanagement")
 const categoryRouter = require("./category")
 const orderRouter = require("./orderManagement")
@@ -18,15 +19,13 @@ var router = express.Router();
 router.use('/productManagement',productRouter)
 router.use('/category',categoryRouter)
 router.use('/orders',orderRouter)
-
+router.use('/dashboard',varifyAdmin,dashboardRouter)
 //admin
 router.get("/", varifyAdmin, (req, res) => {
   res.render("admin/userManagement", { admin: req.admin });
 });
 
-router.get('/dashboard',(req,res) =>{
-  res.render("admin/dashboard")
-})
+
 
 //Admin login
 router.get("/login", (req, res) => {

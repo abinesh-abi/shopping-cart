@@ -26,6 +26,7 @@ module.exports ={
                 // console.log(cart)
                 resolve(cart)
             })  
+            .catch((err) => {reject(err)})
         })
         
     },
@@ -62,6 +63,108 @@ module.exports ={
                 resolve(data);  
             })
             .catch(err => reject(err));
+        })
+    },
+    orderInWeek:()=>{
+        return new Promise((resolve, reject) =>{
+        Orders.aggregate([
+            {$match:{
+               createdAt:{
+                   $gte: new Date(new Date() - 7 * 60 * 60 * 24 * 1000)
+               },
+            }},
+            {$unwind:"$orders"},
+            {
+                $project:{
+                    year:{$year:'$createdAt'},
+                    month: { $month: "$createdAt" },
+                    day: { $dayOfMonth: "$createdAt" },
+                    dayOfWeek: { $dayOfWeek: "$createdAt" },
+                    week: { $week: "$createdAt" },
+                    date:{$toDate:"$createdAt" }
+                    // date:{$dateToString:{format:"$createdAt"} }
+                },
+            },
+            {
+                $group:{
+                    _id:'$dayOfWeek',
+                    count:{$sum:1},
+                    detail: { $first: '$$ROOT' },
+                }
+            },
+            {
+                $sort:{
+                    _id:1
+                }
+            },
+   
+            // {"$replaceRoot":{"newRoot":"$detail"}}
+            
+        ])
+        .then(data=>resolve(data))
+        .catch(err => reject(err))
+        })
+        
+    },
+    orderInMonth:()=>{
+        return new Promise((resolve, reject) =>{
+        Orders.aggregate([
+            {$match:{
+               createdAt:{
+                   $gte: new Date(new Date().getMonth()-10)
+               },
+            }},
+            {$unwind:"$orders"},
+            {
+                $project:{
+                    year:{$year:'$createdAt'},
+                    month: { $month: "$createdAt" },
+                    day: { $dayOfMonth: "$createdAt" },
+                    dayOfWeek: { $dayOfWeek: "$createdAt" },
+                    week: { $week: "$createdAt" },
+                    date:{$toDate:"$createdAt" }
+                    // date:{$dateToString:{format:"$createdAt"} }
+                },
+            },
+            {
+                $group:{
+                    _id:'$month',
+                    count:{$sum:1},
+                    detail: { $first: '$$ROOT' },
+                }
+            },
+            {
+                $sort:{
+                    _id:1
+                }
+            },
+   
+            // {"$replaceRoot":{"newRoot":"$detail"}}
+            
+        ])
+        .then(data=>resolve(data))
+        .catch(err => reject(err))
+        })
+        
+    },
+    totalErnings:()=>{
+        return new Promise((resolve, reject) => {
+            Orders.aggregate([
+                {
+                    $match:{}
+                },
+                {
+                    $group:{
+                        _id:"tp",
+                        totalErnings:{
+                            $sum:'$totalPrice'
+                        }
+                        
+                    }
+                }
+            ])
+            .then(data=>resolve(data))
+            .catch(err => reject(err))
         })
     }
 }

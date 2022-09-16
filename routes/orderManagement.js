@@ -11,7 +11,10 @@ router.get('/check',varifyAdmin,async(req,res)=>{
     let admin = req.admin
     // let users = ()
     let order = orderAggregate()
-    .then(data=>res.json(data))
+    .then(data=>{
+        console.log(data)
+        res.json(data)
+    })
     .catch(err=>console.log(err))  
 })
 

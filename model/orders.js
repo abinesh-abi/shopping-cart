@@ -15,7 +15,9 @@ const schema = mongoose.Schema({
 
     }
   ],
-  totalPrice:Number
+  address:String,
+  totalPrice:Number,
+  payMethod:String,
 
 },
 {

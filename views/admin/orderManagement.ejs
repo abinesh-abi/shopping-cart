@@ -39,8 +39,10 @@
             if (response.length != 0) {
               let orders=''
               response.forEach((element, i) => {
+                console.log(element.orders)
                 let temp
                 element.orderdItems.forEach((val,h)=>{
+                  // console.log(val)
                 temp += `
                       <tr>
                         <td>${val.name}</td>

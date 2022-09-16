@@ -11,6 +11,27 @@ const Products = require('../model/product');
 const { userLogged } = require('./varify/userLogged');
 const { varifyUser } = require("./varify/varifyUser");
 
+
+//paypal
+// const paypal = require('paypal-rest-sdk');
+const paypal = require("@paypal/checkout-server-sdk")
+const Environment =
+  process.env.NODE_ENV === "production"
+    ? paypal.core.LiveEnvironment
+    : paypal.core.SandboxEnvironment
+const paypalClient = new paypal.core.PayPalHttpClient(
+  new Environment(
+    process.env.PAYPAL_CLIENT_ID,
+    process.env.PAYPAL_SECRET
+  )
+)
+// // Pypal configaration
+// paypal.configure({
+//   'mode': 'sandbox', //sandbox or live
+//   'client_id':process.env.PAYPAL_CLIENT_ID,
+//   'client_secret':process.env.PAYPAL_SECRET
+// });
+
 const router = express.Router()
 
 router.get('/view/:id',userLogged, async(req, res) => {
@@ -150,7 +171,13 @@ var instance = new Razorpay({
     console.log(totalPrice,address)
 
     if (req.body.payMethod=='paypal') {
-      res.render('user/paypal',{name,categories})
+      res.render('user/paypal',{
+        name,
+        categories,
+          totalPrice,
+          address,
+           paypalClientId:process.env.PAYPAL_CLIENT_ID
+      })
 
     } else if (req.body.payMethod=='razorpay') {
         res.render('user/razorpay',{
@@ -180,7 +207,8 @@ var instance = new Razorpay({
     // let user = await userFindOne(userId)
     let cart = await getCart(userId)
     let product = cart.cart
-    placeOrder(userId,product,totalPrice,address)
+    let method  = 'cod'
+    placeOrder(userId,product,totalPrice,address,method)
     .then(data =>{
       res.render("user/checkoutSucces",{name,categories})
     })
@@ -188,7 +216,7 @@ var instance = new Razorpay({
     }
 
   })
-
+  // razorpay create order
   router.post('/razorpayCreateOreder',varifyUser,async(req,res)=>{
     const {amount,currency,receipt, notes}  = req.body;      
 
@@ -215,8 +243,8 @@ var instance = new Razorpay({
     //         console.log(err)
     //     })
   })
-
-  router.post('/razorpayVarify',varifyUser,(req,res)=>{
+  // varify order
+  router.post('/razorpayVarify',varifyUser, async(req,res)=>{
     let body = req.body
     console.log(req.body,'body=========')
 
@@ -229,13 +257,131 @@ var instance = new Razorpay({
     hmac.update(body['razorpay_order_id'] + "|" + body['razorpay_payment_id']);
     hmac = hmac.digest('hex')
     if (hmac==body['razorpay_signature']) {
-      res.json({status:'payment success'})
+      res.json({status:true})
       console.log('paument success')
+
+    let { totalPrice , address} = req.body
+      let userId = req.userId
+    let cart = await getCart(userId)
+    let product = cart.cart
+    let method  = 'razorpay'
+    console.log({
+      userId,product,totalPrice,address,method
+    })
+    placeOrder(userId,product,totalPrice,address,method)
+    .then(data =>{
+      // res.render("user/checkoutSucces",{name,categories})
+      console.log(data)
+    })
+    .catch(err =>console.log(err)) 
     }else{
       console.log(' payment error')
-      res.json({status:'payment failedj'})
+      res.json({status:false})
     }
 })
+
+
+
+const storeItems = new Map([
+  [1, { price: 100, name: "Learn React Today" }],
+  [2, { price: 200, name: "Learn CSS Today" }],
+])
+router.post("/paypal/createOrder", async (req, res) => {
+  console.log('orderPage++++++++++')
+   const request = new paypal.orders.OrdersCreateRequest()
+  // const total = req.body.items.reduce((sum, item) => {
+  //   return sum + storeItems.get(item.id).price * item.quantity
+  // }, 0)
+  const total = '2'
+  request.prefer("return=representation")
+  request.requestBody({
+    intent: "CAPTURE",
+    purchase_units: [
+      {
+        amount: {
+          currency_code: "USD",
+          value: total,
+          breakdown: {
+            item_total: {
+              currency_code: "USD",
+              value: total,
+            },
+          },
+        },
+        // items: req.body.items.map(item => {
+        //   const storeItem = storeItems.get(item.id)
+        //   return {
+        //     name: storeItem.name,
+        //     unit_amount: {
+        //       currency_code: "USD",
+        //       value: storeItem.price,
+        //     },
+        //     quantity: item.quantity,
+        //   }
+        // }),
+        // items: {
+        //     name: "phone",
+        //     unit_amount: {
+        //       currency_code: "USD",
+        //       value: 2,
+        //     },
+        //     quantity: 2,
+        //   }
+      },
+    ],
+  })
+
+  try {
+    const order = await paypalClient.execute(request)
+    console.log(order)
+    res.json({ id: order.result.id })
+  } catch (e) {
+    res.status(500).json({ error: e.message })
+    console.log(e.message)
+  }
+});
+
+// router.post("/paypal/createOrder", (req, res) => {
+//   const create_payment_json = {
+//     "intent": "sale",
+//     "payer": {
+//         "payment_method": "paypal"
+//     },
+//     "redirect_urls": {
+//         "return_url": "http://localhost:3000/success",
+//         "cancel_url": "http://localhost:3000/cancel"
+//     },
+//     "transactions": [{
+//         "item_list": {
+//             "items": [{
+//                 "name": "Red Sox Hat",
+//                 "sku": "001",
+//                 "price": "2.00",
+//                 "currency": "USD",
+//                 "quantity": 1
+//             }]
+//         },
+//         "amount": {
+//             "currency": "USD",
+//             "total": "2.00"
+//         },
+//         "description": "Hat for the best team ever"
+//     }]
+// };
+ 
+// paypal.payment.create(create_payment_json, function (error, payment) {
+//   if (error) {
+//       throw error;
+//   } else {
+//       for(let i = 0;i < payment.links.length;i++){
+//         if(payment.links[i].rel === 'approval_url'){
+//           res.redirect(payment.links[i].href);
+//         }
+//       }
+//   }
+// });
+ 
+// });
 
 router.get('/addAddressCheckout',varifyUser,async(req,res)=>{
     let userId = req.userId

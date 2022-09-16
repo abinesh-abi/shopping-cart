@@ -67,11 +67,11 @@ module.exports = {
              .then(data=>resolve(data))
         });
     },
-    placeOrder:(userId,product,totalPrice)=>{
+    placeOrder:(userId,product,totalPrice,address,method)=>{
         return new Promise((resolve,reject) =>{
             //  Orders
             //  .updateOne({userId},{$push:{orders:product,totalPrice}},{upsert:true})
-            new Orders({userId,orders:product,totalPrice}).save()
+            new Orders({userId,orders:product,totalPrice,payMethod:method}).save()
              .then(cart => resolve(cart))
              .catch(err => reject(err));
         })
