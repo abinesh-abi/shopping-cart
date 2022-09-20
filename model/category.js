@@ -7,6 +7,12 @@ const categorySchema = mongoose.Schema({
     required:true,
     unique:true,
   },
+  offer:{
+    type:Number,
+    default:0
+    // required:true,
+    // unique:true,
+  },
   
 });
 

@@ -82,8 +82,9 @@
                   </div><a href="/product/view/<%=product._id%>" class="invisible"><img src="/images/<%=product._id%>.jpg" alt="" class="img-fluid"></a>
                   <div class="text">
                     <h3><%=product.name%></h3>
+                     <p class="price"><del class="text-danger">&#8377 <%= product.price%></del></i></p>
                     <p class="price"> 
-                      <del></del>&#8377 <%= product.price%>
+                      &#8377 <%=  product.price - (product.price * categories[index].offer/100)  %>
                     </p>
                   </div>
                 </div>

@@ -37,9 +37,10 @@
                   <div class="box">
                     <h1 class="text-center"><%=product.name%></h1>
                     <h4 class="goToDescription"><a href="#details" class="scroll-to">Scroll to product details</a></h4>
-                    <p class="price">&#8377 <%=product.price%></p>
+                    <p class="price"><del class="text-danger">&#8377 <%=product.price%></del></p>
+                    <p class="price mt-1">&#8377 <%=offerPrice %></p>
                     <p class="text-center buttons">
-                      <a onclick="addToCart('<%=product._id%>')" class="btn btn-primary"><i class="fa fa-shopping-cart"></i> Add to cart</a>
+                      <a onclick="addToCart('<%=product._id%>','<%=offerPrice %>')" class="btn btn-primary"><i class="fa fa-shopping-cart"></i> Add to cart</a>
                       <!-- <a href="basket.html" class="btn btn-outline-primary"><i class="fa fa-heart"></i> Add to wishlist</a> -->
                     </p>
                   </div>
@@ -86,8 +87,8 @@
       </div>
     </div>
     <script>
-      function addToCart(productId) {
-       fetch(`/product/addToCart/${productId}`,{
+      function addToCart(productId,price) {
+       fetch(`/product/addToCart?productId=${productId}&price=${price}`,{
         method: 'GET',
       }).then(data=> data.json())
       .then(data=>alert(data.message))

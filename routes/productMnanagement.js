@@ -16,7 +16,7 @@ router.use(
 );
 
 router.get("/", varifyAdmin, function (req, res) {
-  res.render("admin/productManagement",{ admin: req.admin });
+  res.render("admin/productManagement2",{ admin: req.admin });
 });
 
 router.get("/check",varifyAdmin, async (req, res) => {

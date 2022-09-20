@@ -1,5 +1,5 @@
 var express = require("express");
-const { viewOrdersByUserId, removeOrder } = require("../helpers/orderHelper");
+const { viewOrdersByUserId, removeOrder, cancelOrder } = require("../helpers/orderHelper");
 const { viewProfile, editProfile, viewProfileByIdAndEmail, addAddress, editAddress, deleteAddress } = require("../helpers/profileHelper");
 const { categoryViceView } = require("../helpers/userHelper");
 const Category = require("../model/category");
@@ -126,11 +126,37 @@ router.get('/viwOrders',varifyUser,async(req, res)=>{
     .catch(error=>{console.log(error)
     })
 })
-router.get('/cancelOrder',varifyUser,(req, res)=>{
-    console.log(req.query)
-    let {orderId ,productId} = req.query
-    removeOrder(orderId,productId)
-    .then(data=>res.redirect("/profile/viwOrders"))
+
+router.get('/orders',varifyUser,async(req,res)=>{
+    let userId = req.userId
+    viewOrdersByUserId(userId)
+    .then(data=>{ 
+        res.json(data)
+    })
+    .catch(error=>{console.log(error)
+    })
+})
+
+
+router.get('/cancelOrder',varifyUser,(req,res)=>{
+    let {orderId,productId} = req.query
+    cancelOrder(orderId,productId)
+    .then(data=>{
+        console.log(data)
+        res.json(data)
+    })
     .catch(err=>console.log(err))
 })
+
+// router.get('/cancelOrder',varifyUser,(req, res)=>{
+//     console.log(req.query)
+//     let {orderId ,productId} = req.query
+//     removeOrder(orderId,productId)
+//     .then(data=>{
+//         console.log(data)
+//         // res.send(data)
+//         res.redirect("/profile/viwOrders")
+//     })
+//     .catch(err=>console.log(err))
+// })
 module.exports = router

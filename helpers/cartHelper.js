@@ -18,7 +18,7 @@ module.exports = {
                     localField:"cart.productId",
                     foreignField:"_id",
                     as:'cartItems'
-                }}
+                }},
             ])
             .then(cart => {
                 console.log(cart)
@@ -40,11 +40,11 @@ module.exports = {
         .then(cart =>{resolve(cart)})
        }) 
     },
-    addToCart:(userId,productId)=>{
+    addToCart:(userId,productId,price)=>{
         return new Promise((resolve,reject) =>{
             // new Cart({userId,cart:[{productId,quantity:1}]}).save()
             // .then(cart =>{resolve(cart)})
-             Cart.updateOne({userId},{$push:{cart:{productId,quantity:1}}},{upsert:true})
+             Cart.updateOne({userId},{$push:{cart:{productId,quantity:1,price}}},{upsert:true})
              .then(cart => resolve(cart))
         })
     },
@@ -67,11 +67,19 @@ module.exports = {
              .then(data=>resolve(data))
         });
     },
+    emptyCart:(userId)=>{
+     return new Promise((resolve,reject) =>{
+        console.log(userId)
+        Cart.findOneAndDelete({userId})
+        .then(data=>resolve(data))
+        .catch(error=>reject(error))
+     })   
+    },
     placeOrder:(userId,product,totalPrice,address,method)=>{
         return new Promise((resolve,reject) =>{
             //  Orders
             //  .updateOne({userId},{$push:{orders:product,totalPrice}},{upsert:true})
-            new Orders({userId,orders:product,totalPrice,payMethod:method}).save()
+            new Orders({userId,orders:product,totalPrice,payMethod:method,address}).save()
              .then(cart => resolve(cart))
              .catch(err => reject(err));
         })

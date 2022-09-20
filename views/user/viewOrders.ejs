@@ -6,13 +6,14 @@
     <!-- nav bar -->
     <%- include('../partials/userNavBar.ejs') %>
 
-    <div class="cart_section">
-     <div class="container-fluid">
-         <div class="row">
-             <div class="col-lg-10 offset-lg-1">
-                 <div class="cart_container">
-                     <div class="cart_title text-center">Previous ourdered Items</div>
-                        <%for(orders of data){%>
+        <div class="page-content">
+          <section class="section">
+            <div class="row" id="table-hover-row">
+              <div class="col-12 mx-auto">
+                <div class="card-content">
+                     <div class="cart_title text-center">Previous Ordered Items</div>
+                     <div id="allOrders" ></div>
+                        <!-- <%for(orders of data){%>
                         <%for(order of orders.orderdItems){%>
                      <div class="cart_items">
                          <ul class="cart_list">
@@ -23,10 +24,6 @@
                                          <div class="cart_item_title">Name</div>
                                          <div class="cart_item_text"><%=order.name%></div>
                                      </div>
-                                     <!-- <div class="cart_item_color cart_info_col">
-                                         <div class="cart_item_title">Color</div>
-                                         <div class="cart_item_text"><span style="background-color:#999999;"></span>Silver</div>
-                                     </div> -->
                                      <div class="cart_item_quantity cart_info_col">
                                          <div class="cart_item_title">Quantity</div>
                                          <div class="cart_item_text"><%=orders.orders.quantity%></div>
@@ -50,7 +47,7 @@
                          </ul>
                      </div>
                      <%}%>
-                     <%}%>
+                     <%}%> -->
                      <!-- <div class="order_total">
                          <div class="order_total_content text-md-right">
                              <div class="order_total_title">Order Total:</div>
@@ -63,6 +60,98 @@
          </div>
      </div>
  </div>
+ 
+ <script>
+  check()
+      function check() {
+        fetch(`http://127.0.0.1:3000/profile/orders`, {
+          method: "GET",
+        })
+          .then(function (response) {
+            return response.json();
+          })
+          .then((response) => {
+            if (response.length != 0) {
+              
+              let orders = "";
+              response.forEach((element, i) => {
+                let temp;
+                element.orderdItems.forEach((val, h) => {
+                  temp += `
+                      <tr>
+                        <td scope="row">${val.name}</td>
+                        <td scope="row">${element.orders[h].price||val.price}</td>
+                        <td scope="row">${element.orders[h].quantity}</td>
+                        <td scope="row">${element.orders[h].price * element.orders[h].quantity||val.price * element.orders[h].quantity}</td>
+                        <td scope="row">
+                          <img src="/images/${val._id}.jpg" alt="${
+                    val.name
+                  }"  style="width:50px; height:50px;" /></td>
+                       
+                        
+                              ${
+                                (function() {
+                                  if(element.orders[h].status=='deleverd'){
+                                         return `<td scope="row " class='text-success font-weight-bolder'>Deleverd</td>`
+                                 }else if(element.orders[h].status=='cancelled'){
+                                        return `<td scope="row"class='text-danger font-weight-bolder'>Canceled</td>`
+                                 }
+                                 else {
+                                     return`<td scope="row"><a onclick="cancel('${element._id}','${val._id}')" class="btn btn-danger">Cancel Order</a></td>`
+                                 } 
+                                })()
+                              }
+                        
+                      </tr>
+                `;
+                });
+                if (element.orders.length != 0) {
+                  orders += `
+              <div class="col-lg-12 grid-margin">
+              <div class="card">
+                <div class="card-body">
+                  <h4 class="card-title">Address : ${element.address}</h4>
+                  <h4 class="card-title">Payment Methd : ${element.payMethod}</h4>
+                  <h4 class="card-title">Date : ${new Date(element.createdAt).toLocaleDateString()}</h4>
+                    <table class="table table-hover mb-0 ">
+                    <thead>
+                      <tr>
+                        <th scope="col">Product Name</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Quantyty</th>
+                        <th scope="col">Total Price</th>
+                        <th scope="col">Image</th>
+                        <th scope="col"></th>
+                      </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                      ${temp}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div> 
+                `;
+                }
+              });
+              document.getElementById("allOrders").innerHTML = orders;
+            } else {
+              document.getElementById("allOrders").innerHTML = `
+            <h3>There is no orders</h3>
+            `;
+            }
+          });
+      }
+      function cancel(orderId,productId) {
+        let cancelProduct = confirm("are you sure you want to cancel this product?");
+        if (cancelProduct) {
+           fetch(`/profile/cancelOrder?orderId=${orderId}&productId=${productId}`)
+           .then(response => {
+            check()
+           }) 
+        }
+      }
+ </script>
 <style>
     *{margin: 0;padding: 0;-webkit-font-smoothing: antialiased;-webkit-text-shadow: rgba(0,0,0,.01) 0 0 1px;text-shadow: rgba(0,0,0,.01) 0 0 1px}body{font-family: 'Rubik', sans-serif;font-size: 14px;font-weight: 400;background: #E0E0E0;color: #000000}ul{list-style: none;margin-bottom: 0px}.button{display: inline-block;background: #0e8ce4;border-radius: 5px;height: 48px;-webkit-transition: all 200ms ease;-moz-transition: all 200ms ease;-ms-transition: all 200ms ease;-o-transition: all 200ms ease;transition: all 200ms ease}.button a{display: block;font-size: 18px;font-weight: 400;line-height: 48px;color: #FFFFFF;padding-left: 35px;padding-right: 35px}.button:hover{opacity: 0.8}.cart_section{width: 100%;padding-top: 93px;padding-bottom: 111px}.cart_title{font-size: 30px;font-weight: 500}.cart_items{margin-top: 8px}.cart_list{border: solid 1px #e8e8e8;box-shadow: 0px 1px 5px rgba(0,0,0,0.1);background-color: #fff}.cart_item{width: 100%;padding: 15px;padding-right: 46px}.cart_item_image{width: 133px;height: 133px;float: left}.cart_item_image img{max-width: 100%}.cart_item_info{width: calc(100% - 133px);float: left;padding-top: 18px}.cart_item_name{margin-left: 7.53%}.cart_item_title{font-size: 14px;font-weight: 400;color: rgba(0,0,0,0.5)}.cart_item_text{font-size: 18px;margin-top: 35px}.cart_item_text span{display: inline-block;width: 20px;height: 20px;border-radius: 50%;margin-right: 11px;-webkit-transform: translateY(4px);-moz-transform: translateY(4px);-ms-transform: translateY(4px);-o-transform: translateY(4px);transform: translateY(4px)}.cart_item_price{text-align: right}.cart_item_total{text-align: right}.order_total{width: 100%;height: 60px;margin-top: 30px;border: solid 1px #e8e8e8;box-shadow: 0px 1px 5px rgba(0,0,0,0.1);padding-right: 46px;padding-left: 15px;background-color: #fff}.order_total_title{display: inline-block;font-size: 14px;color: rgba(0,0,0,0.5);line-height: 60px}.order_total_amount{display: inline-block;font-size: 18px;font-weight: 500;margin-left: 26px;line-height: 60px}.cart_buttons{margin-top: 60px;text-align: right}.cart_button_clear{display: inline-block;border: none;font-size: 18px;font-weight: 400;line-height: 48px;color: rgba(0,0,0,0.5);background: #FFFFFF;border: solid 1px #b2b2b2;padding-left: 35px;padding-right: 35px;outline: none;cursor: pointer;margin-right: 26px}.cart_button_clear:hover{border-color: #0e8ce4;color: #0e8ce4}.cart_button_checkout{display: inline-block;border: none;font-size: 18px;font-weight: 400;line-height: 48px;color: #FFFFFF;padding-left: 35px;padding-right: 35px;outline: none;cursor: pointer;vertical-align: top}
 </style>

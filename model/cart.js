@@ -10,10 +10,13 @@ const cartSchema = mongoose.Schema({
       productId:{
         type: mongoose.Schema.Types.ObjectId,
       },
-      quantity:Number
+      quantity:Number,
+      price:Number
 
     }
-  ]
+  ],
+  address:String,
+  totalPrice:Number
 });
 
 let Cart = mongoose.model("cart", cartSchema);

@@ -93,22 +93,24 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
-                            <h4>This week</h4>
+                            <h4 id="chartName">Day Vice</h4>
                         </div>
+                                                   <div class="btn-group mb-1">
+                                <div class="dropdown">
+                                    <button class="btn btn-secondary dropdown-toggle me-1" type="button"
+                                        id="dropdownMenuButtonSec" data-bs-toggle="dropdown" aria-haspopup="true"
+                                        aria-expanded="false">
+                                        Select
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButtonSec">
+                                        <a class="dropdown-item" onclick="chartDay()" > Day</a>
+                                        <a class="dropdown-item" onclick="chartWeek()" >Week</a>
+                                        <a class="dropdown-item" onclick="chartMonth()" > Month</a>
+                                    </div>
+                                </div>
+                            </div> 
                         <div class="card-body">
                             <div id="chart-profile-visit"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <h4>Month Vice</h4>
-                        </div>
-                        <div class="card-body">
-                            <div id="chart-month">hello</div>
                         </div>
                     </div>
                 </div>
@@ -311,6 +313,10 @@
 <script src="assets/js/pages/dashboard.js"></script>
 
 <script>
+    //for higlight sidebar selection
+     let navHilight= document.getElementById("dashboard")
+      navHilight.classList.add('active')
+
     let totalUsers = document.getElementById('totalUsers')
     fetch("http://127.0.0.1:3000/admin/check",{
         method:'get'

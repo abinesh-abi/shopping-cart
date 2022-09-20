@@ -21,12 +21,50 @@ module.exports ={
                     foreignField:"_id",
                     as:'users'
                 }},
+                {
+                    $sort:{
+                       createdAt:-1 
+                    }
+                }
             ])
             .then(cart => {
                 // console.log(cart)
                 resolve(cart)
             })  
             .catch((err) => {reject(err)})
+        })
+        
+    },
+    cancelOrder:(orderId,productId)=>{
+        return new Promise((resolve, reject) => {
+            Orders.findOneAndUpdate(
+                {_id:orderId,'orders.productId':productId},
+                {$set:{"orders.$.status":"cancelled"}}
+            )
+        .then(data => resolve(data))
+        .catch(err => reject(err))  
+        })
+    },
+    deleverdOrder:(orderId,productId)=>{
+        return new Promise((resolve, reject) => {
+            Orders.findOneAndUpdate(
+                {_id:orderId,'orders.productId':productId},
+                {$set:{"orders.$.status":"deleverd"}}
+            )
+        .then(data => resolve(data))
+        .catch(err => reject(err))  
+        })
+    },
+    shippedOrder:(orderId,productId)=>{
+        return new Promise((resolve, reject) => {
+            Orders.findOne(
+                {_id:orderId,'orders.productId':productId},
+                // {$set:{"orders.$.status":"shipped"}}
+            )
+        .then(data =>{
+            console.log(data)
+        resolve(data)})
+        .catch(err => reject(err))  
         })
         
     },
@@ -45,7 +83,7 @@ module.exports ={
                 {$match:{
                    userId:mongoose.Types.ObjectId(userId)
                 }},
-                {$unwind:"$orders"},
+                // {$unwind:"$orders"},
                 {$lookup:{
                     from:'products',
                     localField:"orders.productId",
@@ -58,14 +96,18 @@ module.exports ={
                 //     foreignField:"_id",
                 //     as:'users'
                 // }},
+                {
+                    $sort:{
+                       createdAt:-1 
+                    }
+                }
             ]).then(data =>{
-                // console.log(data)
                 resolve(data);  
             })
             .catch(err => reject(err));
         })
     },
-    orderInWeek:()=>{
+    orderDayVice:()=>{
         return new Promise((resolve, reject) =>{
         Orders.aggregate([
             {$match:{
@@ -94,7 +136,7 @@ module.exports ={
             },
             {
                 $sort:{
-                    _id:1
+                    _id:-1
                 }
             },
    
@@ -106,7 +148,7 @@ module.exports ={
         })
         
     },
-    orderInMonth:()=>{
+    orderMonthVice:()=>{
         return new Promise((resolve, reject) =>{
         Orders.aggregate([
             {$match:{
@@ -129,6 +171,47 @@ module.exports ={
             {
                 $group:{
                     _id:'$month',
+                    count:{$sum:1},
+                    detail: { $first: '$$ROOT' },
+                }
+            },
+            {
+                $sort:{
+                    _id:-1
+                }
+            },
+   
+            // {"$replaceRoot":{"newRoot":"$detail"}}
+            
+        ])
+        .then(data=>resolve(data))
+        .catch(err => reject(err))
+        })
+        
+    },
+    orderWeekVice:()=>{
+        return new Promise((resolve, reject) =>{
+        Orders.aggregate([
+            {$match:{
+               createdAt:{
+                   $gte: new Date(new Date() - 7 * 7 * 60 * 60 * 24 * 1000)
+               },
+            }},
+            {$unwind:"$orders"},
+            {
+                $project:{
+                    year:{$year:'$createdAt'},
+                    month: { $month: "$createdAt" },
+                    day: { $dayOfMonth: "$createdAt" },
+                    dayOfWeek: { $dayOfWeek: "$createdAt" },
+                    week: { $week: "$createdAt" },
+                    date:{$toDate:"$createdAt" }
+                    // date:{$dateToString:{format:"$createdAt"} }
+                },
+            },
+            {
+                $group:{
+                    _id:'$week',
                     count:{$sum:1},
                     detail: { $first: '$$ROOT' },
                 }

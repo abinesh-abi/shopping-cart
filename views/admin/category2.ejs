@@ -1,0 +1,182 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+  <%- include('../partials/adminHead.ejs') %>
+<body>
+    <div id="app">
+  <%- include('../partials/adminSideBar2.ejs') %>
+        
+        <div id="main">
+            <header class="mb-3">
+                <a href="#" class="burger-btn d-block d-xl-none">
+                    <i class="bi bi-justify fs-3"></i>
+                </a>
+            </header>
+            
+<div class="page-heading">
+    <h3>Products</h3>
+</div>
+<div class="d-flex justify-content-center">
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+  Add category
+</button>
+</div>
+<!-- <div class="form-outline mb-4">
+  <input type="search" class="form-control" id="search">
+</div> -->
+<div class="page-content">
+  <section class="section">
+        <div class="row" id="table-hover-row">
+            <div class="col-6 mx-auto">
+                <div class="card">
+                    <!-- <div class="card-header">
+                        <h4 class="card-title">Hoverable rows</h4>
+                    </div> -->
+                    <div class="card-content">
+                        <!-- <div class="card-body">
+                            <p>Add <code class="highlighter-rouge">.table-hover</code> to enable a hover state on table
+                                rows
+                                within a
+                                <code class="highlighter-rouge">&lt;tbody&gt;</code>.
+                            </p>
+                        </div> -->
+                        <!-- table hover -->
+                        <div class="table-responsive d-flex justify-content-center">
+                            <table class="table table-hover mb-0 ">
+                                <thead>
+                                  <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Category</th>
+                                    <th scope="col">Offer</th>
+                                    <th scope="col"></th>
+                                  </tr>
+                                </thead>
+                                <tbody id="tableBody">
+                                    <!-- <%data.forEach((val,key)=>{%>
+                                    <tr>
+                                      <th scope="row"><%=key+1%></th>
+                                      <td><%=val.name%></td>
+                                      <td>
+                                        <a class="btn btn-success" href="/admin/category/edit/<%=val._id%>">Edit</a>
+                                        <a class="btn btn-danger" href="/admin/category/delete/<%=val._id%>">Delete</a>
+                                      </td>
+                                    </tr>
+                                    <%})%> -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+        </div>
+    </div>
+<!-- add product popup menu -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Add category</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+          <!-- <form action="/admin/category/add" method="post"> -->
+          <!-- <form > -->
+                <input value="" type="text" id="addCategory" class="form-control mx-auto" placeholder="Add Category" style="max-width: 600px;"/>
+                <p id="inputErr" class="text-danger"></p>
+                <div class="text-center">
+                <a id="addBtn" class="btn mx-auto text-center" onclick="add()"> Add </a>
+                <!-- <button class="btn mx-auto" >Add</button> -->
+                </div>
+         <!-- </form>         -->
+      </div>
+      <div class="modal-footer" >
+        <button onsubmit="addCategory()" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+ <!-- poupu menu end -->
+    <!-- <script src="assets/js/bootstrap.js"></script> -->
+    <script src="assets/js/app.js"></script>
+
+<script>
+     let navHilight= document.getElementById("category")
+      navHilight.classList.add('active')
+        // document.getElementById("search").style.display ='none'
+getCategories()
+  function getCategories() {
+   fetch('/admin/category/get',{
+    method:'GET',
+   }) .then(data =>data.json())
+   .then(data =>{
+    let str =''
+    for(val in data){
+      str += `
+      
+        <tr>
+          <th scope="row">${Number(val)+1}</th>
+          <td>${data[val].name}</td>
+          <td><i>${data[val].offer}%    </i><i class="fas fa-edit" data-bs-toggle="dropdown"
+                                    aria-haspopup="true" aria-expanded="false"></i>
+            
+                                <div class="dropdown-menu">
+                                        <div class="form-group">
+                                            <label for="exampleDropdownFormEmail1">Change Offer</label>
+                                            <input type="number" class="form-control" id="${data[val]._id}"
+                                                placeholder="Offer" maxlength="2">
+                                        </div>
+                                        <a  onclick="editOffer('${data[val]._id}')" class="btn btn-primary">Edit</a>
+                                </div>
+
+            </td>
+          <td>
+            <a class="btn btn-success" href="/admin/category/edit/${data[val]._id}">Edit</a>
+            <a class="btn btn-danger" href="/admin/category/delete/${data[val]._id}">Delete</a>
+          </td>
+        </tr>
+      `
+    }
+    document.getElementById('tableBody').innerHTML= str
+   })
+  }
+
+    let category = document.getElementById("addCategory")
+    let addBtn = document.getElementById("addBtn")
+    function add() {
+      fetch(`/admin/category/add?name=${category.value}`,{
+        method:'get' 
+      }).then(data=>data.json())
+      .then(data=>{
+       if(!data.inputErr){
+           var myModalEl = document.getElementById('staticBackdrop');
+           myModalEl.style.display = 'none';
+
+       }else{
+        document.getElementById('inputErr').innerHTML= 'Enter valied Text'
+       }
+        console.log(data)
+      })
+    }  
+    function editOffer(category) {
+      let offer = document.getElementById(category).value
+      console.log({offer,category})
+      fetch('/admin/category/editOffer',{
+        method:'post',
+        headers: { "Content-Type": "application/json" },
+        body:JSON.stringify({
+         categoryId:category,
+         newOffer:offer 
+        })
+      })
+      getCategories()
+    }
+    </script>
+</body>
+
+</html>

@@ -68,6 +68,7 @@ router.get('/navHeadInfo',async(req,res,next)=>{
 router.get("/", async function (req, res, next) {
   let categories = await categoryViceView()
   let products = await Products.find()
+
   if (req.cookies.token) {
   let {name,id} =  jwt.verify(req.cookies.token, process.env.JWT_USER_SECRET)
     res.render("user/userHome", { name:name,id,categories});

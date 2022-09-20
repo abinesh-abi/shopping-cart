@@ -14,7 +14,7 @@
               <!-- breadcrumb-->
               <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                  <li class="breadcrumb-item"><a href="#">Home</a></li>
+                  <li class="breadcrumb-item"><a href="/">Home</a></li>
                   <li aria-current="page" class="breadcrumb-item active"><%=category%></li>
                 </ol>
               </nav>
@@ -59,11 +59,14 @@
                     <div class="text">
                       <h3><a href="/product/view/<%=pro._id%>"><%=pro.name%></a></h3>
                       <p class="price"> 
-                        <del></del>&#8377 <%=pro.price%>
+                        <del class="text-danger">&#8377 <%=pro.price%></del>
+                      </p>
+                      <p class="price mt-0"> 
+                        <del></del>&#8377 <%=pro.price - (pro.price *off/100)%>
                       </p>
                       <p class="buttons">
                         <a href="/product/view/<%=pro._id%>" class="btn btn-outline-secondary">View detail</a>
-                        <a onclick="addToCart('<%=pro._id%>')" class="btn btn-primary"><i class="fa fa-shopping-cart"></i>Add to cart</a>
+                        <a onclick="addToCart('<%=pro._id%>','<%=pro.price - (pro.price *off/100)%>')" class="btn btn-primary"><i class="fa fa-shopping-cart"></i>Add to cart</a>
                       </p>
                     </div>
                     <!-- /.text-->
@@ -96,8 +99,8 @@
     </div>
 
     <script>
-      function addToCart(productId) {
-       fetch(`/product/addToCart/${productId}`,{
+      function addToCart(productId,price) {
+       fetch(`/product/addToCart?productId=${productId}&price=${price}`,{
         method: 'GET',
       }).then(data=> data.json())
       .then(data=>alert(data.message))

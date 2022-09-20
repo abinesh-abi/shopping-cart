@@ -72,6 +72,18 @@
                         Add New Address
                     </a>
                   </li>
+                  <li>
+                      <div class="form-group">
+                        <label class="margin-10px-left xs-margin-four-left text-sky" for="exampleInputEmail1">have any coupon</label>
+                        <input name="code" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Coupon">
+                        <p id="error" class="text-danger"></p>
+                      </div>
+                      <div class=" ms-2 mt-2">
+                      <a onclick="varifyCoupon()" type="button" class="btn btn-primary " style="display: inline;">
+                        Apply
+                    </a>
+                      </div>
+                  </li>
                 </ul>
 
             </div>
@@ -115,7 +127,7 @@
               <li
                 class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
                 Price
-                <span>&#8377; <%=totalPrice%></span>
+                <span id="tp1">&#8377; <%=totalPrice%></span>
               </li>
                 <input type="text" name="totalPrice" value="<%=totalPrice%>" hidden>
               <li class="list-group-item d-flex justify-content-between align-items-center px-0">
@@ -130,7 +142,7 @@
                     <p class="mb-0">(including GST)</p>
                   </strong>
                 </div>
-                <span><strong>&#8377; <%=totalPrice%></strong></span>
+                <span><strong id="tp2">&#8377; <%=totalPrice%></strong></span>
               </li>
               <li
                 class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
@@ -179,7 +191,26 @@
       method: 'GET',
     }).then(data=> console.log(data))
   }
-    
+
+   function varifyCoupon(){
+    let code=  document.querySelector('input[name="code"]').value
+    let totalPrice=  document.querySelector('input[name="totalPrice"]').value
+    let tp1 = document.getElementById('tp1')
+    let tp2 = document.getElementById('tp2')
+    fetch(`/product/varifyCoupon?coupon=${code}`)
+    .then(res=> res.json())
+    .then(async data =>{
+      if(data){
+        let offer = data.offer
+        let offerPrice =Math.floor(totalPrice -(totalPrice * offer/100))
+        tp1.innerHTML =`&#8377; ${offerPrice}`
+        tp2.innerHTML =`&#8377; ${offerPrice}`
+        fetch(`/product/updatePrice/${offerPrice}`)
+      }else{
+        alert('hello')
+      }
+    })
+   } 
 </script>
   <style>
    .gradient-custom {

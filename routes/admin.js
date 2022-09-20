@@ -11,6 +11,7 @@ const productRouter = require("./productMnanagement")
 const categoryRouter = require("./category")
 const orderRouter = require("./orderManagement")
 const {varifyAdmin} =require("./varify/varifyAdmin")
+const couponRouter = require("./couponManagement")
 
 var router = express.Router();
 
@@ -20,9 +21,10 @@ router.use('/productManagement',productRouter)
 router.use('/category',categoryRouter)
 router.use('/orders',orderRouter)
 router.use('/dashboard',varifyAdmin,dashboardRouter)
+router.use('/coupon',varifyAdmin,couponRouter)
 //admin
 router.get("/", varifyAdmin, (req, res) => {
-  res.render("admin/userManagement", { admin: req.admin });
+  res.render("admin/dashboard", { admin: req.admin });
 });
 
 
@@ -87,7 +89,7 @@ router.get("/logout", (req, res) => {
 // });
 router.get("/userManagement", varifyAdmin, async (req, res) => {
   res.setHeader("cache-control", "private,no-cache,no-store,must-revalidate");
-  res.render("admin/userManagement", {
+  res.render("admin/userManagement2", {
     admin: req.admin
   })
 });

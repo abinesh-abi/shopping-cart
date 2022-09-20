@@ -11,14 +11,16 @@ const schema = mongoose.Schema({
       productId:{
         type: mongoose.Schema.Types.ObjectId,
       },
-      quantity:Number
+      quantity:Number,
+      price:Number,
+      status:String,
+      
 
     }
   ],
   address:String,
   totalPrice:Number,
   payMethod:String,
-
 },
 {
   timestamps:true

@@ -106,8 +106,10 @@ input[type=number] {
 
                 <!-- Price -->
                 <p class="text-start text-md-center">
-                  <strong><%=cart[itm].price%></strong>
-
+                  <del><%=cart[itm].price%></del>
+                </p>
+                <p class="text-start text-md-center">
+                  <strong><%=cart[itm].price - (cart[itm].price * category[cart[itm].category]/100) %></strong>
                 </p>
                 <!-- Price -->
               </div>
@@ -121,7 +123,7 @@ input[type=number] {
                     <div class="left"><a href="/" class="btn btn-outline-secondary"><i class="fa fa-chevron-left"></i> Continue shopping</a></div>
                     <div class="right">
                       <!-- <button class="btn btn-outline-secondary"><i class="fa fa-refresh"></i> Update cart</button> -->
-                      <a href="/product/checkout" class="btn btn-primary">Proceed to checkout <i class="fa fa-chevron-right"></i></a>
+                      <a href="/product/checkout?offerPrice=<%=totalOfferPrice%>" class="btn btn-primary">Proceed to checkout <i class="fa fa-chevron-right"></i></a>
                     </div>
                   </div>
         </div>
@@ -163,18 +165,18 @@ input[type=number] {
                       <tr>
                         <td>Order subtotal</td>
                         <th>&#8377; <%=totalPrice%></th>
+                      </tr>totalOfferPrice
+                      <tr>
+                        <td>Total offer applied Price</td>
+                        <th>&#8377; <%=totalOfferPrice%></th>
                       </tr>
                       <!-- <tr>
-                        <td>Shipping and handling</td>
-                        <th>&#8377; 0.00</th>
-                      </tr>
-                      <tr>
                         <td>Tax</td>
                         <th>&#8377; 0.00</th>
                       </tr> -->
                       <tr class="total">
-                        <td>Total</td>
-                        <th>&#8377; <%=totalPrice%></th>
+                        <td>Total amount to Pay</td>
+                        <th>&#8377; <%=totalOfferPrice%></th>
                       </tr>
                     </tbody>
                   </table>

@@ -1,16 +1,4 @@
 
-////first chart
-fetch('/admin/dashboard/orderInWeek',{
-  method:'get'
-}).then(data =>data.json())
-.then(data => {
-let feilds = []
-let values =[]
-  for(val of data){
-    let date = `${val.detail.day}/${val.detail.month}/${val.detail.year}`
-    feilds.push(date)
-    values.push(val.count)
-  }
 var optionsProfileVisit = {
   annotations: {
     position: "back",
@@ -28,14 +16,14 @@ var optionsProfileVisit = {
   plotOptions: {},
   series: [
     {
-      name: "sales",
+      // name: "sales",
       // data: [9, 20, 30, 20, 10, 20, 30],
-      data: [...values],
+      // // data: [...values],
     },
   ],
   colors: "#435ebe",
   xaxis: {
-    // categories: [
+    categories: [
     //   'sun',
     //   'mon',
     //   'tue',
@@ -43,23 +31,80 @@ var optionsProfileVisit = {
     //   'the',
     //   'fri',
     //   'sat',
-    // ],
-    categories:[...feilds]
+    ],
+    // categories:[...feilds]
   },
 }
 var chartProfileVisit = new ApexCharts(
   document.querySelector("#chart-profile-visit"),
   optionsProfileVisit
 )
-chartProfileVisit.render()
-})
+// chartProfileVisit.render()
 
-// second chart
-fetch("/admin/dashboard/orderInMonth",{
+chartDay()
+function chartDay() {
+fetch('/admin/dashboard/orderDayVice',{
+  method:'get'
+}).then(data =>data.json())
+.then(data => {
+let feilds = []
+let values =[]
+// new Date().toDateString()
+  for(val of data){
+    let date = `${val.detail.day}/${val.detail.month}/${val.detail.year}`
+    // let date = new Date(val.detail.date).toDateString()
+    feilds.push(date)
+    values.push(val.count)
+  }
+chartProfileVisit.render()
+  chartProfileVisit.updateOptions({
+  series: [
+    {
+      name: "sales",
+      data: [...values],
+    },
+  ],
+  xaxis: {
+    categories:[...feilds]
+  },
+  })
+  document.getElementById("chartName").innerHTML= 'DayWise Sales'
+})
+}
+
+function chartWeek() {
+fetch("/admin/dashboard/orderWeekVice",{
   method:'get'
 }).then(data =>data.json())
 .then(data =>{
-console.log(data[0]._id,'monj=================')
+// let feilds = ['week 1', 'week 2', 'week 3', 'week 4', 'week 5', 'week 6', 'week 7']
+let feilds = []
+let values =[]
+  for(val of data){
+    values.push(val.count)
+    feilds.push('Week : '+val._id)
+  }
+  console.log([feilds,values])
+chartProfileVisit.render()
+  chartProfileVisit.updateOptions({
+  series: [
+    {
+      name: "sales",
+      data: [...values],
+    },
+  ],
+  xaxis: {
+    categories:[...feilds]
+  },
+  })
+  document.getElementById("chartName").innerHTML= 'Weekwise Sales'
+})
+}
+function chartMonth() {
+fetch("/admin/dashboard/orderMonthVice",{
+  method:'get'
+}).then(data =>data.json())
+.then(data =>{
 let feilds = []
 let values =[]
   for(val of data){
@@ -105,52 +150,22 @@ let values =[]
     }
     values.push(val.count)
   }
-
-var optionsMonth = {
-  annotations: {
-    position: "back",
-  },
-  dataLabels: {
-    enabled: false,
-  },
-  chart: {
-    type: "bar",
-    height: 300,
-  },
-  fill: {
-    opacity: 1,
-  },
-  plotOptions: {},
+chartProfileVisit.render()
+  chartProfileVisit.updateOptions({
   series: [
     {
       name: "sales",
-      // data: [9, 20, 30, 20, 10, 20, 30],
       data: [...values],
     },
   ],
-  colors: "#435ebe",
   xaxis: {
-    // categories: [
-    //   'sun',
-    //   'mon',
-    //   'tue',
-    //   'wed',
-    //   'the',
-    //   'fri',
-    //   'sat',
-    // ],
     categories:[...feilds]
   },
-}
-var chartMonth = new ApexCharts(
-  document.querySelector("#chart-month"),
-  optionsMonth
-)
-chartMonth.render()
-
+  })
+  document.getElementById("chartName").innerHTML= 'Monthwise Sales'
 })
+}
 
-///
 let optionsVisitorsProfile = {
   series: [70, 30],
   labels: ["Male", "Female"],
@@ -265,8 +280,8 @@ var chartIndonesia = new ApexCharts(
   optionsIndonesia
 )
 
-chartIndonesia.render()
-chartAmerica.render()
-chartEurope.render()
+// chartIndonesia.render()
+// chartAmerica.render()
+// chartEurope.render()
 // chartProfileVisit.render()
-chartVisitorsProfile.render()
+// chartVisitorsProfile.render()

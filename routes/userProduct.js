@@ -1,5 +1,5 @@
 const express = require('express'); 
-const { productExistsInCart, addToCart, allCartItems, removeFromCart, incrementProduct, decrementProduct, placeOrder, getCart } = require('../helpers/cartHelper');
+const { productExistsInCart, addToCart, allCartItems, removeFromCart, incrementProduct, decrementProduct, placeOrder, getCart, emptyCart } = require('../helpers/cartHelper');
 const Razorpay = require('razorpay'); 
 
 const { viewProfile, addAddress } = require('../helpers/profileHelper');
@@ -14,7 +14,9 @@ const { varifyUser } = require("./varify/varifyUser");
 
 //paypal
 // const paypal = require('paypal-rest-sdk');
-const paypal = require("@paypal/checkout-server-sdk")
+const paypal = require("@paypal/checkout-server-sdk");
+const { resolve } = require('path');
+const { varifyCoupon } = require('../helpers/couponHelper');
 const Environment =
   process.env.NODE_ENV === "production"
     ? paypal.core.LiveEnvironment
@@ -39,17 +41,20 @@ router.get('/view/:id',userLogged, async(req, res) => {
    let id = req.userId
   let categories = await Category.find()
     let product= await Products.findOne({_id:req.params.id})
-    res.render("user/viewProduct" ,{name,id,product,categories})
-    // res.status(200).json(product)
-    console.log(product._id);
+    let cat = await Category.find({name:product.category})
+    let off = cat[0].offer
+    let offerPrice = product.price -(product.price * off /100)
+    res.render("user/viewProduct" ,{name,id,product,categories,offerPrice})
 
  })
  router.get('/categoryView/:category',varifyUser,async(req, res) => {
   let category = req.params.category
   let name = req.userName
   let categories = await Category.find()
+    let cat = await Category.find({name:category})
+    let off = cat[0].offer
   Products.find({category}).then(product =>{
-    res.render("user/categoryView",{name,product:product,category,categories})
+    res.render("user/categoryView",{name,product:product,category,categories,off})
   })
  })
 
@@ -62,21 +67,27 @@ router.get('/view/:id',userLogged, async(req, res) => {
    let val = await allCartItems(userId)
 
    if(val.length ===0){
-   res.render("user/cart",{name,id,cart:[],qty:'',totalPrice:'',categories})
+   res.render("user/cart",{name,id,cart:[],qty:'',totalPrice:'',totalOfferPrice:'',categories})
    }
   else {
    let cart = val[0].cartItems
    let qty = val[0].cart
 
+    let category ={}
+    for(val of categories){
+      category[val.name]=val.offer
+    }
   // find tota Price 
    let totalPrice = 0
+   let totalOfferPrice = 0
+//calculate totalPrice
    for (const val in cart) {
     let price = cart[val].price
     let totalQuantity = qty[val].quantity
     totalPrice += price * totalQuantity
+    totalOfferPrice += (price -(price *category[cart[val].category]/100))*totalQuantity
    }
-
-   res.render("user/cart",{name,id,cart,qty,totalPrice,categories})
+   res.render("user/cart",{name,id,cart,qty,totalPrice,totalOfferPrice,categories,category})
   }
  })
 
@@ -85,12 +96,11 @@ router.get('/view/:id',userLogged, async(req, res) => {
   getCart(userId).then(cart   => res.json(cart))
  });
 
- router.get('/addToCart/:id',varifyUser,async(req,res)=> { 
+ //add to cart
+ router.get('/addToCart',varifyUser,async(req,res)=> { 
 
-    let productId = req.params.id
+    let {productId,price} = req.query
     let userId = req.userId
-    console.log(productId,userId,'hllo')
-
     try {
 
      let productExist = await productExistsInCart(userId,productId)
@@ -99,7 +109,7 @@ router.get('/view/:id',userLogged, async(req, res) => {
       res.json({message:"Already exists in cart"})
      }else{
       console.log('not found')
-      let cart = await addToCart(userId,productId)
+      let cart = await addToCart(userId,productId,price)
       res.json({message:"successfully added to cart"})
      }
     } catch (err) {
@@ -108,6 +118,28 @@ router.get('/view/:id',userLogged, async(req, res) => {
      } 
     }
   })
+//  router.get('/addToCart/:id',varifyUser,async(req,res)=> { 
+
+//     let productId = req.params.id
+//     let userId = req.userId
+
+//     try {
+
+//      let productExist = await productExistsInCart(userId,productId)
+//      console.log(productExist)
+//      if (productExist) {
+//       res.json({message:"Already exists in cart"})
+//      }else{
+//       console.log('not found')
+//       let cart = await addToCart(userId,productId)
+//       res.json({message:"successfully added to cart"})
+//      }
+//     } catch (err) {
+//      if (err) {
+//       res.send(err)
+//      } 
+//     }
+//   })
 
   router.get("/cart/delete/:id",varifyUser,(req,res)=>{
     let userId = req.userId
@@ -135,6 +167,13 @@ router.get('/view/:id',userLogged, async(req, res) => {
     }) 
   })
 
+  router.get('/varifyCoupon',varifyUser,(req,res)=>{
+    let {coupon} = req.query
+    varifyCoupon(coupon).then(data=>{
+      res.json(data)
+    })
+  })
+
   router.get('/checkout',varifyUser,async(req,res)=>{
   let categories = await Category.find()
     let name = req.userName
@@ -142,18 +181,27 @@ router.get('/view/:id',userLogged, async(req, res) => {
     let user = await viewProfile(userId)
    let val = await allCartItems(userId)
 
+try {
+  console.log({query:req.query})
+  let totalPrice = req.query.offerPrice
    let cart = val[0].cartItems
    let qty = val[0].cart
-
   // find tota Price 
-   let totalPrice = 0
-   for (const val in cart) {
-    let price = cart[val].price
-    let totalQuantity = qty[val].quantity
-    totalPrice += price * totalQuantity
-   }
+  //  let totalPrice = 0
+  //  for (const val in cart) {
+  //   let price = cart[val].price
+  //   let totalQuantity = qty[val].quantity
+  //   totalPrice += price * totalQuantity
+  //  }
   //  res.json(user)
+    Cart.updateOne({userId},{$set:{totalPrice}})
+    .then((data)=>{console.log([data])})
     res.render('user/checkout',{name,totalPrice,user,categories})
+} catch (error) {
+  console.log('error')
+  res.redirect('/')
+}
+
   })
 
 
@@ -162,14 +210,22 @@ var instance = new Razorpay({
   key_id:process.env.RAZORPAY_KEE_ID ,
   key_secret:process.env.RAZORPAY_SECRET 
    })
-  
+ 
+   router.get('/updatePrice/:id',varifyUser,(req,res)=>{
+    let userId = req.userId
+    let totalPrice = req.params.id
+    console.log({totalPrice,userId})
+    Cart.updateOne({userId},{$set:{totalPrice}}).then(data=>console.log(data))
+   })
+
   router.post("/checkout",varifyUser,async(req,res) => {
   let categories = await Category.find()
     let name = req.userName
     let userId = req.userId
-    let { totalPrice , address} = req.body
+    let { totalPrice, address} = req.body
+    Cart.updateOne({userId},{$set:{address}}).then(data => console.log(data))
     console.log(totalPrice,address)
-
+    // paypal
     if (req.body.payMethod=='paypal') {
       res.render('user/paypal',{
         name,
@@ -178,7 +234,7 @@ var instance = new Razorpay({
           address,
            paypalClientId:process.env.PAYPAL_CLIENT_ID
       })
-
+      //razorpay
     } else if (req.body.payMethod=='razorpay') {
         res.render('user/razorpay',{
           name,
@@ -188,21 +244,7 @@ var instance = new Razorpay({
         })
 
 
-      // let currency = 'INR'
-    // instance.orders.create({amount : totalPrice, currency}, 
-    //     (err, order)=>{
-    //       if(!err){
-    //         console.log(order)
-            // res.render('user/razorpay',{
-            //   name,
-            //   categories,
-              //  amount:order.amount,
-              //  orderId:order.id
-            // })
-        //   }else
-        //     console.log(err)
-        // }
-    // )
+    // COD
     } else if (req.body.payMethod=='cod') {
     // let user = await userFindOne(userId)
     let cart = await getCart(userId)
@@ -210,6 +252,8 @@ var instance = new Razorpay({
     let method  = 'cod'
     placeOrder(userId,product,totalPrice,address,method)
     .then(data =>{
+      emptyCart(userId).then((response)=>console.log(response,))
+      .catch((err)=>console.log(err))
       res.render("user/checkoutSucces",{name,categories})
     })
     .catch(err =>console.log(err)) 
@@ -218,14 +262,17 @@ var instance = new Razorpay({
   })
   // razorpay create order
   router.post('/razorpayCreateOreder',varifyUser,async(req,res)=>{
-    const {amount,currency,receipt, notes}  = req.body;      
+    let userId = req.userId
+    const { currency,receipt, notes}  = req.body;      
+    let cart = await getCart(userId)
+    let amount =Number(cart.totalPrice)*100
 
     instance.orders.create({amount, currency}, 
         (err, order)=>{
           //STEP 3 & 4: 
           if(!err){
             res.json({
-              amount:order.amount*100,
+              amount:order.amount,
               orderId:order.id,
             })
           }else
@@ -246,48 +293,33 @@ var instance = new Razorpay({
   // varify order
   router.post('/razorpayVarify',varifyUser, async(req,res)=>{
     let body = req.body
-    console.log(req.body,'body=========')
-
-    console.log(body.razorpay_payment_id,'order--------------------------')
-    console.log(body['razorpay_payment_id'],'payment++++++++++++++++++++')
-
-
+    console.log(body)
     const crypto = require('crypto') 
     let hmac = crypto.createHmac('sha256',process.env.RAZORPAY_SECRET );
     hmac.update(body['razorpay_order_id'] + "|" + body['razorpay_payment_id']);
     hmac = hmac.digest('hex')
     if (hmac==body['razorpay_signature']) {
       res.json({status:true})
-      console.log('paument success')
 
-    let { totalPrice , address} = req.body
       let userId = req.userId
     let cart = await getCart(userId)
     let product = cart.cart
     let method  = 'razorpay'
-    console.log({
-      userId,product,totalPrice,address,method
-    })
+    let { totalPrice , address} = cart
     placeOrder(userId,product,totalPrice,address,method)
     .then(data =>{
-      // res.render("user/checkoutSucces",{name,categories})
-      console.log(data)
+      emptyCart(userId).then((response)=>console.log(response,))
+      .catch((err)=>console.log(err))
     })
     .catch(err =>console.log(err)) 
     }else{
-      console.log(' payment error')
       res.json({status:false})
     }
 })
 
 
 
-const storeItems = new Map([
-  [1, { price: 100, name: "Learn React Today" }],
-  [2, { price: 200, name: "Learn CSS Today" }],
-])
 router.post("/paypal/createOrder", async (req, res) => {
-  console.log('orderPage++++++++++')
    const request = new paypal.orders.OrdersCreateRequest()
   // const total = req.body.items.reduce((sum, item) => {
   //   return sum + storeItems.get(item.id).price * item.quantity
@@ -323,9 +355,9 @@ router.post("/paypal/createOrder", async (req, res) => {
         //     name: "phone",
         //     unit_amount: {
         //       currency_code: "USD",
-        //       value: 2,
+        //       value: total,
         //     },
-        //     quantity: 2,
+        //     quantity: total ,
         //   }
       },
     ],
@@ -333,13 +365,38 @@ router.post("/paypal/createOrder", async (req, res) => {
 
   try {
     const order = await paypalClient.execute(request)
-    console.log(order)
     res.json({ id: order.result.id })
   } catch (e) {
     res.status(500).json({ error: e.message })
     console.log(e.message)
   }
 });
+
+router.get('/placeOrder/:id',varifyUser,async(req,res)=>{
+    let userId = req.userId
+    let cart = await allCartItems(userId)
+    let user = await userFindOne(userId)
+    let product = cart[0].cart
+    let address = user.address[0]
+    let method = req.params.id
+    let cartItems = cart[0].cartItems
+    let totalPrice = 0
+    for(intex in cartItems){
+      let price = cartItems[intex].price 
+      let quantity = cart[0].cart[intex].quantity
+      totalPrice += price * quantity
+    }
+    placeOrder(userId,product,totalPrice,address,method)
+    .then(async data =>{
+      let categories = await Category.find()
+      let name = req.userName
+      // res.render("user/checkoutSucces",{categories, name})
+      res.json('success')
+      emptyCart(userId).then((response)=>console.log(response,))
+      .catch((err)=>console.log(err))
+    })
+    .catch(err =>console.log(err)) 
+})
 
 // router.post("/paypal/createOrder", (req, res) => {
 //   const create_payment_json = {

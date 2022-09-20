@@ -125,7 +125,8 @@ rzp1.on('payment.failed', function (response){
     url:'/product/razorpayVarify',
     data:{
       ...payment,
-      orderId:orderId
+      orderId:orderId,
+      
     },
     method:'post',
     success:function(result) {
@@ -143,6 +144,7 @@ rzp1.on('payment.failed', function (response){
                <h1>Payment Success !</h1>
              <!--  <p>Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. </p> -->
                <a href="/">Go to Home</a>
+               <a href="/profile/viwOrders">View Orders</a>
             </div>
             
          </div>
