@@ -17,6 +17,7 @@ const { varifyUser } = require("./varify/varifyUser");
 const paypal = require("@paypal/checkout-server-sdk");
 const { resolve } = require('path');
 const { varifyCoupon } = require('../helpers/couponHelper');
+const { valletView, updateVallet } = require('../helpers/valletHelper');
 const Environment =
   process.env.NODE_ENV === "production"
     ? paypal.core.LiveEnvironment
@@ -62,22 +63,56 @@ router.get('/view/:id',userLogged, async(req, res) => {
   let categories = await Category.find()
    let name = req.userName
   let id = req.userId
-  let userId = await req.userId
+  let userId =  req.userId
+//   console.log(name,id)
+//    let val = await allCartItems(userId)
+
+//    if(val.length ===0){
+//    res.render("user/cart",{name,id,cart:[],qty:'',totalPrice:'',totalOfferPrice:'',categories})
+//    }
+//   else {
+//    let cart = val[0].cartItems
+//    let qty = val[0].cart
+
+//     let category ={}
+//     for(val of categories){
+//       category[val.name]=val.offer
+//     }
+//   // find tota Price 
+//    let totalPrice = 0
+//    let totalOfferPrice = 0
+// //calculate totalPrice
+//    for (const val in cart) {
+//     let price = cart[val].price
+//     let totalQuantity = qty[val].quantity
+//     totalPrice += price * totalQuantity
+//     totalOfferPrice += (price -(price *category[cart[val].category]/100))*totalQuantity
+//    }
+//    res.render("user/cart",{name,id,cart,qty,totalPrice,totalOfferPrice,categories,category})
+//   }
+   res.render("user/cart",{name,id,categories})
+ })
+
+router.get('/getCartDetails',varifyUser,async (req,res)=>{
+   let name = req.userName
+  let id = req.userId
+  let userId =  req.userId
   console.log(name,id)
+  let categories = await Category.find()
    let val = await allCartItems(userId)
 
    if(val.length ===0){
-   res.render("user/cart",{name,id,cart:[],qty:'',totalPrice:'',totalOfferPrice:'',categories})
+    res.json({cart:false})
    }
   else {
    let cart = val[0].cartItems
    let qty = val[0].cart
-
     let category ={}
     for(val of categories){
       category[val.name]=val.offer
     }
-  // find tota Price 
+
+  // find total Price 
    let totalPrice = 0
    let totalOfferPrice = 0
 //calculate totalPrice
@@ -87,9 +122,9 @@ router.get('/view/:id',userLogged, async(req, res) => {
     totalPrice += price * totalQuantity
     totalOfferPrice += (price -(price *category[cart[val].category]/100))*totalQuantity
    }
-   res.render("user/cart",{name,id,cart,qty,totalPrice,totalOfferPrice,categories,category})
+   res.json({cart,qty,totalPrice,totalOfferPrice,categories,category})
   }
- })
+})
 
  router.get('/cartJson',varifyUser,async(req,res) => {
   let userId = req.userId
@@ -104,11 +139,9 @@ router.get('/view/:id',userLogged, async(req, res) => {
     try {
 
      let productExist = await productExistsInCart(userId,productId)
-     console.log(productExist)
      if (productExist) {
       res.json({message:"Already exists in cart"})
      }else{
-      console.log('not found')
       let cart = await addToCart(userId,productId,price)
       res.json({message:"successfully added to cart"})
      }
@@ -145,7 +178,8 @@ router.get('/view/:id',userLogged, async(req, res) => {
     let userId = req.userId
     let productId = req.params.id
     removeFromCart(userId,productId).then(data=>{
-      res.redirect('/product/cart')
+      // res.redirect('/product/cart')
+      res.json(data)
     })
   })
 
@@ -154,16 +188,14 @@ router.get('/view/:id',userLogged, async(req, res) => {
     let userId = req.userId
     let productId = req.params.id
     incrementProduct(userId,productId).then(data=>{
-      res.redirect("/product/cart")
+      res.json(data)
     }) 
   })
   router.get('/cart/decrement/:id',varifyUser,(req,res)=>{
     let userId = req.userId
     let productId = req.params.id
-    console.log(userId,productId)
     decrementProduct(userId,productId).then(data=>{
-      res.redirect("/product/cart")
-      console.log(data)
+      res.json(data)
     }) 
   })
 
@@ -182,7 +214,6 @@ router.get('/view/:id',userLogged, async(req, res) => {
    let val = await allCartItems(userId)
 
 try {
-  console.log({query:req.query})
   let totalPrice = req.query.offerPrice
    let cart = val[0].cartItems
    let qty = val[0].cart
@@ -257,6 +288,27 @@ var instance = new Razorpay({
       res.render("user/checkoutSucces",{name,categories})
     })
     .catch(err =>console.log(err)) 
+
+    } else if(req.body.payMethod=='vallet'){
+    let cart = await getCart(userId)
+    let product = cart.cart
+    let method  = 'vallet'
+    let vallet = await valletView(userId)
+
+    let newValletBalance = vallet.balance - totalPrice
+
+    updateVallet(userId,newValletBalance).then(data=>{
+      console.log(data)
+    }) .catch(err=>console.log(err))
+
+    placeOrder(userId,product,totalPrice,address,method)
+    .then(data =>{
+      emptyCart(userId).then((response)=>console.log(response,))
+      .catch((err)=>console.log(err))
+      res.render("user/checkoutSucces",{name,categories})
+    })
+    .catch(err =>console.log(err)) 
+      
     }
 
   })
@@ -324,7 +376,11 @@ router.post("/paypal/createOrder", async (req, res) => {
   // const total = req.body.items.reduce((sum, item) => {
   //   return sum + storeItems.get(item.id).price * item.quantity
   // }, 0)
-  const total = '2'
+  let userId = req.userId
+  let cart =await getCart(userId)
+  let totalPrice = cart.totalPrice
+  const total = `${Math.floor(cart.totalPrice * 0.01254)}`
+
   request.prefer("return=representation")
   request.requestBody({
     intent: "CAPTURE",

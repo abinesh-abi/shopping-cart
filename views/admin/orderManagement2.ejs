@@ -54,7 +54,6 @@
             if (response.length != 0) {
               let orders = "";
               response.forEach((element, i) => {
-                console.log(element.orders);
                 let temp;
                 element.orderdItems.forEach((val, h) => {
                   temp += `
@@ -73,45 +72,66 @@
                             class="btn btn-danger "
                             >Cancel Order</a>
                         </td> -->
-                              ${
-                                (function() {
-                                 if (element.orders[h].status=='cancelled') {
-                                        return `<td scope="row"class='text-danger fw-bolder'>Canceled</td>`
-                                 }else if(element.orders[h].status=='deleverd'){
-                                        return `<td scope="row"class='text-success fw-bolder'>Deleverd</td>`
-                                 }else if(element.orders[h].status=='shipped'){
-                                        return `<td scope="row"class='text-success fw-bolder'>Shipped</td>`
-                                 }else {
-                                  return  `
-                                  <td scope="row">
-                                    <div class="dropdown">
-                                      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                                        Placed
-                                      </button>
-                                      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                          <li><a class="dropdown-item" onclick="cancelOrder('${element._id}','${element.orderdItems[0]._id}')">Cancel</a></li>
-                                          <li><a class="dropdown-item" onclick="deleverOrder('${element._id}','${element.orderdItems[0]._id}')">Deliverd</a></li>
-                                          <li><a class="dropdown-item" onclick="shippedOrder('${element._id}','${element.orderdItems[0]._id}')">Shipped</a></li>
-                                      </ul>
-                                    </div>  
-                                  </td>
-                                      `
-                                 } 
-                                })()
-                              }
                       </tr>
                 `;
                 });
-                if (element.orders.length != 0) {
+                if (element.orders.length != 0 && element.users.length != 0) {
                   orders += `
               <div class="col-lg-12 grid-margin">
               <div class="card">
                 <div class="card-body">
-                  <h4 class="card-title">Name : ${element.users[0].name}</h4>
-                  <h4 class="card-title">Address : ${element.address}</h4>
-                  <h4 class="card-title">Payment Methd : ${element.payMethod}</h4>
-                  <h4 class="card-title">Date : ${new Date(element.createdAt).toLocaleDateString()}</h4>
-                  <h4 class="card-title">Total price : ${ element.totalPrice}</h4>
+                  <div class="d-flex" >
+                    <div>
+                      <h4 class="card-title">Name : ${element.users[0].name}</h4>
+                      <h4 class="card-title">Address : ${element.address}</h4>
+                      <h4 class="card-title">Payment Methd : ${element.payMethod}</h4>
+                      <h4 class="card-title">Date : ${new Date(element.createdAt).toLocaleDateString()}</h4>
+                      <h4 class="card-title">Total price : ${ element.totalPrice}</h4>
+                    </div>
+                    <div>
+
+                              ${
+                                (function() {
+                                 if (element.status=='cancelled') {
+                                        return `<div scope="row"class='text-danger fw-bolder'>Canceled</div>`
+                                 }else if(element.status=='deleverd'){
+                                        return `<div scope="row"class='text-success fw-bolder'>Deleverd</div>`
+                                 }else if(element.status=='shipped'){
+                                        
+                                  return  `
+                                  <div scope="row" >
+                                    <div class="dropdown">
+                                      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Shipped
+                                      </button>
+                                      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                          <div><a class="dropdown-item" onclick="cancelOrder('${element._id}')">Cancel</a></div>
+                                          <div><a class="dropdown-item" onclick="deleverOrder('${element._id}')">Deliverd</a></div>
+                                      </div>
+                                    </div>  
+                                  </div>
+                                      `
+
+                                 }else {
+                                  return  `
+                                  <div scope="row" >
+                                    <div class="dropdown">
+                                      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Placed
+                                      </button>
+                                      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                          <div><a class="dropdown-item" onclick="cancelOrder('${element.users[0]._id}','${element._id}','${element.payMethod}','${ element.totalPrice}')">Cancel</a></div>
+                                          <div><a class="dropdown-item" onclick="deleverOrder('${element._id}')">Deliverd</a></div>
+                                          <div><a class="dropdown-item" onclick="shippedOrder('${element._id}')">Shipped</a></div>
+                                      </div>
+                                    </div>  
+                                  </div>
+                                      `
+                                 } 
+                                })()
+                              }
+                    </div>
+                  </div>
                     <table class="table table-hover mb-0 ">
                     <thead>
                       <tr>
@@ -120,7 +140,6 @@
                         <th scope="col">Quantyty</th>
                         <th scope="col">Total Price</th>
                         <th scope="col">Image</th>
-                        <th scope="col"></th>
                       </tr>
                     </thead>
                     <tbody id="tableBody">
@@ -158,19 +177,20 @@
         }
         check();
       }
-      function cancelOrder(id,proId){
-        fetch(`http://127.0.0.1:3000/admin/orders/cancel?orderId=${id}&productId=${proId}`)
+
+      function cancelOrder(userId,orderId,payMethod,totalPrice){
+        fetch(`http://127.0.0.1:3000/admin/orders/cancel?userId=${userId}&orderId=${orderId}&payMethod=${payMethod}&totalPrice=${totalPrice}`)
         .then(data=>data.json())
         .then((response) => check())
 
       }
       function deleverOrder(id,proId){
-        fetch(`http://127.0.0.1:3000/admin/orders/deleverd?orderId=${id}&productId=${proId}`)
+        fetch(`http://127.0.0.1:3000/admin/orders/deleverd?orderId=${id}`)
         .then(data=>data.json())
         .then((response) => check())
       }
       function shippedOrder(id,proId){
-        fetch(`http://127.0.0.1:3000/admin/orders/shipped?orderId=${id}&productId=${proId}`)
+        fetch(`http://127.0.0.1:3000/admin/orders/shipped?orderId=${id}`)
         .then(data=>data.json())
         .then((response) => check())
       }

@@ -332,17 +332,17 @@ body {
             </li>`
             }else{
 				document.getElementById('loginStatus').innerHTML =`
-            <li class="list-inline-item"><a href="/admin">Admin</a></li>
+            <li class="list-inline-item h4"><a href="/admin">Admin Login</a></li>
 				<!-- <li class="list-inline-item">
               <a><%= name %></a>
             </li> -->
             <li class="list-inline-item dropdown">
-              <a type="button" class="dropdown-toggle" data-toggle="dropdown">
+              <a type="button" class="dropdown-toggle h4" data-toggle="dropdown">
                 <%= name %>
               </a>
               <div class="dropdown-menu">
-                <a class="dropdown-item text-dark" href="/logout">Logout</a>
-                <a class="dropdown-item text-dark" href="/profile/view">Profile</a>
+                <a class="dropdown-item text-dark h4" href="/logout">Logout</a>
+                <a class="dropdown-item text-dark h4" href="/profile/view">Profile</a>
               </div>
             </li>`
             }

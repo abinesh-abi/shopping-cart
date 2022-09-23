@@ -25,5 +25,12 @@ module.exports ={
                 resolve(product)
             }) .catch(err => reject(err))
         })
-    }
+    },
+   referralCheck:(refCode)=>{
+    return new Promise((resolve, reject) => {
+        User.findOne({refCode}).then(data=>{
+         resolve(data)
+        }).catch(err=>{reject(err)})
+    })
+   },
 }

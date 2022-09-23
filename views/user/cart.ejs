@@ -24,43 +24,43 @@ input[type=number] {
 
 
 <section class="h-100  container">
-  <div class="py-5 row">
-    <div class="row d-flex justify-content-center my-4">
-      <div class="col-md-8 ">
-        <div class="card mb-4" id="cartItems">
-          <div class="card-header py-3">
-            <h5 class="mb-0">Cart - <%=cart.length%> items</h5>
-          </div>
-          <div class="card-body">
-            <!-- Single item -->
-                  <%for(itm in cart){%>
+  <div id="main-div"class="py-5 row">
+    
+  </div>
+</section>
+
+<script defer>
+getCartDetails()
+function getCartDetails() {
+  fetch('/product/getCartDetails').then(data=>data.json()) 
+  .then(response=>{
+
+    let {cart,qty,totalPrice,totalOfferPrice,categories,category} = response
+
+    let temp
+              for(itm in cart){
+                
+    temp += 
+                    `
             <div class="row">
               <div class="col-lg-3 col-md-12 mb-4 mb-lg-0">
-                <!-- Image -->
                 <div class="bg-image hover-overlay hover-zoom ripple rounded" data-mdb-ripple-color="light">
-                  <img src="/images/<%=cart[itm]._id%>.jpg"
-                    class="w-75" alt="Blue Jeans Jacket "
+                  <img src="/images/${cart[itm]._id}.jpg"
+                    class="w-75" alt="product image"
                      />
-                  <a href="#!">
+                  <a href="">
                     <div class="mask" style="background-color: rgba(251, 251, 251, 0.2)"></div>
                   </a>
                 </div>
-                <!-- Image -->
               </div>
 
               <div class="col-lg-5 col-md-6 mb-4 mb-lg-0">
-                <!-- Data -->
-                <h4><strong><%=cart[itm].name%></strong></h4>
-                <p>category: <%=cart[itm].category%></p>
-                <!-- <p>Size: M</p> -->
-                <a href="/product/cart/delete/<%=cart[itm]._id%>" type="button" class="btn btn-primary btn-sm me-1 mb-2" data-mdb-toggle="tooltip"
+                <h4><strong>${cart[itm].name}</strong></h4>
+                <p>category: ${cart[itm].category}</p>
+                <a onclick="removeFromCart('${cart[itm]._id}')" type="button" class="btn btn-primary btn-sm me-1 mb-2" data-mdb-toggle="tooltip"
                   title="Remove item">
                   <i class="fa fa-trash"></i>
                 </a>
-                <!-- <a type="button" class="btn btn-danger btn-sm mb-2" data-mdb-toggle="tooltip"
-                  title="Move to the wish list">
-                  <i class="fas fa-heart"></i>
-                </a> -->
                 <!-- Data -->
               </div>
 
@@ -68,48 +68,32 @@ input[type=number] {
                 <!-- Quantity -->
                 <div class="d-flex mb-4" style="max-width: 300px">
 
-                  <a href="/product/cart/decrement/<%=cart[itm]._id%>"
+                  <a  onclick="decrement('${cart[itm]._id}')"
                     onclick="return this.parentNode.querySelector('input[type=number]').value >= 2  "
                     >
                   <button class="btn btn-primary px-3 ms-2">
-                    <!-- onclick="this.parentNode.querySelector('input[type=number]').stepUp()"> -->
                     <i class="fa fa-minus"></i>
                   </button>
                 </a>
 
-                <!-- fetch -->
-                  <!-- <button class="btn btn-primary px-3 me-2"
-                  onclick="decrement('<%=cart[itm]._id%>')">
-                    <i class="fas fa-minus"></i>
-                  </button> -->
-
                   <div class="form-outline">
-                    <input id="form1" min="0" name="quantity" value="<%=qty[itm].quantity%>" type="number" class="form-control mx-auto" style="max-width: 60px;" disabled/>
+                    <input id="form1" min="0" name="quantity" value="${qty[itm].quantity}" type="number" class="form-control mx-auto" style="max-width: 60px;" disabled/>
                     <label class="form-label" for="form1">Quantity</label>
                   </div>
 
-                  <a href="/product/cart/increment/<%=cart[itm]._id%>">
+                  <a onclick="increment('${cart[itm]._id}')">
                   <button class="btn btn-primary px-3 ms-2">
-                    <!-- onclick="this.parentNode.querySelector('input[type=number]').stepUp()"> -->
                     <i class="fa fa-plus"></i>
                   </button>
                 </a>
 
-                  <!-- using fetch -->
-                  <!-- <button class="btn btn-primary px-3 ms-2"
-                    onclick="increment('<%=cart[itm]._id%>')">
-                    <i class="fas fa-plus"></i>
-                  </button> -->
-
                 </div>
-                <!-- Quantity -->
 
-                <!-- Price -->
                 <p class="text-start text-md-center">
-                  <del><%=cart[itm].price%></del>
+                  <del>${cart[itm].price}</del>
                 </p>
                 <p class="text-start text-md-center">
-                  <strong><%=cart[itm].price - (cart[itm].price * category[cart[itm].category]/100) %></strong>
+                  <strong>${cart[itm].price - (cart[itm].price * category[cart[itm].category]/100) }</strong>
                 </p>
                 <!-- Price -->
               </div>
@@ -118,40 +102,35 @@ input[type=number] {
 
             <hr class="my-4" />
 
-                  <%}%>
+               `
+                }
+              
+    document.getElementById('main-div').innerHTML =`
+    <div  class="row d-flex justify-content-center my-4">
+      <div class="col-md-8 ">
+        <div class="card mb-4" id="cartItems">
+          <div class="card-header py-3">
+            <h5 class="mb-0">Cart - ${response.cart.length} items</h5>
+          </div>
+          <div class="card-body">
+            <!-- Single item -->
+
+
+
+          ${temp}
+
+
+
+            
           <div class="box-footer d-flex justify-content-between flex-column flex-lg-row">
                     <div class="left"><a href="/" class="btn btn-outline-secondary"><i class="fa fa-chevron-left"></i> Continue shopping</a></div>
                     <div class="right">
                       <!-- <button class="btn btn-outline-secondary"><i class="fa fa-refresh"></i> Update cart</button> -->
-                      <a href="/product/checkout?offerPrice=<%=totalOfferPrice%>" class="btn btn-primary">Proceed to checkout <i class="fa fa-chevron-right"></i></a>
+                      <a href="/product/checkout?offerPrice=${totalOfferPrice}" class="btn btn-primary">Proceed to checkout <i class="fa fa-chevron-right"></i></a>
                     </div>
                   </div>
         </div>
           </div>
-        <!-- <div class="card mb-4">
-          <div class="card-body">
-            <p><strong>Expected shipping delivery</strong></p>
-            <p class="mb-0">12.10.2020 - 14.10.2020</p>
-          </div>
-        </div> -->
-
-        <!-- <div class="card mb-4 mb-lg-0">
-          <div class="card-body">
-            <p><strong>We accept</strong></p>
-            <img class="me-2" width="45px"
-              src="https://mdbcdn.b-cdn.net/wp-content/plugins/woocommerce-gateway-stripe/assets/images/visa.svg"
-              alt="Visa" />
-            <img class="me-2" width="45px"
-              src="https://mdbcdn.b-cdn.net/wp-content/plugins/woocommerce-gateway-stripe/assets/images/amex.svg"
-              alt="American Express" />
-            <img class="me-2" width="45px"
-              src="https://mdbcdn.b-cdn.net/wp-content/plugins/woocommerce-gateway-stripe/assets/images/mastercard.svg"
-              alt="Mastercard" />
-            <img class="me-2" width="45px"
-              src="https://mdbcdn.b-cdn.net/wp-content/plugins/woocommerce/includes/gateways/paypal/assets/images/paypal.webp"
-              alt="PayPal acceptance mark" />
-          </div>
-        </div> -->
       </div>
       <div class="col-md-4">
               <div id="order-summary" class="box">
@@ -164,62 +143,61 @@ input[type=number] {
                     <tbody>
                       <tr>
                         <td>Order subtotal</td>
-                        <th>&#8377; <%=totalPrice%></th>
+                        <th>&#8377; ${totalPrice}</th>
                       </tr>totalOfferPrice
                       <tr>
                         <td>Total offer applied Price</td>
-                        <th>&#8377; <%=totalOfferPrice%></th>
+                        <th>&#8377; ${totalOfferPrice}</th>
                       </tr>
-                      <!-- <tr>
-                        <td>Tax</td>
-                        <th>&#8377; 0.00</th>
-                      </tr> -->
                       <tr class="total">
                         <td>Total amount to Pay</td>
-                        <th>&#8377; <%=totalOfferPrice%></th>
+                        <th>&#8377; ${totalOfferPrice}</th>
                       </tr>
                     </tbody>
                   </table>
                 </div>
               </div>
-              <!-- <div class="box">
-                <div class="box-header">
-                  <h4 class="mb-0">Coupon code</h4>
-                </div>
-                <p class="text-muted">If you have a coupon code, please enter it in the box below.</p>
-                <form>
-                  <div class="input-group">
-                    <input type="text" class="form-control"><span class="input-group-append">
-                      <button type="button" class="btn btn-primary"><i class="fa fa-gift"></i></button></span>
-                  </div>
-                </form>
-              </div> -->
             </div>
     </div>
-  </div>
-</section>
+    `
 
-<script>
+  if (cart.length==0) {
+  document.getElementById('main-div').innerHTML =`
+      <div class="card container mb-4">
+           <h3 class="p-3 text-center"> Cart is Empty</h3>
+      </div>
+  `
+   document.getElementById('order-summary').style.display = 'none';
+
+   //from navbar ejs
+    getValues()
+  }
+  })
+}
+
   function increment(productId) {
     console.log(productId);
     fetch(`/product/cart/increment/${productId}`,{
       method: 'GET',
-    }).then(data=> console.log(data))
+    }).then(data =>data.json())
+    .then(data=> {
+      getCartDetails()
+    })
   }
   function decrement(productId) {
     console.log(productId);
     fetch(`/product/cart/decrement/${productId}`,{
       method: 'GET',
     }).then(data=> {
-     reload() 
-      console.log(data)
+      getCartDetails()
     })
   }
-  if ('<%=cart.length%>'==0) {
-   document.getElementById("cartItems")
-   .innerHTML=`
-    <h3 class="p-3 text-center"> Cart is Empty</h3>
-   `
+  function removeFromCart(productId) {
+    fetch(`/product/cart/delete/${productId}`,{
+      method: 'GET',
+    }).then(data=> {
+      getCartDetails()
+    })
   }
     
 </script>

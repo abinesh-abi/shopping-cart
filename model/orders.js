@@ -13,7 +13,6 @@ const schema = mongoose.Schema({
       },
       quantity:Number,
       price:Number,
-      status:String,
       
 
     }
@@ -21,6 +20,7 @@ const schema = mongoose.Schema({
   address:String,
   totalPrice:Number,
   payMethod:String,
+  status:String,
 },
 {
   timestamps:true

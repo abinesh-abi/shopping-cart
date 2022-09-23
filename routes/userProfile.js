@@ -2,6 +2,7 @@ var express = require("express");
 const { viewOrdersByUserId, removeOrder, cancelOrder } = require("../helpers/orderHelper");
 const { viewProfile, editProfile, viewProfileByIdAndEmail, addAddress, editAddress, deleteAddress } = require("../helpers/profileHelper");
 const { categoryViceView } = require("../helpers/userHelper");
+const { valletAggigateView, valletView, updateVallet } = require("../helpers/valletHelper");
 const Category = require("../model/category");
 const { varifyUser } = require("./varify/varifyUser");
 var router = express.Router();
@@ -12,7 +13,7 @@ router.get("/view",varifyUser,async(req,res)=>{
     let name = req.userName
     console.log(userId)
     let user = await viewProfile(userId)
-    res.render('user/profile',{name,id:userId,user,categories})
+    res.render('user/profile2',{name,id:userId,user,categories})
 })
 
 router.get("/getValues",varifyUser,async(req,res)=>{
@@ -138,9 +139,19 @@ router.get('/orders',varifyUser,async(req,res)=>{
 })
 
 
-router.get('/cancelOrder',varifyUser,(req,res)=>{
-    let {orderId,productId} = req.query
-    cancelOrder(orderId,productId)
+router.get('/cancelOrder',varifyUser,async(req,res)=>{
+    let userId = req.userId
+    let {orderId,payMethod,totalPrice} = req.query
+    let vallet = await valletView(userId)
+
+    let newValletBalance = vallet.balance + Number(totalPrice) 
+
+    if (payMethod != 'cod') {
+        updateVallet(userId,newValletBalance).then(data=>{
+        console.log(data)
+        }) .catch(err=>console.log(err))
+    }
+    cancelOrder(orderId)
     .then(data=>{
         console.log(data)
         res.json(data)
@@ -159,4 +170,35 @@ router.get('/cancelOrder',varifyUser,(req,res)=>{
 //     })
 //     .catch(err=>console.log(err))
 // })
+
+router.get("/vallet",varifyUser,async(req, res)=>{
+    let name = req.user
+  let categories = await categoryViceView()
+  res.render('user/vallet',{categories, name})
+})
+router.get("/vallet/view",varifyUser,async(req, res)=>{
+    let userId = req.userId
+    valletAggigateView(userId)
+    .then(data=>{
+        res.json(data[0])
+    })
+    .catch(err=>res.json(err))
+})
+router.get("/vallet/compare",varifyUser,async(req, res)=>{
+    let {totalPrice } = req.query
+    let userId = req.userId
+    valletView(userId)
+    .then(data=>{
+        console.log(data.balance)
+       if (data.balance <totalPrice) {
+            res.json({status:'insufficient balance vallet',}) 
+       }else{
+           res.json({status:true}) 
+       }
+    })
+    .catch(err=>{
+        console.log(err)
+        res.send(err)})
+})
+
 module.exports = router

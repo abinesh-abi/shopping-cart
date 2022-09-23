@@ -2,6 +2,7 @@ var express = require("express");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const client = require('twilio')(process.env.accountSid, process.env.authToken)
+const CouponJS = require("couponjs");
 
 // const authRouter = require("./authUser")
 const viewRouter = require("./userProduct")
@@ -9,9 +10,11 @@ const profileRouter = require("./userProfile")
 const Products = require("../model/product")
 const User = require("../model/users");
 const { request } = require("express");
-const { categoryViceView } = require("../helpers/userHelper");
+const { categoryViceView, referralCheck, userFindOne } = require("../helpers/userHelper");
 const Category = require("../model/category");
 const { getCart } = require("../helpers/cartHelper");
+const { varifyUser } = require("./varify/varifyUser");
+const { updateVallet, valletView, incrementVallet } = require("../helpers/valletHelper");
 var router = express.Router();
 
 
@@ -137,34 +140,16 @@ router.post("/signup", async (req, res) => {
   } else {
     body.password = bcrypt.hashSync(body.password, 10);
     let { name, number } = body;
-    console.log(req.body)
+    console.log(body.number)
 
-    // for testing purposes
-    // res.render("user/signup", {
-    //   name: body.name,
-    //   email: body.email,
-    //   errMsg: "that ok",
-    //   otpErr: "",
-    //   number:body.number,
-    // });
-
-    //   res.render("user/otpSignup", {
-    //   name: body.name,
-    //   email:body.email,
-    //   number:body.number,
-    //   password:body.password,
-    //   otpErr: "",
-    // });
-
-    // // otp-start
-    client.verify.services(process.env.serviceId)
-      .verifications
-      .create({
-        to:`+91${body.number}`,
-        channel:"sms"
-      })
-      .then(data=>{
-        console.log(data);
+    // ///// otp-start
+    // client.verify.services(process.env.serviceId)
+    //   .verifications
+    //   .create({
+    //     to:`+91${body.number}`,
+    //     channel:"sms"
+    //   })
+    //   .then(data=>{
       res.render("user/otpSignup", {
       name: body.name,
       email:body.email,
@@ -172,10 +157,11 @@ router.post("/signup", async (req, res) => {
       password:body.password,
       otpErr: "",
     });
-      }).catch(error=>{
-        res.send('error')
-      })
-      //otp-end
+      // }).catch(error=>{
+      //   // res.send('error')
+      //   console.log(error)
+      // })
+      // //otp-end
     
   }
 });
@@ -184,15 +170,25 @@ router.post("/signup/otp", async (req, res) => {
  let {body} =req
  console.log(body)
 
- //otp-start
-     client.verify
-    .services(process.env.serviceId)
-    .verificationChecks
-    .create({
-        to:`+91${body.number}`,
-        code:body.otp
-    }).then(data=>{
-    new User({ ...body }).save().then((user) => {
+// //  otp-start
+//      client.verify
+//     .services(process.env.serviceId)
+//     .verificationChecks
+//     .create({
+//         to:`+91${body.number}`,
+//         code:body.otp
+//     }).then(data=>{
+
+   const coupon = new CouponJS();
+   const myCoupon = coupon.generate({
+    prefix:'REF-',
+    length: 4,
+    characterSet: {
+      builtIn: ['CHARSET_DIGIT']
+    },
+  });  
+
+    new User({ ...body,refCode:myCoupon }).save().then((user) => {
       console.log(user);
       const token = jwt.sign(
         {
@@ -205,23 +201,49 @@ router.post("/signup/otp", async (req, res) => {
           httpOnly: true,
         }
       );
-      res.cookie("token", token).redirect("/");
+      res.cookie("token", token).redirect("/referral");
     });
         
-    }).catch((error) => {
-      res.status(401).render("user/otpSignup", {
-      name: body.name,
-      email:body.email,
-      number:body.number,
-      password:body.password,
-      otpErr: "Invalied OTP",
-    });
+    // }).catch((error) => {
+    //   res.status(401).render("user/otpSignup", {
+    //   name: body.name,
+    //   email:body.email,
+    //   number:body.number,
+    //   password:body.password,
+    //   otpErr: "Invalied OTP",
+    // });
       
-      console.log(error)
-    })
-    // otp-end
+    //   console.log(error)
+    // })
+    // // otp-end
 })
 
+router.get("/referral",varifyUser,(req,res)=>{
+  let userId = req.userId
+    updateVallet(userId,0).then(data=>{
+      console.log(data)
+    }) .catch(err=>console.log(err))
+   res.render('user/referralPage',{refErr:''})
+})
+
+router.post("/referral",varifyUser,async(req,res)=>{
+  let userId = req.userId
+  let {code} = req.body
+  var invaliedText = (code.trim().length ==0 || !code.match(/^[a-zA-Z\-]/) || !code.match(/[0-9\-]$/))
+  
+  let refferalExits = await referralCheck(code)
+  if(invaliedText){
+   res.render('user/referralPage',{refErr:'Enter Valied Text'})
+  }else if (refferalExits){
+    console.log({refferalExits})
+    let hi = await updateVallet(userId,50)
+    let hhi1 = await incrementVallet(refferalExits._id,100)
+    console.log({hi,hhi1})
+       res.redirect('/')
+  }else{
+   res.render('user/referralPage',{refErr:'This Code is not Exits'})
+  }
+})
 //login user
 router.get("/login", (req, res) => {
   res.setHeader("cache-control", "private,no-cache,no-store,must-revalidate");
@@ -369,5 +391,11 @@ router.get('/logout', (req, res) => {
   .redirect("/")
 
 });
+
+// router.get('/vallet',varifyUser,async(req,res)=>{
+//  let userId = req.userId 
+//  console.log(userId)
+//  valletView(userId).then(vallet=>console.log(vallet))
+// })
 
 module.exports = router;

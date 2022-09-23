@@ -15,25 +15,54 @@
             </header>
             
 <div class="page-heading">
-    <h3>Products</h3>
+    <h3>Coupons</h3>
 </div>
 <div class="d-flex justify-content-center">
 <!-- Button trigger modal -->
 <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
   Add category
 </button> -->
-<button id="btn" class="btn btn-primary" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-  Add category
+<!-- <button id="btn" class="btn btn-primary" data-bs-toggle="dropdown"  >
+  Add Coupon
 </button>
-  <div class="dropdown-menu">
+  <div class="dropdown-menu" style="width: 400px;">
           <div class="form-group">
                 <input value="" name="code" type="text"  class="form-control mx-auto" placeholder="Enter Coupon Code" style="max-width: 600px;"/>
                 <input value="" name="value" type="number"  class="form-control mx-auto" placeholder="Enre offer value" style="max-width: 600px;"/>
                 <p id="inputErr" class="text-danger"></p>
-                <button type="submit" id="addBtn" class="btn mx-auto text-center"> Add </button>
+                <span  id="addBtn" class="btn btn-success mx-auto text-center"> Add </span>
           </div>
+  </div> -->
+  
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+  Add category
+</button>
+</div>
+<!--  popup menu -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Add category</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+          <div class="form-group">
+                <input value="" name="code" type="text"  class="form-control mx-auto" placeholder="Enter Coupon Code" style="max-width: 600px;"/>
+                <input value="" name="value" type="number"  class="form-control mx-auto" placeholder="Enre offer value" style="max-width: 600px;"/>
+                <p id="inputErr" class="text-danger"></p>
+                <div class="text-center">
+                <a id="addBtn" class="btn btn-primary mx-auto text-center" onclick="addCoupon()"> Add </a>
+                </div>
+          </div>
+      </div>
+      <div class="modal-footer" >
+        <button onsubmit="addCategory()" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
   </div>
 </div>
+ <!-- poupu menu end -->
 <!-- <div class="form-outline mb-4">
   <input type="search" class="form-control" id="search">
 </div> -->
@@ -78,31 +107,6 @@
 
         </div>
     </div>
-<!-- add product popup menu -->
-<!-- <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="staticBackdropLabel">Add category</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-          <form id="contact-us-form" method="post">
-                <input value="" name="code" type="text"  class="form-control mx-auto" placeholder="Enter Coupon Code" style="max-width: 600px;"/>
-                <input value="" name="value" type="number"  class="form-control mx-auto" placeholder="Enre offer value" style="max-width: 600px;"/>
-                <p id="inputErr" class="text-danger"></p>
-                <div class="text-center">
-                <button type="submit" id="addBtn" class="btn mx-auto text-center"> Add </button>
-                </div>
-         </form>        
-      </div>
-      <div class="modal-footer" >
-        <button  type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
-</div> -->
- <!-- poupu menu end -->
     <!-- <script src="assets/js/bootstrap.js"></script> -->
     <script src="assets/js/app.js"></script>
 
@@ -140,26 +144,32 @@ getCoupons()
 
 const form = document.getElementById("addBtn");
 
-form.addEventListener("click", formSubmit);
-function formSubmit(e) {
-  e.preventDefault()
+function validate() {
 
+}
+
+function addCoupon() {
+  console.log('hello')
     let code=  document.querySelector('input[name="code"]').value
     let value= document.querySelector('input[name="value"]').value
-    // let expires= document.querySelector('input[name="expires"]').value
+  
+    console.log({code,value})
   fetch(`http://127.0.0.1:3000/admin/coupon/add?code=${code}&value=${value}`,)
   .then(response => response.json())
   .then(response =>{
     getCoupons()
+    var myModalEl = document.getElementById('staticBackdrop');
+    var modal = bootstrap.Modal.getInstance(myModalEl)
+    modal.hide();
   })
   .catch(error => console.log(error))
 }
 
 function remove(id){
+  console.log(id)
   fetch(`http://127.0.0.1:3000/admin/coupon/remove?id=${id}`,)
   .then(response => response.json())
   .then(response =>{
-    console.log(response)
     getCoupons()
   })
 }

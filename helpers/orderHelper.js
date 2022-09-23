@@ -35,11 +35,11 @@ module.exports ={
         })
         
     },
-    cancelOrder:(orderId,productId)=>{
+    cancelOrder:(orderId)=>{
         return new Promise((resolve, reject) => {
             Orders.findOneAndUpdate(
-                {_id:orderId,'orders.productId':productId},
-                {$set:{"orders.$.status":"cancelled"}}
+                {_id:orderId},
+                {$set:{status:"cancelled"}}
             )
         .then(data => resolve(data))
         .catch(err => reject(err))  
@@ -48,8 +48,8 @@ module.exports ={
     deleverdOrder:(orderId,productId)=>{
         return new Promise((resolve, reject) => {
             Orders.findOneAndUpdate(
-                {_id:orderId,'orders.productId':productId},
-                {$set:{"orders.$.status":"deleverd"}}
+                {_id:orderId},
+                {$set:{status:"deleverd"}}
             )
         .then(data => resolve(data))
         .catch(err => reject(err))  
@@ -57,9 +57,9 @@ module.exports ={
     },
     shippedOrder:(orderId,productId)=>{
         return new Promise((resolve, reject) => {
-            Orders.findOne(
-                {_id:orderId,'orders.productId':productId},
-                // {$set:{"orders.$.status":"shipped"}}
+            Orders.findOneAndUpdate(
+                {_id:orderId},
+                {$set:{status:"shipped"}}
             )
         .then(data =>{
             console.log(data)

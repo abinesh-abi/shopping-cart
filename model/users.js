@@ -24,7 +24,8 @@ const userSchema = mongoose.Schema({
   },
   address:{
     type: Array,
-  }
+  },
+  refCode:String
 });
 
 let User = mongoose.model("otpUsers", userSchema);

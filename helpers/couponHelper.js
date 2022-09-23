@@ -17,7 +17,7 @@ module.exports ={
     },
     removeCoupon:(_id)=>{
         return new Promise((resolve, reject) => {
-            Coupon.findOneAndRemove(_id)
+            Coupon.deleteOne({_id})
             .then(data=>resolve(data))
             .catch(err=> reject(err))
         })

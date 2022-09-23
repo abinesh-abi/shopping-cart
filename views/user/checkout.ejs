@@ -142,7 +142,7 @@
                     <p class="mb-0">(including GST)</p>
                   </strong>
                 </div>
-                <span><strong id="tp2">&#8377; <%=totalPrice%></strong></span>
+                <span>&#8377;<strong id="tp2"> <%=totalPrice%></strong></span>
               </li>
               <li
                 class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
@@ -165,6 +165,13 @@
                     <input type="radio" name="payMethod"  value="razorpay"/>
                     <span class="radio"></span>
                     <span>Razorpay</span>
+                  </label>
+                  <br>
+                   <label >
+                    <input id="vallet" onclick="compareVallet()" type="radio" name="payMethod"  value="vallet"/>
+                    <span class="radio"></span>
+                    <span>Vallet</span>
+                    <p id="valletErr" class="text-danger"></p>
                   </label>
                 </div>
               </li>
@@ -211,6 +218,19 @@
       }
     })
    } 
+   function compareVallet() {
+    let tp2 = document.getElementById('tp2').innerHTML
+    let totalPrice = Number(tp2)
+    console.log(totalPrice)
+    fetch(`/profile/vallet/compare?totalPrice=${totalPrice}`).then(res=> res.json())
+    .then(data=>{
+      if (data.status !=true) {
+          document.getElementById('valletErr').innerHTML = data.status
+          document.getElementById('vallet').disabled = true;  
+
+      }
+    })
+   }
 </script>
   <style>
    .gradient-custom {

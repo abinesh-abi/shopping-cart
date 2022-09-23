@@ -9,7 +9,7 @@
         
         <div id="main">
             <header class="mb-3">
-                <a href="#" class="burger-btn d-block d-xl-none">
+                <a href="" class="burger-btn d-block d-xl-none">
                     <i class="bi bi-justify fs-3"></i>
                 </a>
             </header>
@@ -90,7 +90,7 @@
                 <input value="" type="text" id="addCategory" class="form-control mx-auto" placeholder="Add Category" style="max-width: 600px;"/>
                 <p id="inputErr" class="text-danger"></p>
                 <div class="text-center">
-                <a id="addBtn" class="btn mx-auto text-center" onclick="add()"> Add </a>
+                <a id="addBtn" class="btn btn-primary mx-auto text-center" onclick="add()"> Add </a>
                 <!-- <button class="btn mx-auto" >Add</button> -->
                 </div>
          <!-- </form>         -->
@@ -154,9 +154,10 @@ getCategories()
       }).then(data=>data.json())
       .then(data=>{
        if(!data.inputErr){
-           var myModalEl = document.getElementById('staticBackdrop');
-           myModalEl.style.display = 'none';
-
+        var myModalEl = document.getElementById('staticBackdrop');
+        var modal = bootstrap.Modal.getInstance(myModalEl)
+        modal.hide();
+        getCategories()
        }else{
         document.getElementById('inputErr').innerHTML= 'Enter valied Text'
        }
