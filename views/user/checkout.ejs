@@ -208,27 +208,30 @@
     .then(res=> res.json())
     .then(async data =>{
       if(data){
+        if (new Date(data.expireAt) < new Date()) {
+       document.getElementById('error').innerHTML = 'Coupon Expired'
+        }else{
         let offer = data.offer
         let offerPrice =Math.floor(totalPrice -(totalPrice * offer/100))
         tp1.innerHTML =`&#8377; ${offerPrice}`
-        tp2.innerHTML =`&#8377; ${offerPrice}`
+        tp2.innerHTML =` ${offerPrice}`
         fetch(`/product/updatePrice/${offerPrice}`)
+        }
       }else{
-        alert('hello')
+       document.getElementById('error').innerHTML = 'Invalied Coupon'
       }
     })
    } 
    function compareVallet() {
     let tp2 = document.getElementById('tp2').innerHTML
     let totalPrice = Number(tp2)
-    console.log(totalPrice)
     fetch(`/profile/vallet/compare?totalPrice=${totalPrice}`).then(res=> res.json())
     .then(data=>{
       if (data.status !=true) {
           document.getElementById('valletErr').innerHTML = data.status
           document.getElementById('vallet').disabled = true;  
-
       }
+
     })
    }
 </script>

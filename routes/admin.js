@@ -177,11 +177,11 @@ router.get("/banOrNot/:id",async(req,res)=>{
 
   if (user.blockOrNot) {
    User.findOneAndUpdate({_id: id},{blockOrNot:false}) .then(data =>{
-    console.log('unbaned')
+    res.send(data)
    })
   }else{
     User.findOneAndUpdate({_id: id},{blockOrNot:true}) .then(data=>{
-      console.log('baned')
+    res.send(data)
     })
 
   }

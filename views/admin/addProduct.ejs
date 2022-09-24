@@ -70,7 +70,7 @@
                         data-toggle="modal"
                         data-target="#modal"
                       />
-                      <input
+                      <!-- <input
                         id="image2"
                         type="file"
                         name="two"
@@ -85,9 +85,9 @@
                         class="form-control"
                         data-toggle="modal"
                         data-target="#modal"
-                      />
+                      /> -->
                     </div>
-                    <img src="/images/631d6ab2663e0c5cd83d1765.jpg" alt="" id="hi">
+                    <img src="" alt="" id="hi">
                     <button type="submit" class="btn btn-primary">
                       Submit
                     </button>
@@ -138,8 +138,8 @@
 
 ////////////////////
           let image1 = document.getElementById('image1')
-          let image2 = document.getElementById('image2')
-          let image3 = document.getElementById('image3')
+          // let image2 = document.getElementById('image2')
+          // let image3 = document.getElementById('image3')
           let displayImage =  document.getElementById('sample_image')
           let hi =  document.getElementById('hi')
           let cropButton = document.getElementById('crop')
@@ -155,20 +155,20 @@
        Cropper.clear()
       });
 
-      image2.addEventListener("change", (e) => {
-        console.log('second')
-        cropper = cropArea(e)
-        element =image2
-       Cropper.noConflict();
-       Cropper.clear()
-      });
+      // image2.addEventListener("change", (e) => {
+      //   console.log('second')
+      //   cropper = cropArea(e)
+      //   element =image2
+      //  Cropper.noConflict();
+      //  Cropper.clear()
+      // });
 
-      image3.addEventListener("change", (e) => {
-        cropper = cropArea(e)
-        element =image3
-       Cropper.noConflict();
-       Cropper.clear()
-      });
+      // image3.addEventListener("change", (e) => {
+      //   cropper = cropArea(e)
+      //   element =image3
+      //  Cropper.noConflict();
+      //  Cropper.clear()
+      // });
 
       //cropp button click event
         cropButton.addEventListener("click", () => {

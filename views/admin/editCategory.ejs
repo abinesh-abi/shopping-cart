@@ -11,7 +11,7 @@
             <h2 class="h1 mb-5">Edit Category</h2>
             <form action="/admin/category/edit/<%=id%>" method="post">
             <div class="form-outline mb-4">
-                <input type="text" id="form2Example2" class="form-control" name="name"/>
+                <input type="text" id="form2Example2" value="<%=name%>" class="form-control" name="name"/>
                 <p class="text-danger"><%=Err%></p>
             </div>
             <button type="submit" class="btn btn-primary btn-block mb-4">Edit</button>

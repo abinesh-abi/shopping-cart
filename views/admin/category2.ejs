@@ -15,12 +15,12 @@
             </header>
             
 <div class="page-heading">
-    <h3>Products</h3>
+    <h3>Category</h3>
 </div>
 <div class="d-flex justify-content-center">
 <!-- Button trigger modal -->
 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-  Add category
+  Add Category
 </button>
 </div>
 <!-- <div class="form-outline mb-4">
@@ -54,16 +54,6 @@
                                   </tr>
                                 </thead>
                                 <tbody id="tableBody">
-                                    <!-- <%data.forEach((val,key)=>{%>
-                                    <tr>
-                                      <th scope="row"><%=key+1%></th>
-                                      <td><%=val.name%></td>
-                                      <td>
-                                        <a class="btn btn-success" href="/admin/category/edit/<%=val._id%>">Edit</a>
-                                        <a class="btn btn-danger" href="/admin/category/delete/<%=val._id%>">Delete</a>
-                                      </td>
-                                    </tr>
-                                    <%})%> -->
                                 </tbody>
                             </table>
                         </div>
@@ -95,7 +85,7 @@
                 </div>
          <!-- </form>         -->
       </div>
-      <div class="modal-footer" >
+      <div  class="modal-footer" >
         <button onsubmit="addCategory()" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
       </div>
     </div>
@@ -137,7 +127,7 @@ getCategories()
             </td>
           <td>
             <a class="btn btn-success" href="/admin/category/edit/${data[val]._id}">Edit</a>
-            <a class="btn btn-danger" href="/admin/category/delete/${data[val]._id}">Delete</a>
+            <a class="btn btn-danger" onclick="return alert('Are You Want To Delete')" href="/admin/category/delete/${data[val]._id}">Delete</a>
           </td>
         </tr>
       `
@@ -158,15 +148,20 @@ getCategories()
         var modal = bootstrap.Modal.getInstance(myModalEl)
         modal.hide();
         getCategories()
-       }else{
-        document.getElementById('inputErr').innerHTML= 'Enter valied Text'
+       }else if(data.inputErr){
+        document.getElementById('inputErr').innerHTML= data.inputErr
        }
-        console.log(data)
       })
     }  
     function editOffer(category) {
       let offer = document.getElementById(category).value
-      console.log({offer,category})
+        console.log(offer)
+      if (offer.trim().length = 0) {
+       return 
+      }else if (offer.trim().length >3) {
+       alert("Please enter valied percentage") 
+      }
+      else{
       fetch('/admin/category/editOffer',{
         method:'post',
         headers: { "Content-Type": "application/json" },
@@ -174,9 +169,13 @@ getCategories()
          categoryId:category,
          newOffer:offer 
         })
+      }).then(data =>data.json())
+      .then(data =>{
+        getCategories()
       })
-      getCategories()
+
     }
+      }
     </script>
 </body>
 

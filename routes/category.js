@@ -26,11 +26,17 @@ router.get("/get",(req,res)=>{
 
  router.get('/add',async(req,res) => {
    let name = req.query.name
+   name =name.toLocaleLowerCase()
+   let categoryExits =  await Category.findOne({name})
+   console.log(categoryExits)
    if (req.query.name.trim()==0) {
       res.json({
-         inputErr:true
+         inputErr:'Enter valied input'
       })
-   }else{
+   }else if(categoryExits) {
+     res.json({inputErr:"This Categoru is Already Exists"}) 
+   }
+   else{
       
    await new Category({name}).save()
    .then(data => res.json(data))
@@ -42,7 +48,8 @@ router.get("/get",(req,res)=>{
 
  router.get('/edit/:id',async(req,res) => {
    let id = req.params.id
-   res.render("admin/editCategory",{id:id,Err:''})
+   let categoryExits = await  Category.findOne({id})
+   res.render("admin/editCategory",{id:id,Err:'',name:categoryExits.name})
  })
 
  router.post('/edit/:id',async(req,res) => {
@@ -54,9 +61,9 @@ router.get("/get",(req,res)=>{
    console.log(data)
 
    if (invaliedName) {
-      res.render("admin/editCategory",{id:id,Err:'Invalied Input'})
+      res.render("admin/editCategory",{id:id,Err:'Invalied Input', name})
    }else if(data){
-      res.render("admin/editCategory",{id:id,Err:'Category already exists'})
+      res.render("admin/editCategory",{id:id,Err:'Category already exists',name})
    }else{
       Category.findOneAndUpdate({_id:id},{$set:{name:name}}).then(data =>{
          res.redirect("/admin/category")

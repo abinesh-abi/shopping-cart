@@ -142,14 +142,14 @@ router.post("/signup", async (req, res) => {
     let { name, number } = body;
     console.log(body.number)
 
-    // ///// otp-start
-    // client.verify.services(process.env.serviceId)
-    //   .verifications
-    //   .create({
-    //     to:`+91${body.number}`,
-    //     channel:"sms"
-    //   })
-    //   .then(data=>{
+    ///// otp-start
+    client.verify.services(process.env.serviceId)
+      .verifications
+      .create({
+        to:`+91${body.number}`,
+        channel:"sms"
+      })
+      .then(data=>{
       res.render("user/otpSignup", {
       name: body.name,
       email:body.email,
@@ -157,11 +157,11 @@ router.post("/signup", async (req, res) => {
       password:body.password,
       otpErr: "",
     });
-      // }).catch(error=>{
-      //   // res.send('error')
-      //   console.log(error)
-      // })
-      // //otp-end
+      }).catch(error=>{
+        // res.send('error')
+        console.log(error)
+      })
+      //otp-end
     
   }
 });
@@ -170,14 +170,14 @@ router.post("/signup/otp", async (req, res) => {
  let {body} =req
  console.log(body)
 
-// //  otp-start
-//      client.verify
-//     .services(process.env.serviceId)
-//     .verificationChecks
-//     .create({
-//         to:`+91${body.number}`,
-//         code:body.otp
-//     }).then(data=>{
+//  otp-start
+     client.verify
+    .services(process.env.serviceId)
+    .verificationChecks
+    .create({
+        to:`+91${body.number}`,
+        code:body.otp
+    }).then(data=>{
 
    const coupon = new CouponJS();
    const myCoupon = coupon.generate({
@@ -204,18 +204,18 @@ router.post("/signup/otp", async (req, res) => {
       res.cookie("token", token).redirect("/referral");
     });
         
-    // }).catch((error) => {
-    //   res.status(401).render("user/otpSignup", {
-    //   name: body.name,
-    //   email:body.email,
-    //   number:body.number,
-    //   password:body.password,
-    //   otpErr: "Invalied OTP",
-    // });
+    }).catch((error) => {
+      res.status(401).render("user/otpSignup", {
+      name: body.name,
+      email:body.email,
+      number:body.number,
+      password:body.password,
+      otpErr: "Invalied OTP",
+    });
       
-    //   console.log(error)
-    // })
-    // // otp-end
+      console.log(error)
+    })
+    // otp-end
 })
 
 router.get("/referral",varifyUser,(req,res)=>{

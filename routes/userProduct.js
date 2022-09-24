@@ -289,6 +289,7 @@ var instance = new Razorpay({
     })
     .catch(err =>console.log(err)) 
 
+    // wallet
     } else if(req.body.payMethod=='vallet'){
     let cart = await getCart(userId)
     let product = cart.cart
@@ -373,9 +374,6 @@ var instance = new Razorpay({
 
 router.post("/paypal/createOrder", async (req, res) => {
    const request = new paypal.orders.OrdersCreateRequest()
-  // const total = req.body.items.reduce((sum, item) => {
-  //   return sum + storeItems.get(item.id).price * item.quantity
-  // }, 0)
   let userId = req.userId
   let cart =await getCart(userId)
   let totalPrice = cart.totalPrice
@@ -396,25 +394,6 @@ router.post("/paypal/createOrder", async (req, res) => {
             },
           },
         },
-        // items: req.body.items.map(item => {
-        //   const storeItem = storeItems.get(item.id)
-        //   return {
-        //     name: storeItem.name,
-        //     unit_amount: {
-        //       currency_code: "USD",
-        //       value: storeItem.price,
-        //     },
-        //     quantity: item.quantity,
-        //   }
-        // }),
-        // items: {
-        //     name: "phone",
-        //     unit_amount: {
-        //       currency_code: "USD",
-        //       value: total,
-        //     },
-        //     quantity: total ,
-        //   }
       },
     ],
   })

@@ -35,7 +35,7 @@
   </div> -->
   
 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-  Add category
+  Add Coupon
 </button>
 </div>
 <!--  popup menu -->
@@ -43,13 +43,14 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="staticBackdropLabel">Add category</h5>
+        <h5 class="modal-title" id="staticBackdropLabel">Add Coupon</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
           <div class="form-group">
                 <input value="" name="code" type="text"  class="form-control mx-auto" placeholder="Enter Coupon Code" style="max-width: 600px;"/>
-                <input value="" name="value" type="number"  class="form-control mx-auto" placeholder="Enre offer value" style="max-width: 600px;"/>
+                <input value="" name="value" type="number"  class="form-control mx-auto" placeholder="Enre offer Percentage" style="max-width: 600px;"/>
+                <input value="" name="date" type="date"  class="form-control mx-auto" placeholder="Enre offer Percentage" style="max-width: 600px;"/>
                 <p id="inputErr" class="text-danger"></p>
                 <div class="text-center">
                 <a id="addBtn" class="btn btn-primary mx-auto text-center" onclick="addCoupon()"> Add </a>
@@ -127,8 +128,18 @@ getCoupons()
         <tr>
           <th scope="row">${Number(val)+1}</th>
           <td>${data[val].code}</td>
-          <td>${data[val].offer}  %</td>
-          <td>${new Date( data[val].expireAt).toLocaleDateString()} ${new Date( data[val].expireAt).toLocaleTimeString()}</td>
+          <td>${data[val].offer}  %</td> 
+          ${
+            (function() {
+              let hi
+              if (new Date() > new Date( data[val].expireAt)) {
+                return `<td>Expired</td>`
+              }else{
+                return `<td>${new Date( data[val].expireAt).toDateString()} ${new Date( data[val].expireAt).toLocaleTimeString()}</td>`
+              }
+            })()
+          }
+          
           <td>
             <a class="btn btn-danger" onclick="remove('${data[val]._id}')" >Delete</a>
           </td>
@@ -149,20 +160,34 @@ function validate() {
 }
 
 function addCoupon() {
-  console.log('hello')
     let code=  document.querySelector('input[name="code"]').value
     let value= document.querySelector('input[name="value"]').value
-  
-    console.log({code,value})
-  fetch(`http://127.0.0.1:3000/admin/coupon/add?code=${code}&value=${value}`,)
+    let date= document.querySelector('input[name="date"]').value
+    console.log({code,value,date})
+    let inputErr = document.getElementById('inputErr')
+    if (code.trim().length ==0 || value.trim().length == 0 || new Date(date) =='Invalid Date') {
+      inputErr.innerHTML = "Please Enter Valied Input" 
+    }else if(value.trim().length >2) {
+      inputErr.innerHTML = "Enter valied percentage" 
+    }
+    else{
+
+
+  fetch(`http://127.0.0.1:3000/admin/coupon/add?code=${code}&value=${value}&date=${date}`,)
   .then(response => response.json())
   .then(response =>{
+    if (response.error) {
+      inputErr.innerHTML = response.error 
+    }else{
     getCoupons()
     var myModalEl = document.getElementById('staticBackdrop');
     var modal = bootstrap.Modal.getInstance(myModalEl)
     modal.hide();
+    }
   })
   .catch(error => console.log(error))
+
+    }
 }
 
 function remove(id){

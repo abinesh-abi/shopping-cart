@@ -1,68 +1,108 @@
-
 <!DOCTYPE html>
 <html>
   <head>
     <title>Admin signup page</title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel="stylesheet" href="/stylesheets/style.css" />
     <!-- CSS only -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
-<style>
-    .wid{
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx"
+      crossorigin="anonymous"
+    />
+    <style>
+      .wid {
         max-width: 500px;
-    }
-</style>
+      }
+    </style>
   </head>
   <body>
-    <div class="wid mx-auto text-center ">
-<h2 class="h1 mb-5">Signup Page</h2>
-<form action="http://127.0.0.1:3000/signup" method="post">
-  <!-- Name input -->
-  <div class="form-outline mb-4">
-    <label class="form-label" for="form2Example1">Name</label>
-    <input type="text" id="form2Example1" class="form-control" name="name" value="<%=name%>" required/>
-  </div>
-  <!-- Email -->
-  <div class="form-outline mb-4">
-    <label class="form-label" for="form2Example1">Email</label>
-    <input type="text" id="form2Example1" class="form-control" name="email" value="<%=email%>" required/>
-  </div>
-  <!-- number input -->
-  <div class="form-outline mb-4">
-    <label class="form-label" for="form2Example1">Enter mobile</label>
-    <input type="number" id="form2Example1" class="form-control" name="number" value="<%=number%>" required/>
-  </div>
-  <!-- password  -->
-  <div class="form-outline mb-4">
-    <label class="form-label" for="form2Example1">Enter Password</label>
-    <input type="text" id="form2Example1" class="form-control" name="password" value="" required/>
-  </div>
+    <section class="vh-100">
+      <div class="container py-5 h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+          <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+            <div class="card shadow-2-strong" style="border-radius: 1rem">
+              <div class="card-body p-5 text-center">
+                <h2 class="h1 mb-5">Signup Page</h2>
+                <form action="http://127.0.0.1:3000/signup" method="post">
+                  <!-- Name input -->
+                  <div class="form-outline mb-4">
+                    <label class="form-label" for="form2Example1">Name</label>
+                    <input
+                      type="text"
+                      id="form2Example1"
+                      class="form-control"
+                      name="name"
+                      value="<%=name%>"
+                      required
+                    />
+                  </div>
+                  <!-- Email -->
+                  <div class="form-outline mb-4">
+                    <label class="form-label" for="form2Example1">Email</label>
+                    <input
+                      type="text"
+                      id="form2Example1"
+                      class="form-control"
+                      name="email"
+                      value="<%=email%>"
+                      required
+                    />
+                  </div>
+                  <!-- number input -->
+                  <div class="form-outline mb-4">
+                    <label class="form-label" for="form2Example1"
+                      >Enter mobile</label
+                    >
+                    <input
+                      type="number"
+                      id="form2Example1"
+                      class="form-control"
+                      name="number"
+                      value="<%=number%>"
+                      required
+                    />
+                  </div>
+                  <!-- password  -->
+                  <div class="form-outline mb-4">
+                    <label class="form-label" for="form2Example1"
+                      >Enter Password</label
+                    >
+                    <input
+                      type="text"
+                      id="form2Example1"
+                      class="form-control"
+                      name="password"
+                      value=""
+                      required
+                    />
+                  </div>
 
-    <p class="text-danger"><%=errMsg%></p>
-  <button type="submit" class="btn btn-primary btn-block mb-4">Varify Number</button>
-</form>
+                  <p class="text-danger"><%=errMsg%></p>
+                  <button type="submit" class="btn btn-primary btn-block mb-4">
+                    Varify Number
+                  </button>
+                </form>
 
-  <!-- Otp input -->
-<!-- <form id="otp" action="http://127.0.0.1:3000/otp" method="post" >
-  <div class="form-outline mb-4">
-    <label class="form-label" for="form2Example2">Enter Otp</label>
-    <input type="number" id="form2Example2" class="form-control" name="otp"/>
-    <p class="text-danger"></p>
-  </div>
+                <!-- Register buttons -->
+                <div class="text-center">
+                  <p>
+                    already have a account?
+                    <a href="http://127.0.0.1:3000/login">Login</a>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-    <input type="number"   name="number" value="" hidden/>
-    <input type="text"   name="name" value="<%=name%>" hidden/>
-  </div>
-    
-  <button type="submit" class="btn btn-primary btn-block mb-4">Signup</button>
-</form> -->
-
-  <!-- Register buttons -->
-  <div class="text-center">
-    <p>already have a account? <a href="http://127.0.0.1:3000/login">Login</a></p>
-     </div>
-    </div>
-    
     <!-- JavaScript Bundle with Popper -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
+      crossorigin="anonymous"
+    ></script>
   </body>
 </html>

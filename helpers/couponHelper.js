@@ -8,9 +8,16 @@ module.exports ={
             .catch(err=> reject(err))
         })
     },
+    getCouponByName:(code)=>{
+        return new Promise((resolve, reject) => {
+            Coupon.findOne({code})
+            .then(data=>resolve(data))
+            .catch(err=> reject(err))
+        })
+    },
     addCoupon:(code,offer,expireAt)=>{
         return new Promise((resolve, reject) => {
-            new Coupon({code,offer}).save()
+            new Coupon({code,offer,expireAt}).save()
             .then(data=>resolve(data))
             .catch(err=> reject(err))
         })
@@ -18,6 +25,13 @@ module.exports ={
     removeCoupon:(_id)=>{
         return new Promise((resolve, reject) => {
             Coupon.deleteOne({_id})
+            .then(data=>resolve(data))
+            .catch(err=> reject(err))
+        })
+    },
+    removeExpiredCoupon:()=>{
+        return new Promise((resolve, reject) => {
+            Coupon.deleteMany({expireAt:{$lt:new Date().toISOString()}})
             .then(data=>resolve(data))
             .catch(err=> reject(err))
         })

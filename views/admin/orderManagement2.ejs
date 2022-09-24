@@ -52,7 +52,7 @@
           })
           .then((response) => {
             if (response.length != 0) {
-              let orders = "";
+              let orders 
               response.forEach((element, i) => {
                 let temp;
                 element.orderdItems.forEach((val, h) => {
@@ -143,7 +143,7 @@
                       </tr>
                     </thead>
                     <tbody id="tableBody">
-                      ${temp}
+                       ${temp}
                     </tbody>
                   </table>
                 </div>

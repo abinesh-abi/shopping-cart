@@ -121,7 +121,7 @@ router.post("/addProduct", varifyAdmin, async(req, res) => {
   });
   }
   else{
-
+    console.log(body,'hello-----------')
   // const file = files.image;
   const user = new Products({ ...body });
    user
@@ -133,19 +133,22 @@ router.post("/addProduct", varifyAdmin, async(req, res) => {
           return res.status(500).send(err);
         }
       });
-      two.mv(`public/images/${user._id}_one.jpg`, (err) => {
-        if (err) {
-          return res.status(500).send(err);
-        }
-      });
-      three.mv(`public/images/${user._id}_two.jpg`, (err) => {
-        if (err) {
-          return res.status(500).send(err);
-        }
-      });
+
+
+      // two.mv(`public/images/${user._id}_one.jpg`, (err) => {
+      //   if (err) {
+      //     return res.status(500).send(err);
+      //   }
+      // });
+      // three.mv(`public/images/${user._id}_two.jpg`, (err) => {
+      //   if (err) {
+      //     return res.status(500).send(err);
+      //   }
+      // });
     res.redirect("/admin/productManagement")
     })
     .catch((err) =>{
+     console.log(err) 
      res.status(400).render("admin/addProduct", {
     name: req.body.name,
     categories,

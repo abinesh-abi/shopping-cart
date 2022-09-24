@@ -68,9 +68,7 @@ function getCartDetails() {
                 <!-- Quantity -->
                 <div class="d-flex mb-4" style="max-width: 300px">
 
-                  <a  onclick="decrement('${cart[itm]._id}')"
-                    onclick="return this.parentNode.querySelector('input[type=number]').value >= 2  "
-                    >
+                  <a  onclick="decrement('${cart[itm]._id}')">
                   <button class="btn btn-primary px-3 ms-2">
                     <i class="fa fa-minus"></i>
                   </button>
@@ -176,7 +174,6 @@ function getCartDetails() {
 }
 
   function increment(productId) {
-    console.log(productId);
     fetch(`/product/cart/increment/${productId}`,{
       method: 'GET',
     }).then(data =>data.json())
@@ -185,7 +182,11 @@ function getCartDetails() {
     })
   }
   function decrement(productId) {
-    console.log(productId);
+     let count = document.querySelector('#form1')
+    if (count.value <= 1) {
+     return 
+    }
+  document.querySelector('input[type=number]').value >= 2
     fetch(`/product/cart/decrement/${productId}`,{
       method: 'GET',
     }).then(data=> {
