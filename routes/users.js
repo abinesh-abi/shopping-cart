@@ -10,7 +10,7 @@ const profileRouter = require("./userProfile")
 const Products = require("../model/product")
 const User = require("../model/users");
 const { request } = require("express");
-const { categoryViceView, referralCheck, userFindOne } = require("../helpers/userHelper");
+const { categoryViceView, referralCheck, userFindOne, getCategories, getUser, getUserByEmail, getUserByNumber } = require("../helpers/userHelper");
 const Category = require("../model/category");
 const { getCart } = require("../helpers/cartHelper");
 const { varifyUser } = require("./varify/varifyUser");
@@ -18,25 +18,25 @@ const { updateVallet, valletView, incrementVallet } = require("../helpers/vallet
 var router = express.Router();
 
 
-//varify jwt token
-function varifyToken(req,res, next) {
-    const token = req.cookies.token;
-    console.log(token);
-  if (!token) {
-    res.redirect('/login');
-  }
-  try {
-    const data = jwt.verify(token, process.env.JWT_USER_SECRET)
-    console.log(data,'data')
-    req.userId = data.id;
-    req.user =data.name
+// // varify jwt token
+// function varifyToken(req,res, next) {
+//     const token = req.cookies.token;
+//     console.log(token);
+//   if (!token) {
+//     res.redirect('/login');
+//   }
+//   try {
+//     const data = jwt.verify(token, process.env.JWT_USER_SECRET)
+//     console.log(data,'data')
+//     req.userId = data.id;
+//     req.user =data.name
     
-    return next();
-  } catch (err) {
-    console.log(err);
-    return res.sendStatus(403);
-  }
-}
+//     return next();
+//   } catch (err) {
+//     console.log(err);
+//     return res.sendStatus(403);
+//   }
+// }
 
 router.use((req,res,next)=>{
   res.setHeader("cache-control", "private,no-cache,no-store,must-revalidate");
@@ -64,14 +64,13 @@ router.get('/navHeadInfo',async(req,res,next)=>{
   } catch (error) {
     cart =null   
   }
-  let categories = await Category.find()
+  let categories = await getCategories()
   res.json({userName,cart,categories}) 
 })
 
+
 router.get("/", async function (req, res, next) {
   let categories = await categoryViceView()
-  let products = await Products.find()
-
   if (req.cookies.token) {
   let {name,id} =  jwt.verify(req.cookies.token, process.env.JWT_USER_SECRET)
     res.render("user/userHome", { name:name,id,categories});
@@ -95,7 +94,7 @@ router.get("/signup", (req, res) => {
 router.post("/signup", async (req, res) => {
   res.setHeader("cache-control", "private,no-cache,no-store,must-revalidate");
   let { body } = req;
-  let user = await User.findOne({$or:[ {number: body.number},{email:body.email} ]});
+  let user = await getUser(body.number, body.email);
 
   ///for validation start
   let regex = new RegExp('[a-z0-9]+@[a-z]+\.[a-z]{2,3}');
@@ -142,7 +141,7 @@ router.post("/signup", async (req, res) => {
     let { name, number } = body;
     console.log(body.number)
 
-    ///// otp-start
+    /// otp-start
     client.verify.services(process.env.serviceId)
       .verifications
       .create({
@@ -168,7 +167,6 @@ router.post("/signup", async (req, res) => {
 
 router.post("/signup/otp", async (req, res) => {
  let {body} =req
- console.log(body)
 
 //  otp-start
      client.verify
@@ -238,7 +236,6 @@ router.post("/referral",varifyUser,async(req,res)=>{
     console.log({refferalExits})
     let hi = await updateVallet(userId,50)
     let hhi1 = await incrementVallet(refferalExits._id,100)
-    console.log({hi,hhi1})
        res.redirect('/')
   }else{
    res.render('user/referralPage',{refErr:'This Code is not Exits'})
@@ -253,7 +250,7 @@ router.get("/login", (req, res) => {
 
 router.post('/loginNumber', async(req, res) => {
   let { body}=  req
-   let dbUser = await User.findOne({ email: body.email });
+   let dbUser = await getUserByEmail(body.email)
   if (dbUser) {
     let passwordMatch = bcrypt.compareSync(req.body.password, dbUser.password)
     if (dbUser.blockOrNot) {
@@ -303,11 +300,9 @@ router.get('/loginOtp',(req,res)=>{
 router.post("/loginOtp", async (req, res) => {
   res.setHeader("cache-control", "private,no-cache,no-store,must-revalidate");
   let { body } = req;
-  console.log(body);
-  let dbUser = await User.findOne({ number: body.number });
+  let dbUser = await getUserByNumber(body.number);
 
     if (dbUser) {
-
       if (dbUser.blockOrNot) {
       res.render("user/otpLogin",{numErr:'You are banned to login'})
     }
@@ -318,7 +313,6 @@ router.post("/loginOtp", async (req, res) => {
         channel:"sms"
       })
       .then(data=>{
-        console.log(data);
 
       res.render("user/otpLoginVarify",{
         _id:dbUser._id,
@@ -340,9 +334,6 @@ router.post("/loginOtp", async (req, res) => {
 
 router.post("/loginOtpVarify", async (req, res) => {
  let {body} =req
-
- console.log(body);
-
      client.verify
     .services(process.env.serviceId)
     .verificationChecks
@@ -350,7 +341,6 @@ router.post("/loginOtpVarify", async (req, res) => {
         to:`+91${body.number}`,
         code:body.otp
     }).then(data=>{
-      console.log(data);
       if (!data.valid) {
       res.render("user/otpLoginVarify",{
         _id:body._id,
@@ -379,7 +369,6 @@ router.post("/loginOtpVarify", async (req, res) => {
         number:body.number,
         otpErr:''
       })
-      console.log(err)
     })
 
 })
@@ -391,11 +380,5 @@ router.get('/logout', (req, res) => {
   .redirect("/")
 
 });
-
-// router.get('/vallet',varifyUser,async(req,res)=>{
-//  let userId = req.userId 
-//  console.log(userId)
-//  valletView(userId).then(vallet=>console.log(vallet))
-// })
 
 module.exports = router;

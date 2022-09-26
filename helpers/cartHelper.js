@@ -1,9 +1,31 @@
 
-const { default: mongoose } = require("mongoose")
+const { default: mongoose, Types } = require("mongoose")
 const Cart = require("../model/cart")
 const Orders = require("../model/orders")
 
 module.exports = {
+    // allCartItems:(userId,productId)=>{
+    //     return new Promise((resolve, reject) =>{
+    //         // Cart.findOne({userId},{cart:1})
+    //         // .then(cart => console.log(cart))
+    //         Cart.aggregate([
+    //             {$match:{
+    //                userId:mongoose.Types.ObjectId(userId)
+    //             }},
+    //             // {$unwind:"$cart"},
+    //             {$lookup:{
+    //                 from:'products',
+    //                 localField:"cart.productId",
+    //                 foreignField:"_id",
+    //                 as:'cartItems'
+    //             }},
+    //         ])
+    //         .then(cart => {
+    //             console.log(cart)
+    //             resolve(cart)
+    //         })  
+    //     })
+    // },
     allCartItems:(userId,productId)=>{
         return new Promise((resolve, reject) =>{
             // Cart.findOne({userId},{cart:1})
@@ -12,13 +34,14 @@ module.exports = {
                 {$match:{
                    userId:mongoose.Types.ObjectId(userId)
                 }},
-                // {$unwind:"$cart"},
+                {$unwind:"$cart"},
                 {$lookup:{
                     from:'products',
                     localField:"cart.productId",
                     foreignField:"_id",
                     as:'cartItems'
                 }},
+                {$unwind:"$cartItems"},
             ])
             .then(cart => {
                 console.log(cart)
@@ -50,7 +73,6 @@ module.exports = {
     },
     removeFromCart:(userId,productId)=>{
         return new Promise((resolve,reject) =>{
-            console.log(userId,productId)
             Cart.updateOne({userId,"cart.productId":productId},{$pull:{cart:{productId:productId}}})
             .then(cart => resolve(cart))
         })
@@ -58,12 +80,19 @@ module.exports = {
     incrementProduct:(userId,productId)=>{
         return new Promise((resolve,reject) =>{
              Cart.updateOne({userId,"cart.productId":productId},{$inc:{"cart.$.quantity":1}})
-             .then(data=>resolve(data))
+             .then(data=>{
+                resolve(data)})
         });
     },
     decrementProduct:(userId,productId)=>{
         return new Promise((resolve,reject) =>{
-             Cart.updateOne({userId,"cart.productId":productId},{$inc:{"cart.$.quantity":-1}})
+             Cart.updateOne({userId:Types.ObjectId(userId),"cart.productId":productId},{$inc:{"cart.$.quantity":-1}})
+             .then(data=>resolve(data))
+        });
+    },
+    updateQuantity:(userId,cart)=>{
+        return new Promise((resolve,reject) =>{
+             Cart.updateOne({userId},{...cart})
              .then(data=>resolve(data))
         });
     },

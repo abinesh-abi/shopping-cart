@@ -4,8 +4,8 @@ const { varifyAdmin } = require("./varify/varifyAdmin");
 const fileUpload = require("express-fileupload");
 const fs = require('fs');
 // const { routes, path } = require("../app");
-const { log } = require("console");
 const Category = require("../model/category");
+const { getAllProducts, findProduct, deleteProduct, getEditCategories, findProductByName, addProduct } = require("../helpers/productHelper");
 
 var router = express.Router();
 
@@ -20,14 +20,13 @@ router.get("/", varifyAdmin, function (req, res) {
 });
 
 router.get("/check",varifyAdmin, async (req, res) => {
-  let data = await Products.find();
+  let data = await getAllProducts()
   res.json(data);
 });
 
 router.get("/check/:id",varifyAdmin, async (req, res) => {
   let name = req.params.id;
-  let data = await Products.find({ name: { $regex: `^${name}` } });
-
+  let data = await findProduct(name)
   if (data.length === 0) {
     res.json([]);
   } else {
@@ -36,10 +35,8 @@ router.get("/check/:id",varifyAdmin, async (req, res) => {
 });
 
 router.get("/delete/:id",varifyAdmin, async (req, res) => {
-  let name = req.params.id;
-  console.log(name)
-  let productDelete = await Products.findOneAndDelete({ name: req.params.id });
-  console.log(productDelete);
+  let id = req.params.id;
+  let productDelete = await deleteProduct(id)
   if (productDelete) {
     fs.unlink(`public/images/${productDelete._id}.jpg`,(err => {
   if (err) console.log(err);
@@ -47,27 +44,26 @@ router.get("/delete/:id",varifyAdmin, async (req, res) => {
     console.log("\nDeleted file: example_file.txt");
   }
 }))
-    fs.unlink(`public/images/${productDelete._id}_one.jpg`,(err => {
-  if (err) console.log(err);
-  else {
-    console.log("\nDeleted file: example_file.txt");
-  }
-}))
-    fs.unlink(`public/images/${productDelete._id}_two.jpg`,(err => {
-  if (err) console.log(err);
-  else {
-    console.log("\nDeleted file: example_file.txt");
-  }
-}))
+//     fs.unlink(`public/images/${productDelete._id}_one.jpg`,(err => {
+//   if (err) console.log(err);
+//   else {
+//     console.log("\nDeleted file: example_file.txt");
+//   }
+// }))
+//     fs.unlink(`public/images/${productDelete._id}_two.jpg`,(err => {
+//   if (err) console.log(err);
+//   else {
+//     console.log("\nDeleted file: example_file.txt");
+//   }
+// }))
 
   }
-  
   
   res.redirect("/admin/userManagement");
 });
 
 router.get("/addProduct",varifyAdmin,  async(req, res) => {
-  let val = await Category.aggregate([{$group:{_id:'array','categories':{$push:"$name"}}}])
+  let val = await  getEditCategories()
   let categories = val[0].categories
   res.render("admin/addProduct", {
     name: "",
@@ -79,10 +75,9 @@ router.get("/addProduct",varifyAdmin,  async(req, res) => {
 router.post("/addProduct", varifyAdmin, async(req, res) => {
   let { body, files } = req;
 
-  let val = await Category.aggregate([{$group:{_id:'array','categories':{$push:"$name"}}}])
-  let categories = val[0].categories
-  let productExists = await Products.findOne({name: body.name})
-
+  let val = await getEditCategories()
+    let categories = val[0].categories
+  let productExists = await findProductByName(body.name)
    //for validation purposes
   var invaliedName = (body.name.trim().length ==0 || !body.name.match(/^[a-zA-Z\-]/) )
   var invaliedSpec = (body.name.trim().length ==0 || !body.name.match(/^[a-zA-Z\-]/) )
@@ -121,11 +116,7 @@ router.post("/addProduct", varifyAdmin, async(req, res) => {
   });
   }
   else{
-    console.log(body,'hello-----------')
-  // const file = files.image;
-  const user = new Products({ ...body });
-   user
-    .save()
+  const user = addProduct(body)
     .then((user) =>{
       let {one, two, three}= files
       one.mv(`public/images/${user._id}.jpg`, (err) => {
@@ -148,7 +139,6 @@ router.post("/addProduct", varifyAdmin, async(req, res) => {
     res.redirect("/admin/productManagement")
     })
     .catch((err) =>{
-     console.log(err) 
      res.status(400).render("admin/addProduct", {
     name: req.body.name,
     categories,

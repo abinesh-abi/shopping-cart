@@ -24,7 +24,7 @@
    >Add product</a>
 </div>
 <div class="form-outline mb-4">
-  <input type="search" class="form-control" id="search">
+  <input onkeyup="check()" type="search" class="form-control" id="search">
   <!-- <label class="form-label" for="datatable-search-input">Search</label> -->
 </div>
 <div class="page-content">
@@ -82,9 +82,6 @@
     <!-- <script src="assets/js/bootstrap.js"></script> -->
     <script src="assets/js/app.js"></script>
     
-<!-- Need: Apexcharts -->
-<script src="assets/extensions/apexcharts/apexcharts.min.js"></script>
-<script src="assets/js/pages/dashboard.js"></script>
 
 <script>
 
@@ -96,6 +93,7 @@
       window.addEventListener("load", check);
       function check() {
         let inp = document.getElementById("search").value;
+        console.log(inp)
         fetch(`http://127.0.0.1:3000/admin/productManagement/check/${inp}`, {
           method: "GET",
         })
@@ -127,7 +125,7 @@
                 >Edit</a
               >
               <a
-                onclick="deleteUser('${element.name}')"
+                onclick="deleteUser('${element._id}')"
                 class="btn btn-danger "
                 >Delete</a
               >

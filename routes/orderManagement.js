@@ -10,53 +10,41 @@ router.get('/',varifyAdmin,(req,res)=>{
 })
 router.get('/check',varifyAdmin,async(req,res)=>{
     let admin = req.admin
-    // let users = ()
     let order = orderAggregate()
-    .then(data=>{
-        res.json(data)
-    })
-    .catch(err=>console.log(err))  
+    .then(data=>res.json(data))
+    .catch(error=>res.json({error}))  
 })
+
+//cancel order
 router.get('/cancel',varifyAdmin,async(req,res)=>{
     let {userId,orderId,payMethod,totalPrice} = req.query
-    
     let vallet = await valletView(userId)
     let newValletBalance = vallet.balance + Number(totalPrice) 
     if (payMethod != 'cod') {
-        updateVallet(userId,newValletBalance).then(data=>{
-        console.log(data)
-        }) .catch(err=>console.log(err))
+       await updateVallet(userId,newValletBalance)
     }
     cancelOrder(orderId)
-    .then(data=>{
-        console.log(data)
-        res.json(data)
-    })
-    .catch(err=>console.log(err))
+    .then(data=>res.json(data))
+    .catch(error=>res.json({error}))
 })
 router.get('/deleverd',varifyAdmin,(req,res)=>{
     let {orderId} = req.query
     deleverdOrder(orderId)
-    .then(data=>{
-        console.log(data)
-        res.json(data)
-    })
-    .catch(err=>console.log(err))
+    .then(data=>res.json(data))
+    .catch(error=>res.json({error}))
 })
 router.get('/shipped',varifyAdmin,(req,res)=>{
     let {orderId} = req.query
     shippedOrder(orderId)
-    .then(data=>{
-        res.json(data)
-    })
-    .catch(err=>console.log(err))
+    .then(data=>res.json(data))
+    .catch(error=>res.json({error}))
 })
 
 router.get('/remove',varifyAdmin,async(req,res)=>{
     let {orderId} = req.query
     removeOrder(orderId)
     .then(data=>res.json(data))
-    .catch(err=>console.log(err))
+    .catch(error=>res.json({error}))
 })
 
 module.exports = router

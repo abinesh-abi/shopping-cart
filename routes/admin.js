@@ -11,7 +11,9 @@ const productRouter = require("./productMnanagement")
 const categoryRouter = require("./category")
 const orderRouter = require("./orderManagement")
 const {varifyAdmin} =require("./varify/varifyAdmin")
-const couponRouter = require("./couponManagement")
+const couponRouter = require("./couponManagement");
+const { getAdminByEmail } = require("../helpers/adminHelper");
+const { getAllUser, findUser, getUserByEmail, userFindOne, userBanOrUnban } = require("../helpers/userHelper");
 
 var router = express.Router();
 
@@ -41,7 +43,7 @@ router.get("/login", (req, res) => {
 router.post("/login", async (req, res) => {
   res.setHeader("cache-control", "private,no-cache,no-store,must-revalidate");
   let { body } = req;
-  let admin = await Admin.findOne({ email: body.email });
+  let admin = await getAdminByEmail(body.email)
   if (!admin) {
     res.render("adminlogin/adminlogin", {
       emailErr: "Mail Mismatch",
@@ -73,20 +75,11 @@ router.post("/login", async (req, res) => {
   }
 });
 
+/// logout
 router.get("/logout", (req, res) => {
   res.clearCookie("adminToken").status(200).redirect("login");
 });
 
-//user managemet
-// router.get("/userManagement", varifyAdmin, async (req, res) => {
-//   res.setHeader("cache-control", "private,no-cache,no-store,must-revalidate");
-//   let dbUsers = await User.find();
-
-//   res.render("admin/userManagement", {
-//     admin: req.admin || "admin",
-//     dbUsers,
-//   });
-// });
 router.get("/userManagement", varifyAdmin, async (req, res) => {
   res.setHeader("cache-control", "private,no-cache,no-store,must-revalidate");
   res.render("admin/userManagement2", {
@@ -95,13 +88,13 @@ router.get("/userManagement", varifyAdmin, async (req, res) => {
 });
 
 router.get("/check",varifyAdmin, async (req, res) => {
-  let data = await User.find();
+  let data = await getAllUser()
   res.json(data);
 });
 
 router.get("/check/:id",varifyAdmin, async (req, res) => {
   let name = req.params.id;
-  let data = await User.find({ name: { $regex: `^${name}` } });
+  let data = await findUser(name)
 
   if (data.length === 0) {
     res.json([]);
@@ -118,80 +111,26 @@ router.get("/create",varifyAdmin, (req, res) => {
   });
 });
 
-router.post("/create",varifyAdmin, async (req, res) => {
-  let { body } = req;
-
-  let dbUser = User.findOne({ email: body.email }).then(async (user) => {
-    if (user) {
-      res.render("admin/createUser", {
-        name: body.name,
-        emailErr: "this email is already in use",
-        email: user.email,
-      });
-    } else {
-      let hashedPassword = bcrypt.hashSync(body.password, 10);
-      let { name, email } = body;
-      // await User.insertOne({name,email,password:hashedPassword});
-      let insertedUser = await new User({
-        name,
-        email,
-        password: hashedPassword,
-      }).save();
-      res.redirect("/admin/userManagement");
-    }
-  });
-});
+// delete user
 router.get("/delete/:id",varifyAdmin, async (req, res) => {
-  let mail = req.params.id;
-  let userDelete = await User.findOneAndDelete({ _id: req.params.id });
+  let _id = req.params.id;
+  let userDelete = await User.findOneAndDelete({ _id});
   res.redirect("/admin/userManagement");
-});
-
-router.get("/edit/:id",varifyAdmin,(req, res) => {
-  let id = req.params.id;
-  User.findOne({ _id: id }).then((user) => {
-    // user._id = user._id.toString();
-    console.log(user);
-    res.render("admin/useredit", { emailErr: "",_id: user._id,name:user.name,email:user.email });
-  });
-});
-
-router.post("/edit/:id",varifyAdmin, async(req, res) => {
-  let { body } = req;
-  let id = req.params.id;
-    let userExists = await User.findOne({ _id:{$ne:id},email:body.email })
-    .then(async user=>{
-    if (user) {
-    res.render("admin/useredit", { emailErr: "user aready exist", ...body,_id:id });
-    }else {
-      await User.findOneAndUpdate({ _id: id }, { $set: body });
-      res.redirect("/admin/userManagement");
-    }
-    })
-
 });
 
 router.get("/banOrNot/:id",async(req,res)=>{
   let id = req.params.id;
-  let user = await User.findOne({ _id: id })
-
+  let user = await userFindOne(id)
   if (user.blockOrNot) {
-   User.findOneAndUpdate({_id: id},{blockOrNot:false}) .then(data =>{
+    let data = userBanOrUnban(id,false)
     res.send(data)
-   })
   }else{
-    User.findOneAndUpdate({_id: id},{blockOrNot:true}) .then(data=>{
-    res.send(data)
-    })
+    let data = userBanOrUnban(id,true)
+    res.send(data);
 
   }
   
 })
 
-// router.get("/hi", (req, res) => {
-//   let admin = new Admin({name:"abi", email: "abi@gmail.com", password: 1234 })
-//     .save()
-//     .then((data) => console.log(data));
-// });
 
 module.exports = router;

@@ -1,5 +1,5 @@
 const express = require('express'); 
-const { productExistsInCart, addToCart, allCartItems, removeFromCart, incrementProduct, decrementProduct, placeOrder, getCart, emptyCart } = require('../helpers/cartHelper');
+const { productExistsInCart, addToCart, allCartItems, removeFromCart, incrementProduct, decrementProduct, placeOrder, getCart, emptyCart, updateQuantity } = require('../helpers/cartHelper');
 const Razorpay = require('razorpay'); 
 
 const { viewProfile, addAddress } = require('../helpers/profileHelper');
@@ -97,39 +97,37 @@ router.get('/getCartDetails',varifyUser,async (req,res)=>{
    let name = req.userName
   let id = req.userId
   let userId =  req.userId
-  console.log(name,id)
   let categories = await Category.find()
-   let val = await allCartItems(userId)
-
-   if(val.length ===0){
+   let cart = await allCartItems(userId)
+   if(cart.length ===0){
     res.json({cart:false})
    }
   else {
-   let cart = val[0].cartItems
-   let qty = val[0].cart
+
+    //find category
     let category ={}
     for(val of categories){
-      category[val.name]=val.offer
+     category[val.name]=val.offer 
     }
-
-  // find total Price 
+//   // find total Price 
    let totalPrice = 0
    let totalOfferPrice = 0
 //calculate totalPrice
    for (const val in cart) {
-    let price = cart[val].price
-    let totalQuantity = qty[val].quantity
+    let price = cart[val].cart.price
+    let totalQuantity = cart[val].cart.quantity
     totalPrice += price * totalQuantity
-    totalOfferPrice += (price -(price *category[cart[val].category]/100))*totalQuantity
+    totalOfferPrice += (price -(price *category[cart[val].cartItems.category]/100))*totalQuantity
    }
-   res.json({cart,qty,totalPrice,totalOfferPrice,categories,category})
+   parseInt(totalOfferPrice)
+   res.json({cart,totalPrice,totalOfferPrice:parseInt(totalOfferPrice),categories,category})
   }
 })
 
- router.get('/cartJson',varifyUser,async(req,res) => {
-  let userId = req.userId
-  getCart(userId).then(cart   => res.json(cart))
- });
+//  router.get('/cartJson',varifyUser,async(req,res) => {
+//   let userId = req.userId
+//   getCart(userId).then(cart   => res.json(cart))
+//  });
 
  //add to cart
  router.get('/addToCart',varifyUser,async(req,res)=> { 
@@ -184,9 +182,30 @@ router.get('/getCartDetails',varifyUser,async (req,res)=>{
   })
 
 
-  router.get('/cart/increment/:id',varifyUser,(req,res)=>{
+  router.get('/cart/increment/:id',varifyUser,async(req,res)=>{
     let userId = req.userId
+    // let name = req.params.name
+
+    // console.log({userId,name})
     let productId = req.params.id
+    // let cartDetails = await allCartItems(userId)
+
+    // let hi
+    // for(val of cartDetails[0].cart){
+    //   val.productId = val.productId.toString()
+    //   val._id = val._id.toString()
+    //  if (val.productId.toString()==productId) {
+    //   hi =  val.quantity +=1
+      
+    //  } 
+    // }
+    // console.log(cartDetails[0].cart)
+    // let updated = updateQuantity(userId,cartDetails[0]).then(data =>{
+    //   // console.log(data)
+    // }).catch(err =>console.log(err))
+    // res.json(cartDetails[0])
+    
+    
     incrementProduct(userId,productId).then(data=>{
       res.json(data)
     }) 
