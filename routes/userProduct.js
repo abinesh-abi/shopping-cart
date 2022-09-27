@@ -18,6 +18,7 @@ const paypal = require("@paypal/checkout-server-sdk");
 const { resolve } = require('path');
 const { varifyCoupon } = require('../helpers/couponHelper');
 const { valletView, updateVallet } = require('../helpers/valletHelper');
+const { addToWishlist } = require('../helpers/whishlistHelper');
 const Environment =
   process.env.NODE_ENV === "production"
     ? paypal.core.LiveEnvironment
@@ -58,6 +59,13 @@ router.get('/view/:id',userLogged, async(req, res) => {
     res.render("user/categoryView",{name,product:product,category,categories,off})
   })
  })
+
+router.get('/addToWishlist',varifyUser,async(req,res) =>{
+  let userId = req.userId
+  let {productId} = req.query
+  let data = await addToWishlist(userId,productId)
+  res.json(data)
+})
 
  router.get('/cart',varifyUser,async(req,res)=>{
   let categories = await Category.find()

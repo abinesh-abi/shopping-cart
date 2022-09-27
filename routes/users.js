@@ -381,4 +381,8 @@ router.get('/logout', (req, res) => {
 
 });
 
+router.get('/wishlist',varifyUser, (req, res) => {
+  res.render("user/wishlist")
+})
+
 module.exports = router;

@@ -41,7 +41,7 @@
                     <p class="price mt-1">&#8377 <%=offerPrice %></p>
                     <p class="text-center buttons">
                       <a onclick="addToCart('<%=product._id%>','<%=offerPrice %>')" class="btn btn-primary"><i class="fa fa-shopping-cart"></i> Add to cart</a>
-                      <!-- <a href="basket.html" class="btn btn-outline-primary"><i class="fa fa-heart"></i> Add to wishlist</a> -->
+                      <a onclick="addToWishlist('<%=product._id%>')" class="btn btn-outline-primary"><i class="fa fa-heart"></i> Add to wishlist</a>
                     </p>
                   </div>
                   <!-- <div data-slider-id="1" class="owl-thumbs">
@@ -92,6 +92,14 @@
         method: 'GET',
       }).then(data=> data.json())
       .then(data=>alert(data.message))
+      }
+      function addToWishlist(productId) {
+        console.log(productId)
+       fetch(`/product/addToWishlist?productId=${productId}`,{
+        method: 'GET',
+      }).then(data=> data.json())
+      .then(data=> alert('Add to wishlist'))
+      
       }
     </script>
   </body>
