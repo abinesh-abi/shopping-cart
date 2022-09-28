@@ -7,10 +7,8 @@ router.get("/",(req, res)=>{
 })
 router.get('/totalErnigs',(req,res)=>{
     totalErnings().then(data=>{
-        console.log(data)
-        console.log(data[0].totalErnings)
         res.json(data[0].totalErnings)
-    }).catch(err=>console.log(err))
+    }).catch(err => res.json(err))
 })
 
 router.get('/orderDayVice',(req,res)=>{
@@ -21,7 +19,6 @@ router.get('/orderDayVice',(req,res)=>{
 })
    .catch(err=>{
     res.send('err') 
-    console.log(err)
 })
 })
 
@@ -33,7 +30,6 @@ router.get('/orderWeekVice',(req,res)=>{
 })
    .catch(err=>{
     res.send('err') 
-    console.log(err)
 })
 })
 router.get('/orderMonthVice',(req,res)=>{
@@ -44,7 +40,6 @@ router.get('/orderMonthVice',(req,res)=>{
 })
    .catch(err=>{
     res.send('err') 
-    console.log(err)
 })
 })
 

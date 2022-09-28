@@ -18,7 +18,7 @@ const paypal = require("@paypal/checkout-server-sdk");
 const { resolve } = require('path');
 const { varifyCoupon } = require('../helpers/couponHelper');
 const { valletView, updateVallet } = require('../helpers/valletHelper');
-const { addToWishlist } = require('../helpers/whishlistHelper');
+const { addToWishlist, getWishlist, removeFromWishlist } = require('../helpers/whishlistHelper');
 const Environment =
   process.env.NODE_ENV === "production"
     ? paypal.core.LiveEnvironment
@@ -61,10 +61,34 @@ router.get('/view/:id',userLogged, async(req, res) => {
  })
 
 router.get('/addToWishlist',varifyUser,async(req,res) =>{
-  let userId = req.userId
-  let {productId} = req.query
-  let data = await addToWishlist(userId,productId)
+  try{
+    let userId = req.userId
+    let {productId} = req.query
+    let data = await addToWishlist(userId,productId)
   res.json(data)
+  }catch(err){res.json(err)}
+
+
+})
+
+router.get("/getWishlist",varifyUser,async(req,res) =>{
+  try{
+    let userName = req.userName
+  let userId = req.userId
+  let items = await getWishlist(userId)
+  res.json({items,userName})
+  }catch(e){
+    res.json({error:e})
+  }
+})
+
+router.put("/removeWishlist",varifyUser,async(req,res) =>{
+  try{
+  let {productId} = req.body
+  let userId = req.userId
+  let data = removeFromWishlist(userId,productId) 
+  res.json(data)
+  }catch(err){res.json(err)}
 })
 
  router.get('/cart',varifyUser,async(req,res)=>{
