@@ -44,7 +44,7 @@
       window.addEventListener("load", check);
       function check() {
         let inp = document.getElementById("search").value;
-        fetch(`http://127.0.0.1:3000/admin/orders/check/${inp}`, {
+        fetch(`/admin/orders/check/${inp}`, {
           method: "GET",
         })
           .then(function (response) {
@@ -165,7 +165,7 @@
         let confimDelete = confirm(`Are you sure want to remove this order`);
         if (confimDelete) {
           fetch(
-            `http://127.0.0.1:3000/admin/orders/remove/?orderId=${id}&productId=${proId}`,
+            `/admin/orders/remove/?orderId=${id}&productId=${proId}`,
             {
               method: "GET",
             }
@@ -179,18 +179,18 @@
       }
 
       function cancelOrder(userId,orderId,payMethod,totalPrice){
-        fetch(`http://127.0.0.1:3000/admin/orders/cancel?userId=${userId}&orderId=${orderId}&payMethod=${payMethod}&totalPrice=${totalPrice}`)
+        fetch(`/admin/orders/cancel?userId=${userId}&orderId=${orderId}&payMethod=${payMethod}&totalPrice=${totalPrice}`)
         .then(data=>data.json())
         .then((response) => check())
 
       }
       function deleverOrder(id,proId){
-        fetch(`http://127.0.0.1:3000/admin/orders/deleverd?orderId=${id}`)
+        fetch(`/admin/orders/deleverd?orderId=${id}`)
         .then(data=>data.json())
         .then((response) => check())
       }
       function shippedOrder(id,proId){
-        fetch(`http://127.0.0.1:3000/admin/orders/shipped?orderId=${id}`)
+        fetch(`/admin/orders/shipped?orderId=${id}`)
         .then(data=>data.json())
         .then((response) => check())
       }

@@ -1,22 +1,11 @@
-<!-- <style>
-body {
-  background-color: #fbfbfb;
-}
- </style> -->
 <header class="header mb-5">
-  <!--
-      *** TOPBAR ***
-      _________________________________________________________
-      -->
   <div id="top">
     <div class="container">
       <div class="row">
-        <!-- <div class="col-lg-6 offer mb-3 mb-lg-0"><a href="#" class="btn btn-success btn-sm">Offer of the day</a><a href="#" class="ml-1">Get flat 35% off on orders over $50!</a></div> -->
         <div class="col-lg-6 offer mb-3 mb-lg-0"></div>
         <div class="col-lg-6 text-center text-lg-right">
           <ul id="loginStatus" class="menu list-inline mb-0">
             <li class="list-inline-item "><a href="/admin">Admin</a></li>
-			<!-- data came from fetch -->
           </ul>
 
         </div>
@@ -184,7 +173,7 @@ body {
   <script defer>
 	document.addEventListener('load',getValues())
 	function getValues() {
-    fetch(`http://127.0.0.1:3000/navHeadInfo`, {
+    fetch(`/navHeadInfo`, {
         method: "GET",
      }).then(data=>  data.json())
 	 .then(data=>{

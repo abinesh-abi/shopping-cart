@@ -15,7 +15,7 @@
 
         <div class="container text-center width">
           <a
-            href="http://127.0.0.1:3000/admin/productManagement/addProduct"
+            href="/admin/productManagement/addProduct"
             class="btn btn-success mb-2"
             >Add product</a
           >
@@ -48,7 +48,7 @@
       window.addEventListener("load", check);
       function check() {
         let inp = document.getElementById("search").value;
-        fetch(`http://127.0.0.1:3000/admin/productManagement/check/${inp}`, {
+        fetch(`/admin/productManagement/check/${inp}`, {
           method: "GET",
         })
           .then(function (response) {
@@ -74,7 +74,7 @@
             <td class="text-end">
               
               <a
-                href="http://127.0.0.1:3000/admin/productManagement/editProduct/${element._id}"
+                href="/admin/productManagement/editProduct/${element._id}"
                 class="btn btn-success "
                 >Edit</a
               >
@@ -98,7 +98,7 @@
         let confimDelete = confirm(`Are you sure you want to delete ${name}`);
         if (confimDelete) {
           fetch(
-            `http://127.0.0.1:3000/admin/productManagement/delete/${name}`,
+            `/admin/productManagement/delete/${name}`,
             {
               method: "GET",
             }

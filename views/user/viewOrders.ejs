@@ -30,7 +30,7 @@
       navHilight.classList.add("active");
   check()
       function check() {
-        fetch(`http://127.0.0.1:3000/profile/orders`, {
+        fetch(`/profile/orders`, {
           method: "GET",
         })
           .then(function (response) {

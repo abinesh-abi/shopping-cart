@@ -173,7 +173,7 @@ function addCoupon() {
     else{
 
 
-  fetch(`http://127.0.0.1:3000/admin/coupon/add?code=${code}&value=${value}&date=${date}`,)
+  fetch(`/admin/coupon/add?code=${code}&value=${value}&date=${date}`,)
   .then(response => response.json())
   .then(response =>{
     if (response.error) {
@@ -192,7 +192,7 @@ function addCoupon() {
 
 function remove(id){
   console.log(id)
-  fetch(`http://127.0.0.1:3000/admin/coupon/remove?id=${id}`,)
+  fetch(`/admin/coupon/remove?id=${id}`,)
   .then(response => response.json())
   .then(response =>{
     getCoupons()

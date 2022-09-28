@@ -307,7 +307,7 @@
       navHilight.classList.add('active')
 
     let totalUsers = document.getElementById('totalUsers')
-    fetch("http://127.0.0.1:3000/admin/check",{
+    fetch("/admin/check",{
         method:'get'
     }).then(data=>data.json())
     .then(data=>{
@@ -315,7 +315,7 @@
         totalUsers.innerHTML = data.length
     })
     
-    fetch("http://127.0.0.1:3000/admin/productManagement/check",{
+    fetch("/admin/productManagement/check",{
         method: 'get'
     }).then(data=>data.json())
     .then(data=>{
