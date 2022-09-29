@@ -29,7 +29,11 @@ router.get("/", varifyAdmin, (req, res) => {
   res.render("admin/dashboard", { admin: req.admin });
 });
 
-
+  let admin ={
+    name : 'abi',
+    email:"abi@gmail.com",
+    password :'1234'
+  }
 
 //Admin login
 router.get("/login", (req, res) => {
@@ -43,7 +47,7 @@ router.get("/login", (req, res) => {
 router.post("/login", async (req, res) => {
   res.setHeader("cache-control", "private,no-cache,no-store,must-revalidate");
   let { body } = req;
-  let admin = await getAdminByEmail(body.email)
+  // let admin = await getAdminByEmail(body.email)
   if (!admin) {
     res.render("adminlogin/adminlogin", {
       emailErr: "Mail Mismatch",
