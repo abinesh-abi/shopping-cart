@@ -380,7 +380,6 @@ router.post("/paypal/createOrder", async (req, res) => {
     res.json({ id: order.result.id })
   } catch (e) {
     res.status(500).json({ error: e.message })
-    console.log(e.message)
   }
 });
 
@@ -410,28 +409,38 @@ router.get('/placeOrder/:id',varifyUser,async(req,res)=>{
     .catch(err =>console.log(err)) 
 })
 
-router.get('/addAddressCheckout',varifyUser,async(req,res)=>{
-    let userId = req.userId
-    let name = req.userName
-    console.log(req)
-    res.render("user/addAddressCheckout",{name,Err:''})
-})
+// router.get('/addAddressCheckout',varifyUser,async(req,res)=>{
+//     let userId = req.userId
+//     let name = req.userName
+//     console.log(req)
+//     res.render("user/addAddressCheckout",{name,Err:''})
+// })
 
 router.post("/addAddressCheckout",varifyUser,async(req,res)=>{
     let userId = req.userId
     let userName = req.userName
     let address = req.body.address
-
+  console.log(address)
     //validation
     let invaliedAddress = (address.trim().length ==0 )
 
     if (invaliedAddress) {
-        res.render("user/addAddressCheckout",{name:userName,Err:'This feild cannot be empty'})
+      res.json({inputErr:"Enter valid address"})
     }else{
             addAddress(userId,address)
             .then(user=>{
-                res.redirect("/product/checkout")
+              res.json({user:user})
             })
     }
+})
+router.get("/getaddress",varifyUser,async(req,res)=>{
+  try {
+    let userId = req.userId
+    viewProfile(userId).then(data=>{
+      res.json(data.address)
+    }).catch(err=>res.json({err}) ) 
+  } catch (error) {
+   res.json({error:error}) 
+  }
 })
 module.exports = router

@@ -9,7 +9,7 @@ module.exports = {
   viewProfileByIdAndEmail: (email, number) => {
     return new Promise((resolve, reject) => {
       User.findOne({ number, email }).then((user) => {
-        console.log(user);
+        resolve(user)
       });
     });
   },
@@ -26,7 +26,6 @@ module.exports = {
       User.updateOne({ _id: userId }, { $push: {address} })
       .then((user)=>{
         resolve(user);
-        console.log(user)
       }).catch((err) => {
        reject(err)
       })
@@ -38,12 +37,11 @@ module.exports = {
     .then((user)=>{
       resolve(user)
     }).catch((err) => {
-      console.log(err)
+      reject(err)
     })
     })
   },
   deleteAddress:(userId,index)=>{
-    console.log(userId,index)
     return new Promise((resolve, reject) => {
       User.updateOne({ _id: userId},{ $unset: {[`address.${index}`]:1 }})
       .then(() => { 
@@ -53,7 +51,6 @@ module.exports = {
       })
       .catch((err) => reject(err)); 
       })  
-      // User.updateOne({ _id: userId},{ $pop: {address: 1}})
     })
   }
 };

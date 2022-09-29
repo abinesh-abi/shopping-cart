@@ -61,16 +61,17 @@
                       <div class=" ms-2 mt-2">
 
                            
-                      <select class="custom-select" name="address" required>
-                      <%for(index in user.address){%>
-                        <option selected value="<%=user.address[index]%>"><%=user.address[index]%></option>
-                      <%}%>
+                      <select id="select" class="custom-select" name="address" required>
+
                       </select>
        
                       </div>
-                      <a href="/product/addAddressCheckout" type="button" class="btn btn-primary " style="display: inline;">
+                      <!-- <a href="/product/addAddressCheckout" type="button" class="btn btn-primary " style="display: inline;">
                         Add New Address
-                    </a>
+                    </a>  -->
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                        Add New Address
+                    </button>
                   </li>
                   <li>
                       <div class="form-group">
@@ -92,6 +93,38 @@
             <hr class="my-4" />
 
           </div>
+          <!-- Add address Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+            <div class="card p-4">
+                <div class="text-left mt-4">
+                    <h5>Add Address</h5>
+                </div>
+
+                <div class="mt-2">
+                  <textarea id='address' name="address" class="form-control" rows="5"></textarea>
+                </div>
+               <p id="inputErr" class="text-danger"></p> 
+                <!-- <div class="mt-3">
+                    <button type="submit" class="button btn btn-primary w-100 d-flex justify-content-center align-items-center"><span>Save</span><i class="fa fa-long-arrow-right ms-2"></i></button>
+                </div> -->
+            </div>
+      </div>
+      <div class="modal-footer">
+        <button id="close" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button onclick="addAddress()" type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
         </div>
         <!-- <div class="card mb-4">
           <div class="card-body">
@@ -232,6 +265,35 @@
           document.getElementById('vallet').disabled = true;  
       }
 
+    })
+   }
+
+   function addAddress() {
+   let address = document.getElementById('address')
+      fetch(`/product/addAddressCheckout`,{
+        method:'post' ,
+        headers: {"Content-Type": "application/json",},
+        body:JSON.stringify({address:address.value})
+      }).then(data=>data.json(data))
+      .then(data=>{
+       if(!data.inputErr){
+        updateAddress()
+       document.getElementById("close").click(); 
+       }else if(data.inputErr){
+        document.getElementById('inputErr').innerHTML= data.inputErr
+       }
+      })
+   }
+   updateAddress()
+  function updateAddress(){
+    fetch('/product/getaddress').then(data=>data.json())
+    .then(data=>{
+      let temp
+      for(val of data){
+        temp +=`
+          <option selected value="${val}">${val}</option>
+        `}
+      document.getElementById("select").innerHTML=temp
     })
    }
 </script>
