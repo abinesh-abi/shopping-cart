@@ -10,11 +10,12 @@ const profileRouter = require("./userProfile")
 const Products = require("../model/product")
 const User = require("../model/users");
 const { request } = require("express");
-const { categoryViceView, referralCheck, userFindOne, getCategories, getUser, getUserByEmail, getUserByNumber } = require("../helpers/userHelper");
+const { categoryViceView, referralCheck, userFindOne, getCategories, getUser, getUserByEmail, getUserByNumber } = require("../service/userService");
 const Category = require("../model/category");
-const { getCart } = require("../helpers/cartHelper");
+const { getCart } = require("../service/cartService");
 const { varifyUser } = require("./varify/varifyUser");
-const { updateVallet, valletView, incrementVallet } = require("../helpers/valletHelper");
+const { updateVallet, valletView, incrementVallet } = require("../service/valletService");
+const {  } = require("../controllers/user");
 var router = express.Router();
 
 

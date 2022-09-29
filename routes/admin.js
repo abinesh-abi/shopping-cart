@@ -12,8 +12,8 @@ const categoryRouter = require("./category")
 const orderRouter = require("./orderManagement")
 const {varifyAdmin} =require("./varify/varifyAdmin")
 const couponRouter = require("./couponManagement");
-const { getAdminByEmail } = require("../helpers/adminHelper");
-const { getAllUser, findUser, getUserByEmail, userFindOne, userBanOrUnban } = require("../helpers/userHelper");
+const { getAdminByEmail } = require("../service/adminService");
+const { getAllUser, findUser, getUserByEmail, userFindOne, userBanOrUnban } = require("../service/userService");
 
 var router = express.Router();
 

@@ -1,9 +1,9 @@
 const express = require('express'); 
-const { productExistsInCart, addToCart, allCartItems, removeFromCart, incrementProduct, decrementProduct, placeOrder, getCart, emptyCart, updateQuantity } = require('../helpers/cartHelper');
+const { productExistsInCart, addToCart, allCartItems, removeFromCart, incrementProduct, decrementProduct, placeOrder, getCart, emptyCart, updateQuantity } = require('../service/cartService');
 const Razorpay = require('razorpay'); 
 
-const { viewProfile, addAddress } = require('../helpers/profileHelper');
-const { userFindOne } = require('../helpers/userHelper');
+const { viewProfile, addAddress } = require('../service/profileService');
+const { userFindOne } = require('../service/userService');
 const Cart = require('../model/cart');
 const Category = require('../model/category');
 const Orders = require('../model/orders');
@@ -16,9 +16,9 @@ const { varifyUser } = require("./varify/varifyUser");
 // const paypal = require('paypal-rest-sdk');
 const paypal = require("@paypal/checkout-server-sdk");
 const { resolve } = require('path');
-const { varifyCoupon } = require('../helpers/couponHelper');
-const { valletView, updateVallet } = require('../helpers/valletHelper');
-const { addToWishlist, getWishlist, removeFromWishlist, wishlistStatus } = require('../helpers/whishlistHelper');
+const { varifyCoupon } = require('../service/couponService');
+const { valletView, updateVallet } = require('../service/valletService');
+const { addToWishlist, getWishlist, removeFromWishlist, wishlistStatus } = require('../service/whishlistService');
 const Environment =
   process.env.NODE_ENV === "production"
     ? paypal.core.LiveEnvironment
@@ -29,12 +29,6 @@ const paypalClient = new paypal.core.PayPalHttpClient(
     process.env.PAYPAL_SECRET
   )
 )
-// // Pypal configaration
-// paypal.configure({
-//   'mode': 'sandbox', //sandbox or live
-//   'client_id':process.env.PAYPAL_CLIENT_ID,
-//   'client_secret':process.env.PAYPAL_SECRET
-// });
 
 const router = express.Router()
 
@@ -172,34 +166,11 @@ router.get('/getCartDetails',varifyUser,async (req,res)=>{
      } 
     }
   })
-//  router.get('/addToCart/:id',varifyUser,async(req,res)=> { 
-
-//     let productId = req.params.id
-//     let userId = req.userId
-
-//     try {
-
-//      let productExist = await productExistsInCart(userId,productId)
-//      console.log(productExist)
-//      if (productExist) {
-//       res.json({message:"Already exists in cart"})
-//      }else{
-//       console.log('not found')
-//       let cart = await addToCart(userId,productId)
-//       res.json({message:"successfully added to cart"})
-//      }
-//     } catch (err) {
-//      if (err) {
-//       res.send(err)
-//      } 
-//     }
-//   })
 
   router.get("/cart/delete/:id",varifyUser,(req,res)=>{
     let userId = req.userId
     let productId = req.params.id
     removeFromCart(userId,productId).then(data=>{
-      // res.redirect('/product/cart')
       res.json(data)
     })
   })
@@ -207,28 +178,7 @@ router.get('/getCartDetails',varifyUser,async (req,res)=>{
 
   router.get('/cart/increment/:id',varifyUser,async(req,res)=>{
     let userId = req.userId
-    // let name = req.params.name
-
-    // console.log({userId,name})
     let productId = req.params.id
-    // let cartDetails = await allCartItems(userId)
-
-    // let hi
-    // for(val of cartDetails[0].cart){
-    //   val.productId = val.productId.toString()
-    //   val._id = val._id.toString()
-    //  if (val.productId.toString()==productId) {
-    //   hi =  val.quantity +=1
-      
-    //  } 
-    // }
-    // console.log(cartDetails[0].cart)
-    // let updated = updateQuantity(userId,cartDetails[0]).then(data =>{
-    //   // console.log(data)
-    // }).catch(err =>console.log(err))
-    // res.json(cartDetails[0])
-    
-    
     incrementProduct(userId,productId).then(data=>{
       res.json(data)
     }) 
@@ -259,14 +209,6 @@ try {
   let totalPrice = req.query.offerPrice
    let cart = val[0].cartItems
    let qty = val[0].cart
-  // find tota Price 
-  //  let totalPrice = 0
-  //  for (const val in cart) {
-  //   let price = cart[val].price
-  //   let totalQuantity = qty[val].quantity
-  //   totalPrice += price * totalQuantity
-  //  }
-  //  res.json(user)
     Cart.updateOne({userId},{$set:{totalPrice}})
     .then((data)=>{console.log([data])})
     res.render('user/checkout',{name,totalPrice,user,categories})
@@ -292,6 +234,7 @@ var instance = new Razorpay({
    })
 
   router.post("/checkout",varifyUser,async(req,res) => {
+    console.log(req.body)
   let categories = await Category.find()
     let name = req.userName
     let userId = req.userId
@@ -332,7 +275,8 @@ var instance = new Razorpay({
     .catch(err =>console.log(err)) 
 
     // wallet
-    } else if(req.body.payMethod=='vallet'){
+    } 
+    else if(req.body.payMethod=='vallet'){
     let cart = await getCart(userId)
     let product = cart.cart
     let method  = 'vallet'
@@ -375,15 +319,6 @@ var instance = new Razorpay({
         }
     )
 
-   // find all orders 
-    // instance.orders.all({},
-    //   (err, order)=>{
-    //       //STEP 3 & 4: 
-    //       if(!err)
-    //         console.log(order)
-    //       else
-    //         console.log(err)
-    //     })
   })
   // varify order
   router.post('/razorpayVarify',varifyUser, async(req,res)=>{
@@ -474,48 +409,6 @@ router.get('/placeOrder/:id',varifyUser,async(req,res)=>{
     })
     .catch(err =>console.log(err)) 
 })
-
-// router.post("/paypal/createOrder", (req, res) => {
-//   const create_payment_json = {
-//     "intent": "sale",
-//     "payer": {
-//         "payment_method": "paypal"
-//     },
-//     "redirect_urls": {
-//         "return_url": "http://localhost:3000/success",
-//         "cancel_url": "http://localhost:3000/cancel"
-//     },
-//     "transactions": [{
-//         "item_list": {
-//             "items": [{
-//                 "name": "Red Sox Hat",
-//                 "sku": "001",
-//                 "price": "2.00",
-//                 "currency": "USD",
-//                 "quantity": 1
-//             }]
-//         },
-//         "amount": {
-//             "currency": "USD",
-//             "total": "2.00"
-//         },
-//         "description": "Hat for the best team ever"
-//     }]
-// };
- 
-// paypal.payment.create(create_payment_json, function (error, payment) {
-//   if (error) {
-//       throw error;
-//   } else {
-//       for(let i = 0;i < payment.links.length;i++){
-//         if(payment.links[i].rel === 'approval_url'){
-//           res.redirect(payment.links[i].href);
-//         }
-//       }
-//   }
-// });
- 
-// });
 
 router.get('/addAddressCheckout',varifyUser,async(req,res)=>{
     let userId = req.userId

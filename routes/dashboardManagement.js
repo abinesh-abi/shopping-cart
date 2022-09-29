@@ -1,46 +1,20 @@
 var express = require("express");
-const { orderInWeek, totalErnings, orderInMonth, orderDayVice, orderMonthVice, orderWeekVice } = require("../helpers/orderHelper");
+const dashboardController = require("../controllers/dashboard");
 var router = express.Router();
 
-router.get("/",(req, res)=>{
-    res.render('admin/dashboard')
-})
-router.get('/totalErnigs',(req,res)=>{
-    totalErnings().then(data=>{
-        res.json(data[0].totalErnings)
-    }).catch(err => res.json(err))
-})
+/******************* get dashboard Page **********************/
+router.get("/",dashboardController.getDashboardPage)
 
-router.get('/orderDayVice',(req,res)=>{
-   orderDayVice()
-   .then(data=>{
-    // let date = new Date((data[0].detail.date)).toDateString();
-    res.json(data)
-})
-   .catch(err=>{
-    res.send('err') 
-})
-})
+/******************* get total Ernigs **********************/
+router.get('/totalErnigs',dashboardController.totalErnings)
 
-router.get('/orderWeekVice',(req,res)=>{
-    orderWeekVice()
-   .then(data=>{
-    // let date = new Date((data[0].detail.date)).toDateString();
-    res.json(data)
-})
-   .catch(err=>{
-    res.send('err') 
-})
-})
-router.get('/orderMonthVice',(req,res)=>{
-    orderMonthVice()
-   .then(data=>{
-    // let date = new Date((data[0].detail.date)).toDateString();
-    res.json(data)
-})
-   .catch(err=>{
-    res.send('err') 
-})
-})
+/*******************get data dayvice **********************/
+router.get('/orderDayVice',dashboardController.datyViceOrder)
+
+/*******************get data weekvice **********************/
+router.get('/orderWeekVice',dashboardController.weekViceOrder)
+
+/*******************get data monthvice **********************/
+router.get('/orderMonthVice',dashboardController.monthViceView)
 
 module.exports = router;

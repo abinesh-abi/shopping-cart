@@ -1,50 +1,23 @@
 var express = require("express");
-const { orderAggregate, removeOrder, cancelOrder, deleverdOrder, shippedOrder } = require("../helpers/orderHelper");
-const { valletView, updateVallet } = require("../helpers/valletHelper");
+const orderController = require("../controllers/orders");
 const { varifyAdmin } = require("./varify/varifyAdmin");
 var router = express.Router();
 
-router.get('/',varifyAdmin,(req,res)=>{
-    let admin = req.admin
-   res.render('admin/orderManagement2', { admin}) 
-})
-router.get('/check',varifyAdmin,async(req,res)=>{
-    let admin = req.admin
-    let order = orderAggregate()
-    .then(data=>res.json(data))
-    .catch(error=>res.json({error}))  
-})
+/******************* get order Page **********************/
+router.get('/',varifyAdmin,orderController.getOrderPage)
 
-//cancel order
-router.get('/cancel',varifyAdmin,async(req,res)=>{
-    let {userId,orderId,payMethod,totalPrice} = req.query
-    let vallet = await valletView(userId)
-    let newValletBalance = vallet.balance + Number(totalPrice) 
-    if (payMethod != 'cod') {
-       await updateVallet(userId,newValletBalance)
-    }
-    cancelOrder(orderId)
-    .then(data=>res.json(data))
-    .catch(error=>res.json({error}))
-})
-router.get('/deleverd',varifyAdmin,(req,res)=>{
-    let {orderId} = req.query
-    deleverdOrder(orderId)
-    .then(data=>res.json(data))
-    .catch(error=>res.json({error}))
-})
-router.get('/shipped',varifyAdmin,(req,res)=>{
-    let {orderId} = req.query
-    shippedOrder(orderId)
-    .then(data=>res.json(data))
-    .catch(error=>res.json({error}))
-})
+/******************** get order details **********************/
+router.get('/check',varifyAdmin,orderController.getOrderDetails)
 
-router.get('/remove',varifyAdmin,async(req,res)=>{
-    let {orderId} = req.query
-    removeOrder(orderId)
-    .then(data=>res.json(data))
-    .catch(error=>res.json({error}))
-})
+/******************** cancel order **********************/
+router.get('/cancel',varifyAdmin,orderController.cancelOrder)
+
+/******************** deleverd order **********************/
+router.get('/deleverd',varifyAdmin,orderController.deleverdOrder)
+
+/******************** deleverd order **********************/
+router.get('/shipped',varifyAdmin,orderController.shippedOerder)
+
+router.get('/remove',varifyAdmin,orderController.removeOrder)
 
 module.exports = router

@@ -5,7 +5,7 @@ const fileUpload = require("express-fileupload");
 const fs = require('fs');
 // const { routes, path } = require("../app");
 const Category = require("../model/category");
-const { getAllProducts, findProduct, deleteProduct, getEditCategories, findProductByName, addProduct } = require("../helpers/productHelper");
+const { getAllProducts, findProduct, deleteProduct, getEditCategories, findProductByName, addProduct } = require("../service/productService");
 
 var router = express.Router();
 

@@ -1,8 +1,8 @@
 var express = require("express");
-const { viewOrdersByUserId, removeOrder, cancelOrder } = require("../helpers/orderHelper");
-const { viewProfile, editProfile, viewProfileByIdAndEmail, addAddress, editAddress, deleteAddress } = require("../helpers/profileHelper");
-const { categoryViceView } = require("../helpers/userHelper");
-const { valletAggigateView, valletView, updateVallet } = require("../helpers/valletHelper");
+const { viewOrdersByUserId, removeOrder, cancelOrder } = require("../service/orderService");
+const { viewProfile, editProfile, viewProfileByIdAndEmail, addAddress, editAddress, deleteAddress } = require("../service/profileService");
+const { categoryViceView } = require("../service/userService");
+const { valletAggigateView, valletView, updateVallet } = require("../service/valletService");
 const Category = require("../model/category");
 const { varifyUser } = require("./varify/varifyUser");
 var router = express.Router();
@@ -187,7 +187,7 @@ router.get("/vallet/compare",varifyUser,async(req, res)=>{
     let userId = req.userId
     valletView(userId)
     .then(data=>{
-        console.log(data.balance)
+        // res.json(data.balance)
        if (data.balance <totalPrice) {
             res.json({status:'insufficient balance vallet',}) 
        }else{
