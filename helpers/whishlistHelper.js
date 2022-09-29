@@ -9,7 +9,6 @@ module.exports ={
             { $addToSet: { wishlist: productId} },
             {upsert: true}
             ).then(data=>{
-                console.log(data)
                 resolve(data)})
             .catch(err=>reject(err))
         })
@@ -38,6 +37,18 @@ module.exports ={
             {userId},
             { $pull: { wishlist: productId} },
             ).then(data=>resolve(data))
+            .catch(err=>reject(err))
+        })
+    },
+    wishlistStatus:(userId,productId)=>{
+        return new Promise((resolve, reject) => {
+            wishlist.find(
+            {userId,
+            wishlist:productId
+            },
+            ).then(data=>{
+                resolve(data)
+            })
             .catch(err=>reject(err))
         })
     }

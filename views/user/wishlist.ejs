@@ -60,7 +60,7 @@
         .then(data=>data.json())
         .then(data=>{
           document.getElementById("userName").innerHTML = data.userName
-          if(data.items=[]){
+          if(data.items.length==0){
             document.getElementById("main").innerHTML = `
              <div class="bg-secondary w-50 mx-auto"> <h3 class="text-white">Wishlist is Empty</h3> </div> 
              `
@@ -92,7 +92,6 @@
        }) .then(data => data.json())
        .then(data =>{
         getWislist()
-         alert('product removed successfully')
        } )
       }
     </script>

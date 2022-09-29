@@ -18,7 +18,7 @@ const paypal = require("@paypal/checkout-server-sdk");
 const { resolve } = require('path');
 const { varifyCoupon } = require('../helpers/couponHelper');
 const { valletView, updateVallet } = require('../helpers/valletHelper');
-const { addToWishlist, getWishlist, removeFromWishlist } = require('../helpers/whishlistHelper');
+const { addToWishlist, getWishlist, removeFromWishlist, wishlistStatus } = require('../helpers/whishlistHelper');
 const Environment =
   process.env.NODE_ENV === "production"
     ? paypal.core.LiveEnvironment
@@ -64,8 +64,16 @@ router.get('/addToWishlist',varifyUser,async(req,res) =>{
   try{
     let userId = req.userId
     let {productId} = req.query
-    let data = await addToWishlist(userId,productId)
-  res.json(data)
+    let status = await wishlistStatus(userId,productId)
+
+    if (status.length == 0) {
+      let data = await addToWishlist(userId,productId)
+      res.json(data)
+    }else{
+      let data = removeFromWishlist(userId,productId) 
+      res.json(data)
+    }
+
   }catch(err){res.json(err)}
 
 
@@ -91,37 +99,24 @@ router.put("/removeWishlist",varifyUser,async(req,res) =>{
   }catch(err){res.json(err)}
 })
 
+router.get("/wishlistStatus",varifyUser,async(req,res) =>{
+  try{
+    let {productId} = req.query
+    let userId = req.userId
+    let data = await wishlistStatus(userId,productId)
+    if (data.length ==0) {
+      res.json({status: false}) 
+    }else{
+      res.json({status: true})
+    }
+  } catch(err){res.json(err)}
+})
+
  router.get('/cart',varifyUser,async(req,res)=>{
   let categories = await Category.find()
    let name = req.userName
   let id = req.userId
   let userId =  req.userId
-//   console.log(name,id)
-//    let val = await allCartItems(userId)
-
-//    if(val.length ===0){
-//    res.render("user/cart",{name,id,cart:[],qty:'',totalPrice:'',totalOfferPrice:'',categories})
-//    }
-//   else {
-//    let cart = val[0].cartItems
-//    let qty = val[0].cart
-
-//     let category ={}
-//     for(val of categories){
-//       category[val.name]=val.offer
-//     }
-//   // find tota Price 
-//    let totalPrice = 0
-//    let totalOfferPrice = 0
-// //calculate totalPrice
-//    for (const val in cart) {
-//     let price = cart[val].price
-//     let totalQuantity = qty[val].quantity
-//     totalPrice += price * totalQuantity
-//     totalOfferPrice += (price -(price *category[cart[val].category]/100))*totalQuantity
-//    }
-//    res.render("user/cart",{name,id,cart,qty,totalPrice,totalOfferPrice,categories,category})
-//   }
    res.render("user/cart",{name,id,categories})
  })
 
@@ -156,10 +151,6 @@ router.get('/getCartDetails',varifyUser,async (req,res)=>{
   }
 })
 
-//  router.get('/cartJson',varifyUser,async(req,res) => {
-//   let userId = req.userId
-//   getCart(userId).then(cart   => res.json(cart))
-//  });
 
  //add to cart
  router.get('/addToCart',varifyUser,async(req,res)=> { 

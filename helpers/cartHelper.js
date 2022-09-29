@@ -44,7 +44,6 @@ module.exports = {
                 {$unwind:"$cartItems"},
             ])
             .then(cart => {
-                console.log(cart)
                 resolve(cart)
             })  
         })
@@ -106,8 +105,6 @@ module.exports = {
     },
     placeOrder:(userId,product,totalPrice,address,method)=>{
         return new Promise((resolve,reject) =>{
-            //  Orders
-            //  .updateOne({userId},{$push:{orders:product,totalPrice}},{upsert:true})
             new Orders({userId,orders:product,totalPrice,payMethod:method,address}).save()
              .then(cart => resolve(cart))
              .catch(err => reject(err));

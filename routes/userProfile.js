@@ -101,17 +101,15 @@ router.post("/editAddress/:num",varifyUser,async(req,res)=>{
     .then(data=>{
         res.redirect('/profile/view')
     }).catch(err=>{
-        console.log(err)
     })
     } catch (error) {
-        console.log(error)    
     }
 })
 router.get("/deleteAddress/:num",varifyUser,(req, res)=>{
     let userId = req.userId
     let index = req.params.num
     deleteAddress(userId, index).then(data=>{
-        res.json(data)
+        res.redirect('/profile/view')
     })
 
 })
