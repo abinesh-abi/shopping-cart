@@ -49,6 +49,7 @@ router.get('/view/:id',userLogged, async(req, res) => {
   let categoryInput = req.params.category
   let name = req.userName
   let categories = await Category.find()
+  console.log(categories)
     let cat = await Category.find({_id:categoryInput})
     let category = cat[0].name
     let off = cat[0].offer
