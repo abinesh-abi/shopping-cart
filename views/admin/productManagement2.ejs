@@ -93,7 +93,6 @@
       window.addEventListener("load", check);
       function check() {
         let inp = document.getElementById("search").value;
-        console.log(inp)
         fetch(`/admin/productManagement/check/${inp}`, {
           method: "GET",
         })

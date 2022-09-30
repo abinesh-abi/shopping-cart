@@ -41,7 +41,7 @@
               
               let orders = "";
               response.forEach((element, i) => {
-                let temp;
+                let temp =''
                 element.orderdItems.forEach((val, h) => {
                   temp += `
                       <tr>
@@ -96,7 +96,7 @@
                         <th scope="col"></th>
                       </tr>
                     </thead>
-                    <tbody id="tableBody">
+                    <tbody>
                       ${temp}
                     </tbody>
                   </table>
