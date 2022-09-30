@@ -5,7 +5,7 @@ const fileUpload = require("express-fileupload");
 const fs = require('fs');
 // const { routes, path } = require("../app");
 const Category = require("../model/category");
-const { getAllProducts, findProduct, deleteProduct, getEditCategories, findProductByName, addProduct } = require("../service/productService");
+const { getAllProducts, findProduct, deleteProduct, getEditCategories, findProductByName, addProduct, getAggregatedProducts } = require("../service/productService");
 
 var router = express.Router();
 
@@ -20,8 +20,13 @@ router.get("/", varifyAdmin, function (req, res) {
 });
 
 router.get("/check",varifyAdmin, async (req, res) => {
-  let data = await getAllProducts()
+  let data = await getAggregatedProducts()
+  data.forEach((val,index)=>{
+    let hi = data[index].categoryInfo[0]
+    console.log(hi)
+  })
   res.json(data);
+  // res.json(data[8].categoryInfo[0].name);
 });
 
 router.get("/check/:id",varifyAdmin, async (req, res) => {
@@ -139,6 +144,7 @@ router.post("/addProduct", varifyAdmin, async(req, res) => {
     res.redirect("/admin/productManagement")
     })
     .catch((err) =>{
+      console.log(err)
      res.status(400).render("admin/addProduct", {
     name: req.body.name,
     categories,
@@ -231,7 +237,8 @@ router.post("/addProduct", varifyAdmin, async(req, res) => {
 router.get('/editProduct/:id',varifyAdmin,async(req,res)=>{
   try {
     let product = await Products.findOne({_id:req.params.id})
-    let val = await Category.aggregate([{$group:{_id:'array','categories':{$push:"$name"}}}])
+    // let val = await Category.aggregate([{$group:{_id:'array','categories':{$push:"$name"}}}])
+  let val = await  getEditCategories()
     let categories = val[0].categories
     //  res.render("admin/productEdit",{name:product.name,price:product.price,category:product.category,_id:product._id})
      res.render("admin/productEdit",{product,categories})

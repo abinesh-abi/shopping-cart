@@ -16,7 +16,7 @@ module.exports ={
                 {$match:{}},
                 {$lookup:{
                     from:'products',
-                    localField:"name",
+                    localField:"_id",
                     foreignField:"category",
                     as:'products'
                 }}

@@ -10,7 +10,7 @@
                 <div class="card-body">
                   <ul class="nav nav-pills flex-column category-menu">
                     <%for(index in categories){%>
-                    <li><a href="/product/categoryView/<%=categories[index].name%>" class="nav-link">
+                    <li><a href="/product/categoryView/<%=categories[index]._id%>" class="nav-link">
                       <%=categories[index].name%> 
                       <!-- <span class="badge badge-secondary">42</span> -->
                     </a></li>

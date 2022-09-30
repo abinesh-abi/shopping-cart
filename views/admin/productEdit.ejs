@@ -42,11 +42,11 @@
                         >category</label
                       >
                       <select
-                        class="form-select form-select-lg mb-3"
+                        class="form-select form-select-lg mb-3 col-12 form-control"
                         name="category"
                       >
                         <%for(val of categories){%>
-                        <option value="<%=val%>"><%=val%></option>
+                        <option value="<%=val.id%>"><%=val.name%></option>
                         <%}%>
                       </select>
                     </div>

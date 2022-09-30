@@ -40,7 +40,6 @@ function getCartDetails() {
     let temp
               for(itm in cart){
                 
-                console.log(cart[itm].cartItems._id)
     temp += 
                     `
             <div class="row">
@@ -57,7 +56,7 @@ function getCartDetails() {
 
               <div class="col-lg-5 col-md-6 mb-4 mb-lg-0">
                 <h4><strong>${cart[itm].cartItems.name}</strong></h4>
-                <p>category: ${cart[itm].category}</p>
+                <p>category: ${cart[itm].categoryDetail.name}</p>
                 <a onclick="removeFromCart('${cart[itm].cartItems._id}')" type="button" class="btn btn-primary btn-sm me-1 mb-2" data-mdb-toggle="tooltip"
                   title="Remove item">
                   <i class="fa fa-trash"></i>

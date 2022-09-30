@@ -19,7 +19,7 @@ const productSchema = mongoose.Schema({
         type:String
     },
     category:{
-        type:String,
+        type:mongoose.Types.ObjectId,
         required:true
     },
     spec:{

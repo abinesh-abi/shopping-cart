@@ -19,6 +19,8 @@ const { resolve } = require('path');
 const { varifyCoupon } = require('../service/couponService');
 const { valletView, updateVallet } = require('../service/valletService');
 const { addToWishlist, getWishlist, removeFromWishlist, wishlistStatus } = require('../service/whishlistService');
+const { getAggregatedProducts, getAllProducts, getProductsByCategory } = require('../service/productService');
+const { findCategory } = require('../service/categoryService');
 const Environment =
   process.env.NODE_ENV === "production"
     ? paypal.core.LiveEnvironment
@@ -37,19 +39,21 @@ router.get('/view/:id',userLogged, async(req, res) => {
    let id = req.userId
   let categories = await Category.find()
     let product= await Products.findOne({_id:req.params.id})
-    let cat = await Category.find({name:product.category})
+    let cat = await Category.find({_id:product.category})
     let off = cat[0].offer
     let offerPrice = product.price -(product.price * off /100)
     res.render("user/viewProduct" ,{name,id,product,categories,offerPrice})
 
  })
  router.get('/categoryView/:category',varifyUser,async(req, res) => {
-  let category = req.params.category
+  let categoryInput = req.params.category
   let name = req.userName
   let categories = await Category.find()
-    let cat = await Category.find({name:category})
+    let cat = await Category.find({_id:categoryInput})
+    let category = cat[0].name
     let off = cat[0].offer
-  Products.find({category}).then(product =>{
+  // Products.find({category}).then(product =>{
+    getProductsByCategory(categoryInput).then(product=>{
     res.render("user/categoryView",{name,product:product,category,categories,off})
   })
  })
@@ -107,7 +111,7 @@ router.get("/wishlistStatus",varifyUser,async(req,res) =>{
 })
 
  router.get('/cart',varifyUser,async(req,res)=>{
-  let categories = await Category.find()
+  let categories = await findCategory()
    let name = req.userName
   let id = req.userId
   let userId =  req.userId
@@ -118,7 +122,7 @@ router.get('/getCartDetails',varifyUser,async (req,res)=>{
    let name = req.userName
   let id = req.userId
   let userId =  req.userId
-  let categories = await Category.find()
+  let categories = await findCategory()
    let cart = await allCartItems(userId)
    if(cart.length ===0){
     res.json({cart:false})
@@ -128,7 +132,7 @@ router.get('/getCartDetails',varifyUser,async (req,res)=>{
     //find category
     let category ={}
     for(val of categories){
-     category[val.name]=val.offer 
+     category[val._id]=val.offer 
     }
 //   // find total Price 
    let totalPrice = 0
@@ -239,6 +243,7 @@ var instance = new Razorpay({
     let name = req.userName
     let userId = req.userId
     let { totalPrice, address} = req.body
+    address = address[0]
     Cart.updateOne({userId},{$set:{address}}).then(data => console.log(data))
     console.log(totalPrice,address)
     // paypal

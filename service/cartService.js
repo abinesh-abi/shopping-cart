@@ -41,7 +41,14 @@ module.exports = {
                     foreignField:"_id",
                     as:'cartItems'
                 }},
+                {$lookup:{
+                    from: "categories",
+                    localField:"cartItems.category",
+                    foreignField:"_id",
+                    as:'categoryDetail'
+                }},
                 {$unwind:"$cartItems"},
+                {$unwind:"$categoryDetail"},
             ])
             .then(cart => {
                 resolve(cart)

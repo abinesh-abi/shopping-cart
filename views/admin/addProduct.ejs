@@ -43,7 +43,7 @@
                         name="category"
                       >
                         <%for(val of categories){%>
-                        <option value="<%=val%>"><%=val%></option>
+                        <option value="<%=val.id%>"><%=val.name%></option>
                         <%}%>
                       </select>
                     </div>
@@ -148,7 +148,6 @@
      let cropper  //for store croppde image
      let element
       image1.addEventListener("change", (e) => {
-        console.log('firsont')
         cropper = cropArea(e)
         element =image1
        Cropper.noConflict();
